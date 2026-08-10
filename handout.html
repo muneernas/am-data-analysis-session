@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Participant Handout · From Numbers to Narratives</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0c2433;
+      --teal: #0f766e;
+      --amber: #b45309;
+      --line: #d5e0e6;
+      --bg: #f7fafb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Outfit", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.45;
+    }
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+    header {
+      border-bottom: 3px solid var(--teal);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    h1 {
+      font-family: "Syne", sans-serif;
+      font-size: 2rem;
+      margin: 0 0 0.35rem;
+    }
+    .sub { color: #4b6472; }
+    h2 {
+      font-family: "Syne", sans-serif;
+      font-size: 1.25rem;
+      color: var(--teal);
+      margin: 1.75rem 0 0.6rem;
+    }
+    .box {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1rem 1.15rem;
+      margin: 0.75rem 0;
+    }
+    .box h3 {
+      margin: 0 0 0.4rem;
+      font-size: 1.05rem;
+    }
+    .meta {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.35rem;
+    }
+    ul { margin: 0.4rem 0 0 1.1rem; padding: 0; }
+    li { margin: 0.25rem 0; }
+    .formula {
+      text-align: center;
+      font-family: "Syne", sans-serif;
+      font-size: 1.15rem;
+      padding: 1rem;
+      background: #e7f6f3;
+      border-radius: 10px;
+      margin: 1rem 0;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 1px dashed #9bb0bc;
+      border-radius: 8px;
+      padding: 0.65rem 0.75rem;
+      font: inherit;
+      background: #fff;
+      margin-top: 0.4rem;
+    }
+    textarea { min-height: 72px; resize: vertical; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 0.45rem 0.55rem;
+      text-align: left;
+    }
+    th { background: #e8f1f4; }
+    .print-note {
+      font-size: 0.85rem;
+      color: #5a7280;
+      margin-top: 2rem;
+    }
+    @media print {
+      body { background: #fff; }
+      .page { padding: 0; max-width: none; }
+      .box { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>From Numbers to Narratives</h1>
+      <p class="sub">Participant handout · Data analysis &amp; Power BI lab</p>
+      <p class="sub"><strong>Dataset:</strong> ahliyyah-mutran-learning.csv &nbsp;·&nbsp; <strong>Time:</strong> ~50 minutes hands-on</p>
+    </header>
+
+    <h2>Insight formula (keep this visible)</h2>
+    <div class="formula">Who + What changed + By how much + So what</div>
+
+    <h2>Quick start in Power BI</h2>
+    <div class="box">
+      <ol>
+        <li>Open <strong>Power BI Desktop</strong> → <strong>Get data</strong> → <strong>Text/CSV</strong> → select the file → <strong>Load</strong>.</li>
+        <li>Confirm <em>Score</em>, <em>AttendancePct</em>, and <em>HomeworkCompletionPct</em> are numbers (Column tools → Data type).</li>
+        <li>Drag fields onto the canvas. Add <strong>Slicers</strong> for Term, GradeLevel, Subject.</li>
+      </ol>
+      <p><em>Excel fallback:</em> Insert → PivotChart / Charts. Same challenges apply.</p>
+    </div>
+
+    <h2>Challenge 1 · Foundations (~12 min)</h2>
+    <div class="box">
+      <span class="meta">Build</span>
+      <h3>Average Score by Subject — with a Term slicer</h3>
+      <ul>
+        <li>Which subject looks strongest? Weakest?</li>
+        <li>What changes when you switch Term 1 → Term 2?</li>
+      </ul>
+      <label>My finding</label>
+      <textarea placeholder="Write one insight using the formula…"></textarea>
+    </div>
+
+    <h2>Challenge 2 · Relationships (~12 min)</h2>
+    <div class="box">
+      <span class="meta">Build</span>
+      <h3>Scatter: AttendancePct (X) vs Score (Y)</h3>
+      <ul>
+        <li>Do you see a relationship?</li>
+        <li>Circle one outlier on your screen — what’s interesting about them?</li>
+      </ul>
+      <label>My finding</label>
+      <textarea placeholder="Write one insight using the formula…"></textarea>
+    </div>
+
+    <h2>Challenge 3 · Impact (~15 min)</h2>
+    <div class="box">
+      <span class="meta">Build</span>
+      <h3>Term 1 vs Term 2 growth by LearningSupport</h3>
+      <ul>
+        <li>Compare Math Intervention / Reading Support vs None.</li>
+        <li>Is growth different? What would you recommend?</li>
+      </ul>
+      <label>My finding + Monday move</label>
+      <textarea placeholder="Insight + what should happen next week…"></textarea>
+    </div>
+
+    <h2>Share-out (60 seconds)</h2>
+    <div class="box">
+      <ol>
+        <li>What surprised you?</li>
+        <li>Which visual proves it?</li>
+        <li>What should happen on Monday?</li>
+      </ol>
+    </div>
+
+    <h2>Field cheat sheet</h2>
+    <table>
+      <thead>
+        <tr><th>Field</th><th>Use it to…</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Score</td><td>Measure achievement</td></tr>
+        <tr><td>Term</td><td>Compare growth over time</td></tr>
+        <tr><td>Subject / GradeLevel</td><td>Find hotspots</td></tr>
+        <tr><td>AttendancePct</td><td>Link engagement to outcomes</td></tr>
+        <tr><td>LearningSupport</td><td>Evaluate interventions</td></tr>
+        <tr><td>Extracurricular</td><td>Explore context (carefully — not causation)</td></tr>
+      </tbody>
+    </table>
+
+    <p class="print-note">Print this page or fill it digitally. Bring one insight you’re proud of to the share-out.</p>
+  </div>
+</body>
+</html>

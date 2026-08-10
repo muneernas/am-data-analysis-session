@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>From Numbers to Narratives · Data Analysis & Power BI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #07141c;
+      --deep: #0c2433;
+      --panel: #123044;
+      --line: rgba(125, 211, 198, 0.22);
+      --teal: #2dd4bf;
+      --teal-dim: #149e8c;
+      --amber: #f0b429;
+      --coral: #ff7a59;
+      --mist: #d7e6ef;
+      --soft: #9fb6c5;
+      --white: #f5fafc;
+      --slide-pad: clamp(2rem, 5vw, 4.5rem);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--ink);
+      color: var(--white);
+      font-family: "Outfit", sans-serif;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 10% -10%, rgba(45, 212, 191, 0.18), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(240, 180, 41, 0.12), transparent 50%),
+        radial-gradient(ellipse 50% 40% at 80% 100%, rgba(255, 122, 89, 0.08), transparent 45%),
+        linear-gradient(160deg, #07141c 0%, #0c2433 45%, #0a1c28 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(125, 211, 198, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(125, 211, 198, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .deck {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      width: 100%;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      padding: var(--slide-pad);
+      opacity: 0;
+      transform: translateY(18px) scale(0.985);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .slide.exit {
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(-12px) scale(0.99);
+    }
+
+    .brand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--soft);
+    }
+
+    .brand-row .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      display: inline-block;
+      margin-right: 0.55rem;
+      box-shadow: 0 0 12px rgba(45, 212, 191, 0.7);
+    }
+
+    h1, h2, h3 {
+      font-family: "Syne", sans-serif;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    h1 { font-size: clamp(2.6rem, 6vw, 4.8rem); font-weight: 800; }
+    h2 { font-size: clamp(2rem, 4.2vw, 3.4rem); font-weight: 700; margin-bottom: 1rem; }
+    h3 { font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 700; color: var(--teal); }
+
+    .lede {
+      font-size: clamp(1.1rem, 2vw, 1.45rem);
+      color: var(--mist);
+      max-width: 42rem;
+      line-height: 1.5;
+      font-weight: 300;
+    }
+
+    .accent { color: var(--teal); }
+    .amber { color: var(--amber); }
+    .coral { color: var(--coral); }
+
+    .hero {
+      justify-content: center;
+      gap: 1.25rem;
+    }
+
+    .hero .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--teal);
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      width: fit-content;
+      backdrop-filter: blur(8px);
+      background: rgba(18, 48, 68, 0.45);
+      animation: floatIn 0.8s ease both;
+    }
+
+    .hero h1 { animation: floatIn 0.9s ease 0.1s both; max-width: 14ch; }
+    .hero .lede { animation: floatIn 0.9s ease 0.2s both; }
+    .hero .meta { animation: floatIn 0.9s ease 0.3s both; margin-top: 1.5rem; color: var(--soft); }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2rem;
+      flex: 1;
+      align-items: center;
+      min-height: 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .card {
+      background: linear-gradient(160deg, rgba(18, 48, 68, 0.85), rgba(12, 36, 51, 0.7));
+      border: 1px solid var(--line);
+      border-radius: 1.1rem;
+      padding: 1.35rem 1.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--teal), var(--amber));
+      opacity: 0.85;
+    }
+
+    .card strong {
+      display: block;
+      font-family: "Syne", sans-serif;
+      font-size: 1.15rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .card p, .card li {
+      color: var(--mist);
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    .big-quote {
+      font-family: "Syne", sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      line-height: 1.2;
+      max-width: 18ch;
+    }
+
+    .list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .list li {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      font-size: 1.15rem;
+      color: var(--mist);
+    }
+
+    .list .num {
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.55rem;
+      background: rgba(45, 212, 191, 0.15);
+      color: var(--teal);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 1.5rem;
+      align-items: center;
+    }
+
+    .flow .step {
+      padding: 0.75rem 1.1rem;
+      border-radius: 0.8rem;
+      background: rgba(18, 48, 68, 0.9);
+      border: 1px solid var(--line);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .flow .arrow {
+      color: var(--amber);
+      font-weight: 700;
+    }
+
+    .viz-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .viz {
+      padding: 1.2rem;
+      border-radius: 1rem;
+      border: 1px solid var(--line);
+      background: rgba(12, 36, 51, 0.75);
+    }
+
+    .viz .label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--soft);
+      margin-bottom: 0.75rem;
+    }
+
+    .bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.4rem;
+      height: 90px;
+    }
+
+    .bars span {
+      flex: 1;
+      border-radius: 0.3rem 0.3rem 0 0;
+      background: linear-gradient(180deg, var(--teal), var(--teal-dim));
+      animation: grow 1.2s ease both;
+    }
+
+    .bars span:nth-child(1) { height: 45%; animation-delay: 0.1s; }
+    .bars span:nth-child(2) { height: 70%; animation-delay: 0.2s; }
+    .bars span:nth-child(3) { height: 55%; animation-delay: 0.3s; }
+    .bars span:nth-child(4) { height: 90%; animation-delay: 0.4s; }
+    .bars span:nth-child(5) { height: 65%; animation-delay: 0.5s; }
+
+    @keyframes grow {
+      from { transform: scaleY(0); transform-origin: bottom; }
+      to { transform: scaleY(1); transform-origin: bottom; }
+    }
+
+    .line-chart {
+      height: 90px;
+      position: relative;
+    }
+
+    .line-chart svg { width: 100%; height: 100%; }
+
+    .donut {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: conic-gradient(var(--teal) 0 62%, var(--amber) 62% 85%, var(--coral) 85% 100%);
+      mask: radial-gradient(circle at center, transparent 42%, black 43%);
+      -webkit-mask: radial-gradient(circle at center, transparent 42%, black 43%);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+
+    .compare .side {
+      padding: 1.4rem;
+      border-radius: 1rem;
+      border: 1px solid var(--line);
+      background: rgba(12, 36, 51, 0.7);
+    }
+
+    .compare .side.bad { border-color: rgba(255, 122, 89, 0.35); }
+    .compare .side.good { border-color: rgba(45, 212, 191, 0.4); }
+
+    .compare h3 { margin-bottom: 0.6rem; }
+    .compare.good h3, .side.good h3 { color: var(--teal); }
+    .side.bad h3 { color: var(--coral); }
+
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .kpi .stat {
+      padding: 1.3rem;
+      border-radius: 1rem;
+      background: rgba(18, 48, 68, 0.85);
+      border: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .kpi .stat .n {
+      font-family: "Syne", sans-serif;
+      font-size: 2.4rem;
+      color: var(--amber);
+      display: block;
+      line-height: 1;
+    }
+
+    .kpi .stat .t {
+      color: var(--soft);
+      margin-top: 0.45rem;
+      font-size: 0.95rem;
+    }
+
+    .challenge {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .challenge .badge {
+      width: fit-content;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(240, 180, 41, 0.15);
+      color: var(--amber);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .timer-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 0.5rem;
+      background: rgba(45, 212, 191, 0.12);
+      color: var(--teal);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .footer-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.5rem;
+      background: linear-gradient(180deg, transparent, rgba(7, 20, 28, 0.92));
+      font-size: 0.85rem;
+      color: var(--soft);
+    }
+
+    .progress {
+      flex: 1;
+      max-width: 280px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(125, 211, 198, 0.15);
+      margin: 0 1.5rem;
+      overflow: hidden;
+    }
+
+    .progress > i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--teal), var(--amber));
+      transition: width 0.35s ease;
+    }
+
+    .nav-hint kbd {
+      display: inline-block;
+      padding: 0.15rem 0.4rem;
+      border: 1px solid var(--line);
+      border-radius: 0.3rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      color: var(--mist);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.25rem;
+    }
+
+    .pill {
+      padding: 0.55rem 0.95rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(18, 48, 68, 0.6);
+      color: var(--mist);
+      font-size: 0.95rem;
+    }
+
+    .two-col-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem 2rem;
+      margin-top: 1.25rem;
+    }
+
+    .two-col-list li {
+      color: var(--mist);
+      font-size: 1.1rem;
+      padding-left: 1.1rem;
+      position: relative;
+      list-style: none;
+    }
+
+    .two-col-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55rem;
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .formula {
+      margin-top: 1.5rem;
+      padding: 1.5rem 1.75rem;
+      border-radius: 1.1rem;
+      border: 1px solid var(--line);
+      background: linear-gradient(120deg, rgba(45, 212, 191, 0.12), rgba(240, 180, 41, 0.08));
+      font-family: "Syne", sans-serif;
+      font-size: clamp(1.3rem, 2.5vw, 2rem);
+      text-align: center;
+    }
+
+    .lab-steps {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .lab-steps .card .n {
+      font-family: "Syne", sans-serif;
+      font-size: 2rem;
+      color: var(--amber);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .split-story {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+
+    .story-card {
+      padding: 1.5rem;
+      border-radius: 1.1rem;
+      min-height: 220px;
+      border: 1px solid var(--line);
+      background: rgba(12, 36, 51, 0.75);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .story-card .who {
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--soft);
+      margin-bottom: 0.75rem;
+    }
+
+    .story-card .said {
+      font-size: 1.25rem;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .story-card .result {
+      margin-top: 1rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--line);
+      color: var(--amber);
+      font-weight: 600;
+    }
+
+    .section-mark {
+      font-size: 0.9rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .grid-4, .viz-row, .compare, .kpi, .lab-steps, .split-story, .two-col-list {
+        grid-template-columns: 1fr;
+      }
+      h1 { font-size: 2.2rem; }
+      .slide { overflow-y: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+
+    <!-- 1 TITLE -->
+    <section class="slide hero active" data-title="Title">
+      <div class="tag"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;box-shadow:0 0 10px var(--teal)"></span> 90-minute professional learning</div>
+      <h1>From Numbers to <span class="accent">Narratives</span></h1>
+      <p class="lede">A hands-on session on data analysis and Power BI — so teachers can turn classroom data into decisions that help students.</p>
+      <p class="meta">Part 1 · Concepts &amp; Power BI &nbsp;|&nbsp; Part 2 · Build, visualize, discover</p>
+    </section>
+
+    <!-- 2 AGENDA -->
+    <section class="slide" data-title="Agenda">
+      <div class="brand-row"><span><span class="dot"></span>Session roadmap</span><span>90 minutes</span></div>
+      <h2>Today’s journey</h2>
+      <div class="grid-3">
+        <div class="card">
+          <strong class="amber">0–5 min</strong>
+          <p>Hook: same data, two very different stories.</p>
+        </div>
+        <div class="card">
+          <strong class="accent">5–40 min</strong>
+          <p>Data analysis mindset + Power BI essentials — clear, practical, no jargon fog.</p>
+        </div>
+        <div class="card">
+          <strong class="coral">40–90 min</strong>
+          <p>Live lab: explore a real school dataset, build visuals, share insights.</p>
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="stat"><span class="n">1</span><div class="t">Dataset for everyone</div></div>
+        <div class="stat"><span class="n">3</span><div class="t">Guided challenges</div></div>
+        <div class="stat"><span class="n">∞</span><div class="t">Insights waiting</div></div>
+      </div>
+    </section>
+
+    <!-- 3 HOOK -->
+    <section class="slide" data-title="Hook">
+      <div class="brand-row"><span><span class="dot"></span>Opening hook</span><span>Same numbers · Different action</span></div>
+      <h2>Two teachers. One report.</h2>
+      <div class="split-story">
+        <div class="story-card">
+          <div>
+            <div class="who">Teacher A</div>
+            <p class="said">“Class average is 74%. We’re fine. Moving on.”</p>
+          </div>
+          <div class="result">Stops at the average → no change</div>
+        </div>
+        <div class="story-card">
+          <div>
+            <div class="who">Teacher B</div>
+            <p class="said">“Average is 74% — but Math Term 1 for boys with low attendance sits at 58%. That’s where I intervene.”</p>
+          </div>
+          <div class="result">Slices the data → targeted support</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 WHY -->
+    <section class="slide" data-title="Why it matters">
+      <div class="brand-row"><span><span class="dot"></span>Why we’re here</span><span>For educators</span></div>
+      <div class="grid-2">
+        <div>
+          <h2>Data doesn’t replace teaching judgment — it <span class="accent">sharpens</span> it.</h2>
+          <p class="lede">You already notice patterns in your classroom. Analysis helps you prove them, challenge them, and act faster.</p>
+        </div>
+        <div>
+          <ul class="list">
+            <li><span class="num">01</span><span>Spot who is slipping before the next report card.</span></li>
+            <li><span class="num">02</span><span>See which interventions actually move the needle.</span></li>
+            <li><span class="num">03</span><span>Tell a clear story to leadership, parents, and your team.</span></li>
+            <li><span class="num">04</span><span>Stop drowning in spreadsheets — start deciding.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 WHAT IS DA -->
+    <section class="slide" data-title="What is data analysis">
+      <div class="brand-row"><span><span class="dot"></span>Core idea</span><span>Demystified</span></div>
+      <h2>What is data analysis — really?</h2>
+      <p class="lede">It’s the disciplined habit of asking good questions of information, looking for patterns, and turning those patterns into decisions.</p>
+      <div class="formula">Question → Evidence → Pattern → Insight → Action</div>
+      <div class="pill-row">
+        <span class="pill">Not just “making charts”</span>
+        <span class="pill">Not only for statisticians</span>
+        <span class="pill">A teacher superpower</span>
+      </div>
+    </section>
+
+    <!-- 6 PROCESS -->
+    <section class="slide" data-title="Analysis loop">
+      <div class="brand-row"><span><span class="dot"></span>The analysis loop</span><span>Keep it simple</span></div>
+      <h2>Seven moves. Repeat forever.</h2>
+      <div class="flow">
+        <span class="step">Ask</span><span class="arrow">→</span>
+        <span class="step">Gather</span><span class="arrow">→</span>
+        <span class="step">Clean</span><span class="arrow">→</span>
+        <span class="step">Explore</span><span class="arrow">→</span>
+        <span class="step">Visualize</span><span class="arrow">→</span>
+        <span class="step">Interpret</span><span class="arrow">→</span>
+        <span class="step">Act</span>
+      </div>
+      <div class="grid-3" style="margin-top:2rem">
+        <div class="card"><strong>Ask</strong><p>What decision am I trying to make?</p></div>
+        <div class="card"><strong>Explore</strong><p>What changed? For whom? Compared to what?</p></div>
+        <div class="card"><strong>Act</strong><p>What will we do differently on Monday?</p></div>
+      </div>
+    </section>
+
+    <!-- 7 QUESTIONS -->
+    <section class="slide" data-title="Better questions">
+      <div class="brand-row"><span><span class="dot"></span>Before Power BI</span><span>Mindset first</span></div>
+      <h2>Charts answer questions. Bad questions waste time.</h2>
+      <div class="compare">
+        <div class="side bad">
+          <h3>Weak</h3>
+          <ul class="list">
+            <li><span class="num">×</span><span>“Show me all the scores.”</span></li>
+            <li><span class="num">×</span><span>“Make a dashboard.”</span></li>
+            <li><span class="num">×</span><span>“Is attendance good?”</span></li>
+          </ul>
+        </div>
+        <div class="side good">
+          <h3>Strong</h3>
+          <ul class="list">
+            <li><span class="num">✓</span><span>“Which grade × subject pairs dropped from Term 1 to Term 2?”</span></li>
+            <li><span class="num">✓</span><span>“Do students in learning support improve faster?”</span></li>
+            <li><span class="num">✓</span><span>“Where does low attendance predict low scores?”</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 DATA TEACHERS HAVE -->
+    <section class="slide" data-title="School data">
+      <div class="brand-row"><span><span class="dot"></span>Your world</span><span>You already have data</span></div>
+      <h2>Teachers sit on gold mines of data</h2>
+      <div class="grid-4">
+        <div class="card"><strong>Achievement</strong><p>Scores, grades, growth between terms</p></div>
+        <div class="card"><strong>Engagement</strong><p>Attendance, homework completion</p></div>
+        <div class="card"><strong>Support</strong><p>Interventions, IEP / learning support</p></div>
+        <div class="card"><strong>Context</strong><p>Homeroom, extracurriculars, gender, grade</p></div>
+      </div>
+      <p class="lede" style="margin-top:1.75rem">Today’s lab uses all four — so the skills transfer straight to your own files.</p>
+    </section>
+
+    <!-- 9 VISUALS -->
+    <section class="slide" data-title="Visual language">
+      <div class="brand-row"><span><span class="dot"></span>Visual language</span><span>Choose with purpose</span></div>
+      <h2>Match the chart to the question</h2>
+      <div class="viz-row">
+        <div class="viz">
+          <div class="label">Compare categories → Bar</div>
+          <div class="bars"><span></span><span></span><span></span><span></span><span></span></div>
+          <p style="margin-top:0.75rem;color:var(--mist)">e.g. Average score by subject</p>
+        </div>
+        <div class="viz">
+          <div class="label">Change over time → Line</div>
+          <div class="line-chart">
+            <svg viewBox="0 0 200 90" preserveAspectRatio="none">
+              <polyline fill="none" stroke="#2dd4bf" stroke-width="3" points="0,70 40,55 80,60 120,35 160,28 200,18" />
+              <polyline fill="none" stroke="#f0b429" stroke-width="3" stroke-dasharray="4 4" points="0,75 40,68 80,50 120,48 160,40 200,42" />
+            </svg>
+          </div>
+          <p style="margin-top:0.75rem;color:var(--mist)">e.g. Term 1 → Term 2 growth</p>
+        </div>
+        <div class="viz">
+          <div class="label">Parts of a whole → Careful!</div>
+          <div class="donut"></div>
+          <p style="margin-top:0.75rem;color:var(--mist)">Use sparingly — only for composition</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 TRAPS -->
+    <section class="slide" data-title="Common traps">
+      <div class="brand-row"><span><span class="dot"></span>Professional caution</span><span>Don’t get fooled</span></div>
+      <h2>Four traps that fool smart people</h2>
+      <div class="grid-2">
+        <ul class="list">
+          <li><span class="num">1</span><span><strong style="color:var(--white)">Average addiction</strong> — a 74% class average can hide a 48% subgroup.</span></li>
+          <li><span class="num">2</span><span><strong style="color:var(--white)">Correlation ≠ cause</strong> — robotics kids score high; robotics may not be why.</span></li>
+        </ul>
+        <ul class="list">
+          <li><span class="num">3</span><span><strong style="color:var(--white)">Cherry-picking</strong> — one shiny chart that fits the story we wanted.</span></li>
+          <li><span class="num">4</span><span><strong style="color:var(--white)">Missing context</strong> — a drop looks scary until you see the assessment got harder.</span></li>
+        </ul>
+      </div>
+      <div class="formula" style="font-size:1.35rem">Always ask: “Compared to what — and for whom?”</div>
+    </section>
+
+    <!-- 11 POWER BI INTRO -->
+    <section class="slide" data-title="Meet Power BI">
+      <div class="brand-row"><span><span class="dot"></span>Tool time</span><span>Microsoft Power BI</span></div>
+      <div class="grid-2">
+        <div>
+          <h2>Meet <span class="accent">Power BI</span></h2>
+          <p class="lede">A visual analytics tool that turns tables into interactive stories — filters, drill-downs, and dashboards you can share.</p>
+          <div class="pill-row">
+            <span class="pill">Free Desktop app</span>
+            <span class="pill">Excel-friendly</span>
+            <span class="pill">Built for exploration</span>
+          </div>
+        </div>
+        <div class="card" style="padding:1.75rem">
+          <h3 style="margin-bottom:1rem">Think of it as…</h3>
+          <p style="font-size:1.15rem;line-height:1.55;color:var(--mist)">Excel’s ambitious cousin: same comfort with tables, but designed so non-coders can slice, compare, and present living visuals.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 POWER BI FLOW -->
+    <section class="slide" data-title="Power BI flow">
+      <div class="brand-row"><span><span class="dot"></span>Power BI workflow</span><span>Four stages</span></div>
+      <h2>The Power BI mental model</h2>
+      <div class="lab-steps">
+        <div class="card"><div class="n">01</div><strong>Get data</strong><p>Import CSV / Excel. Preview columns. Load.</p></div>
+        <div class="card"><div class="n">02</div><strong>Shape &amp; model</strong><p>Fix types, rename fields, create relationships if needed.</p></div>
+        <div class="card"><div class="n">03</div><strong>Visualize</strong><p>Drag fields → visuals. Add slicers for Term, Grade, Subject.</p></div>
+        <div class="card"><div class="n">04</div><strong>Insight &amp; share</strong><p>Annotate findings. Pin a report page. Tell the story.</p></div>
+      </div>
+    </section>
+
+    <!-- 13 BUILDING BLOCKS -->
+    <section class="slide" data-title="Building blocks">
+      <div class="brand-row"><span><span class="dot"></span>Building blocks</span><span>Speak the language</span></div>
+      <h2>Words you’ll use in the next hour</h2>
+      <div class="grid-3">
+        <div class="card"><strong>Fields</strong><p>Columns in your table: Score, Term, Subject…</p></div>
+        <div class="card"><strong>Visuals</strong><p>Charts, cards, tables on the canvas.</p></div>
+        <div class="card"><strong>Slicers</strong><p>Clickable filters the audience can drive.</p></div>
+        <div class="card"><strong>Measures</strong><p>Calculations like Average Score, Growth %.</p></div>
+        <div class="card"><strong>Report page</strong><p>One screen of related visuals = one story.</p></div>
+        <div class="card"><strong>Insight</strong><p>A sentence a colleague can act on Monday.</p></div>
+      </div>
+    </section>
+
+    <!-- 14 INSIGHT FORMULA -->
+    <section class="slide" data-title="Insight formula">
+      <div class="brand-row"><span><span class="dot"></span>The payoff</span><span>From visual to decision</span></div>
+      <h2>Write insights like a pro</h2>
+      <div class="formula">[Who] + [What changed] + [By how much] + [So what]</div>
+      <div class="compare" style="margin-top:1.5rem">
+        <div class="side bad">
+          <h3>Observation</h3>
+          <p style="color:var(--mist);font-size:1.15rem;line-height:1.5">“Math scores are lower.”</p>
+        </div>
+        <div class="side good">
+          <h3>Insight</h3>
+          <p style="color:var(--mist);font-size:1.15rem;line-height:1.5">“Grade 6 Math Term 1 averages 68% for students under 80% attendance — 14 points below peers. Priority: attendance + Math check-ins.”</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 BRIDGE -->
+    <section class="slide" data-title="Bridge to lab">
+      <div class="brand-row"><span><span class="dot"></span>Transition</span><span>Theory → Practice</span></div>
+      <h2>Enough watching. Time to <span class="accent">build</span>.</h2>
+      <p class="lede">You’ll open Ahliyyah &amp; Mutran’s learning snapshot, create visuals in Power BI (or Excel if needed), and defend one insight to the room.</p>
+      <div class="kpi">
+        <div class="stat"><span class="n">20</span><div class="t">Students</div></div>
+        <div class="stat"><span class="n">120</span><div class="t">Rows of scores</div></div>
+        <div class="stat"><span class="n">~50</span><div class="t">Minutes to explore</div></div>
+      </div>
+    </section>
+
+    <!-- 16 LAB OVERVIEW -->
+    <section class="slide" data-title="Lab overview">
+      <div class="section-mark">Part 2 · Hands-on lab</div>
+      <h2>Lab brief: Ahliyyah &amp; Mutran</h2>
+      <p class="lede">File: <span class="accent">ahliyyah-mutran-learning.csv</span> — scores across Math, Science, English for Terms 1 &amp; 2, plus attendance, support, and activities.</p>
+      <div class="lab-steps">
+        <div class="card"><div class="n">A</div><strong>Load the data</strong><p>Get Data → Text/CSV → Load. Check Score &amp; Attendance are numbers.</p></div>
+        <div class="card"><div class="n">B</div><strong>Build a page</strong><p>Title your report. Add Average Score card + 2–3 charts.</p></div>
+        <div class="card"><div class="n">C</div><strong>Add slicers</strong><p>Term, GradeLevel, Subject — make it interactive.</p></div>
+        <div class="card"><div class="n">D</div><strong>Write 1 insight</strong><p>Use the who / what / how much / so what formula.</p></div>
+      </div>
+    </section>
+
+    <!-- 17 CHALLENGE 1 -->
+    <section class="slide" data-title="Challenge 1">
+      <div class="challenge">
+        <span class="badge">Challenge 01 · Foundations</span>
+        <h2>Where are we strong — and weak?</h2>
+        <p class="lede">Create a bar chart of <span class="accent">Average Score by Subject</span>. Add a slicer for Term. Compare Term 1 vs Term 2.</p>
+        <div class="pill-row">
+          <span class="timer-chip">⏱ ~12 minutes</span>
+          <span class="pill">Visual: Clustered bar or column</span>
+          <span class="pill">Bonus: split by GradeLevel</span>
+        </div>
+        <div class="card" style="margin-top:0.5rem">
+          <strong>Success looks like</strong>
+          <p>You can point to the highest and lowest subject–term combination and say why a teacher should care.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18 CHALLENGE 2 -->
+    <section class="slide" data-title="Challenge 2">
+      <div class="challenge">
+        <span class="badge">Challenge 02 · Relationships</span>
+        <h2>Does showing up pay off?</h2>
+        <p class="lede">Build a scatter chart: <span class="accent">AttendancePct</span> on X, <span class="accent">Score</span> on Y. Optional: color by LearningSupport or GradeLevel.</p>
+        <div class="pill-row">
+          <span class="timer-chip">⏱ ~12 minutes</span>
+          <span class="pill">Visual: Scatter chart</span>
+          <span class="pill">Ask: any surprising outliers?</span>
+        </div>
+        <div class="card" style="margin-top:0.5rem">
+          <strong>Success looks like</strong>
+          <p>One sentence on the attendance–score relationship — and one student (or group) that breaks the pattern.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19 CHALLENGE 3 -->
+    <section class="slide" data-title="Challenge 3">
+      <div class="challenge">
+        <span class="badge">Challenge 03 · Impact</span>
+        <h2>Who is growing?</h2>
+        <p class="lede">Compare Term 1 vs Term 2 for students in <span class="accent">Math Intervention</span> or <span class="accent">Reading Support</span> versus peers with None.</p>
+        <div class="pill-row">
+          <span class="timer-chip">⏱ ~15 minutes</span>
+          <span class="pill">Visual: Clustered column / line</span>
+          <span class="pill">Insight must include “so what”</span>
+        </div>
+        <div class="card" style="margin-top:0.5rem">
+          <strong>Success looks like</strong>
+          <p>A clear verdict: support seems to help / needs review — backed by a number, not a vibe.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20 SHARE OUT -->
+    <section class="slide" data-title="Share-out">
+      <div class="brand-row"><span><span class="dot"></span>Gallery walk</span><span>~10 minutes</span></div>
+      <h2>Share your sharpest insight</h2>
+      <p class="lede">In 60 seconds: screen + one sentence. No method monologues — only the finding and the action.</p>
+      <div class="grid-3">
+        <div class="card"><strong>1 · Hook</strong><p>What surprised you?</p></div>
+        <div class="card"><strong>2 · Evidence</strong><p>Which visual proves it?</p></div>
+        <div class="card"><strong>3 · Monday move</strong><p>What should happen next?</p></div>
+      </div>
+    </section>
+
+    <!-- 21 CLOSING -->
+    <section class="slide" data-title="Close">
+      <div class="brand-row"><span><span class="dot"></span>Takeaways</span><span>Leave with this</span></div>
+      <h2>Remember these three</h2>
+      <ul class="list" style="margin-top:1.5rem;max-width:40rem">
+        <li><span class="num">1</span><span>Start with a decision-worthy question — not a blank canvas.</span></li>
+        <li><span class="num">2</span><span>Power BI is a flashlight: slicers + the right chart reveal who needs you.</span></li>
+        <li><span class="num">3</span><span>An insight without a next step is just trivia.</span></li>
+      </ul>
+      <div class="formula" style="margin-top:2rem">Thank you — now go make one chart that changes a student’s week.</div>
+    </section>
+
+  </div>
+
+  <div class="footer-bar">
+    <div class="nav-hint"><kbd>←</kbd> <kbd>→</kbd> or click · <kbd>F</kbd> fullscreen</div>
+    <div class="progress"><i id="progress"></i></div>
+    <div id="counter">1 / 21</div>
+  </div>
+
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    const progress = document.getElementById("progress");
+    const counter = document.getElementById("counter");
+    let index = 0;
+    let locking = false;
+
+    function show(i) {
+      if (locking) return;
+      const next = Math.max(0, Math.min(slides.length - 1, i));
+      if (next === index && slides[index].classList.contains("active")) {
+        updateChrome();
+        return;
+      }
+      locking = true;
+      const prev = slides[index];
+      prev.classList.remove("active");
+      prev.classList.add("exit");
+      index = next;
+      const cur = slides[index];
+      cur.classList.add("active");
+      updateChrome();
+      setTimeout(() => {
+        prev.classList.remove("exit");
+        locking = false;
+      }, 420);
+    }
+
+    function updateChrome() {
+      progress.style.width = ((index + 1) / slides.length) * 100 + "%";
+      counter.textContent = `${index + 1} / ${slides.length}`;
+      document.title = `${slides[index].dataset.title} · From Numbers to Narratives`;
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) {
+        e.preventDefault();
+        show(index + 1);
+      } else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) {
+        e.preventDefault();
+        show(index - 1);
+      } else if (e.key === "Home") {
+        show(0);
+      } else if (e.key === "End") {
+        show(slides.length - 1);
+      } else if (e.key.toLowerCase() === "f") {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+      }
+    });
+
+    document.getElementById("deck").addEventListener("click", (e) => {
+      if (e.target.closest("a, button, kbd")) return;
+      const mid = window.innerWidth / 2;
+      if (e.clientX > mid) show(index + 1);
+      else show(index - 1);
+    });
+
+    let touchX = null;
+    document.addEventListener("touchstart", (e) => { touchX = e.changedTouches[0].screenX; }, { passive: true });
+    document.addEventListener("touchend", (e) => {
+      if (touchX == null) return;
+      const dx = e.changedTouches[0].screenX - touchX;
+      if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1));
+      touchX = null;
+    }, { passive: true });
+
+    updateChrome();
+  </script>
+</body>
+</html>

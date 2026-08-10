@@ -1,0 +1,121 @@
+StudentID,FirstName,LastName,GradeLevel,Homeroom,Subject,Term,Score,AttendancePct,Gender,LearningSupport,Extracurricular,HomeworkCompletionPct,Teacher
+S001,Amina,Hassan,6,6A,Math,Term 1,78,94,F,None,Robotics,88,Ms. Carter
+S001,Amina,Hassan,6,6A,Science,Term 1,82,94,F,None,Robotics,91,Mr. Okonkwo
+S001,Amina,Hassan,6,6A,English,Term 1,85,94,F,None,Robotics,93,Ms. Rivera
+S001,Amina,Hassan,6,6A,Math,Term 2,84,96,F,None,Robotics,90,Ms. Carter
+S001,Amina,Hassan,6,6A,Science,Term 2,88,96,F,None,Robotics,94,Mr. Okonkwo
+S001,Amina,Hassan,6,6A,English,Term 2,87,96,F,None,Robotics,95,Ms. Rivera
+S002,Noah,Patel,6,6A,Math,Term 1,62,81,M,Reading Support,Soccer,70,Ms. Carter
+S002,Noah,Patel,6,6A,Science,Term 1,68,81,M,Reading Support,Soccer,74,Mr. Okonkwo
+S002,Noah,Patel,6,6A,English,Term 1,58,81,M,Reading Support,Soccer,65,Ms. Rivera
+S002,Noah,Patel,6,6A,Math,Term 2,71,86,M,Reading Support,Soccer,78,Ms. Carter
+S002,Noah,Patel,6,6A,Science,Term 2,74,86,M,Reading Support,Soccer,80,Mr. Okonkwo
+S002,Noah,Patel,6,6A,English,Term 2,66,86,M,Reading Support,Soccer,72,Ms. Rivera
+S003,Layla,Nguyen,6,6B,Math,Term 1,91,98,F,None,Debate,96,Ms. Carter
+S003,Layla,Nguyen,6,6B,Science,Term 1,89,98,F,None,Debate,95,Mr. Okonkwo
+S003,Layla,Nguyen,6,6B,English,Term 1,94,98,F,None,Debate,97,Ms. Rivera
+S003,Layla,Nguyen,6,6B,Math,Term 2,93,97,F,None,Debate,98,Ms. Carter
+S003,Layla,Nguyen,6,6B,Science,Term 2,92,97,F,None,Debate,96,Mr. Okonkwo
+S003,Layla,Nguyen,6,6B,English,Term 2,95,97,F,None,Debate,98,Ms. Rivera
+S004,Omar,Khalil,7,7A,Math,Term 1,55,72,M,Math Intervention,None,58,Mr. Diaz
+S004,Omar,Khalil,7,7A,Science,Term 1,61,72,M,Math Intervention,None,62,Ms. Brooks
+S004,Omar,Khalil,7,7A,English,Term 1,70,72,M,Math Intervention,None,68,Ms. Chen
+S004,Omar,Khalil,7,7A,Math,Term 2,64,79,M,Math Intervention,Basketball,67,Mr. Diaz
+S004,Omar,Khalil,7,7A,Science,Term 2,69,79,M,Math Intervention,Basketball,71,Ms. Brooks
+S004,Omar,Khalil,7,7A,English,Term 2,73,79,M,Math Intervention,Basketball,74,Ms. Chen
+S005,Sofia,Martinez,7,7A,Math,Term 1,88,95,F,None,Choir,92,Mr. Diaz
+S005,Sofia,Martinez,7,7A,Science,Term 1,86,95,F,None,Choir,90,Ms. Brooks
+S005,Sofia,Martinez,7,7A,English,Term 1,90,95,F,None,Choir,94,Ms. Chen
+S005,Sofia,Martinez,7,7A,Math,Term 2,90,96,F,None,Choir,93,Mr. Diaz
+S005,Sofia,Martinez,7,7A,Science,Term 2,89,96,F,None,Choir,92,Ms. Brooks
+S005,Sofia,Martinez,7,7A,English,Term 2,92,96,F,None,Choir,95,Ms. Chen
+S006,Ethan,Wright,7,7B,Math,Term 1,74,88,M,None,Robotics,82,Mr. Diaz
+S006,Ethan,Wright,7,7B,Science,Term 1,79,88,M,None,Robotics,85,Ms. Brooks
+S006,Ethan,Wright,7,7B,English,Term 1,71,88,M,None,Robotics,79,Ms. Chen
+S006,Ethan,Wright,7,7B,Math,Term 2,77,90,M,None,Robotics,84,Mr. Diaz
+S006,Ethan,Wright,7,7B,Science,Term 2,83,90,M,None,Robotics,88,Ms. Brooks
+S006,Ethan,Wright,7,7B,English,Term 2,75,90,M,None,Robotics,81,Ms. Chen
+S007,Maya,Ali,8,8A,Math,Term 1,67,84,F,Reading Support,Drama,76,Ms. Foster
+S007,Maya,Ali,8,8A,Science,Term 1,72,84,F,Reading Support,Drama,78,Mr. Singh
+S007,Maya,Ali,8,8A,English,Term 1,64,84,F,Reading Support,Drama,70,Ms. Park
+S007,Maya,Ali,8,8A,Math,Term 2,73,89,F,Reading Support,Drama,81,Ms. Foster
+S007,Maya,Ali,8,8A,Science,Term 2,78,89,F,Reading Support,Drama,84,Mr. Singh
+S007,Maya,Ali,8,8A,English,Term 2,71,89,F,Reading Support,Drama,77,Ms. Park
+S008,Lucas,Kim,8,8A,Math,Term 1,95,99,M,None,Robotics,98,Ms. Foster
+S008,Lucas,Kim,8,8A,Science,Term 1,97,99,M,None,Robotics,99,Mr. Singh
+S008,Lucas,Kim,8,8A,English,Term 1,91,99,M,None,Robotics,95,Ms. Park
+S008,Lucas,Kim,8,8A,Math,Term 2,96,98,M,None,Robotics,97,Ms. Foster
+S008,Lucas,Kim,8,8A,Science,Term 2,98,98,M,None,Robotics,99,Mr. Singh
+S008,Lucas,Kim,8,8A,English,Term 2,93,98,M,None,Robotics,96,Ms. Park
+S009,Hana,Ibrahim,8,8B,Math,Term 1,81,92,F,None,Soccer,87,Ms. Foster
+S009,Hana,Ibrahim,8,8B,Science,Term 1,84,92,F,None,Soccer,89,Mr. Singh
+S009,Hana,Ibrahim,8,8B,English,Term 1,88,92,F,None,Soccer,91,Ms. Park
+S009,Hana,Ibrahim,8,8B,Math,Term 2,85,94,F,None,Soccer,90,Ms. Foster
+S009,Hana,Ibrahim,8,8B,Science,Term 2,87,94,F,None,Soccer,92,Mr. Singh
+S009,Hana,Ibrahim,8,8B,English,Term 2,90,94,F,None,Soccer,93,Ms. Park
+S010,James,Okafor,6,6B,Math,Term 1,49,65,M,Math Intervention,None,52,Ms. Carter
+S010,James,Okafor,6,6B,Science,Term 1,54,65,M,Math Intervention,None,55,Mr. Okonkwo
+S010,James,Okafor,6,6B,English,Term 1,60,65,M,Math Intervention,None,58,Ms. Rivera
+S010,James,Okafor,6,6B,Math,Term 2,58,74,M,Math Intervention,Soccer,61,Ms. Carter
+S010,James,Okafor,6,6B,Science,Term 2,63,74,M,Math Intervention,Soccer,64,Mr. Okonkwo
+S010,James,Okafor,6,6B,English,Term 2,67,74,M,Math Intervention,Soccer,66,Ms. Rivera
+S011,Zara,Bennett,7,7B,Math,Term 1,83,93,F,None,Debate,89,Mr. Diaz
+S011,Zara,Bennett,7,7B,Science,Term 1,80,93,F,None,Debate,86,Ms. Brooks
+S011,Zara,Bennett,7,7B,English,Term 1,92,93,F,None,Debate,94,Ms. Chen
+S011,Zara,Bennett,7,7B,Math,Term 2,86,95,F,None,Debate,91,Mr. Diaz
+S011,Zara,Bennett,7,7B,Science,Term 2,84,95,F,None,Debate,88,Ms. Brooks
+S011,Zara,Bennett,7,7B,English,Term 2,94,95,F,None,Debate,96,Ms. Chen
+S012,Ryan,Torres,8,8B,Math,Term 1,70,85,M,None,Basketball,75,Ms. Foster
+S012,Ryan,Torres,8,8B,Science,Term 1,68,85,M,None,Basketball,73,Mr. Singh
+S012,Ryan,Torres,8,8B,English,Term 1,74,85,M,None,Basketball,78,Ms. Park
+S012,Ryan,Torres,8,8B,Math,Term 2,72,83,M,None,Basketball,76,Ms. Foster
+S012,Ryan,Torres,8,8B,Science,Term 2,66,83,M,None,Basketball,71,Mr. Singh
+S012,Ryan,Torres,8,8B,English,Term 2,75,83,M,None,Basketball,79,Ms. Park
+S013,Nina,Santos,6,6A,Math,Term 1,86,97,F,None,Choir,92,Ms. Carter
+S013,Nina,Santos,6,6A,Science,Term 1,90,97,F,None,Choir,94,Mr. Okonkwo
+S013,Nina,Santos,6,6A,English,Term 1,88,97,F,None,Choir,93,Ms. Rivera
+S013,Nina,Santos,6,6A,Math,Term 2,89,98,F,None,Choir,95,Ms. Carter
+S013,Nina,Santos,6,6A,Science,Term 2,93,98,F,None,Choir,96,Mr. Okonkwo
+S013,Nina,Santos,6,6A,English,Term 2,91,98,F,None,Choir,94,Ms. Rivera
+S014,Adam,Farouk,7,7A,Math,Term 1,76,90,M,None,Drama,84,Mr. Diaz
+S014,Adam,Farouk,7,7A,Science,Term 1,73,90,M,None,Drama,81,Ms. Brooks
+S014,Adam,Farouk,7,7A,English,Term 1,85,90,M,None,Drama,88,Ms. Chen
+S014,Adam,Farouk,7,7A,Math,Term 2,79,91,M,None,Drama,86,Mr. Diaz
+S014,Adam,Farouk,7,7A,Science,Term 2,77,91,M,None,Drama,83,Ms. Brooks
+S014,Adam,Farouk,7,7A,English,Term 2,87,91,M,None,Drama,90,Ms. Chen
+S015,Emily,Chen,8,8A,Math,Term 1,92,96,F,None,Robotics,95,Ms. Foster
+S015,Emily,Chen,8,8A,Science,Term 1,94,96,F,None,Robotics,97,Mr. Singh
+S015,Emily,Chen,8,8A,English,Term 1,89,96,F,None,Robotics,92,Ms. Park
+S015,Emily,Chen,8,8A,Math,Term 2,94,97,F,None,Robotics,96,Ms. Foster
+S015,Emily,Chen,8,8A,Science,Term 2,96,97,F,None,Robotics,98,Mr. Singh
+S015,Emily,Chen,8,8A,English,Term 2,91,97,F,None,Robotics,94,Ms. Park
+S016,Daniel,Lopez,6,6B,Math,Term 1,69,87,M,Reading Support,Basketball,72,Ms. Carter
+S016,Daniel,Lopez,6,6B,Science,Term 1,71,87,M,Reading Support,Basketball,75,Mr. Okonkwo
+S016,Daniel,Lopez,6,6B,English,Term 1,63,87,M,Reading Support,Basketball,68,Ms. Rivera
+S016,Daniel,Lopez,6,6B,Math,Term 2,75,90,M,Reading Support,Basketball,79,Ms. Carter
+S016,Daniel,Lopez,6,6B,Science,Term 2,76,90,M,Reading Support,Basketball,80,Mr. Okonkwo
+S016,Daniel,Lopez,6,6B,English,Term 2,70,90,M,Reading Support,Basketball,74,Ms. Rivera
+S017,Sara,Youssef,7,7B,Math,Term 1,58,78,F,Math Intervention,None,60,Mr. Diaz
+S017,Sara,Youssef,7,7B,Science,Term 1,64,78,F,Math Intervention,None,66,Ms. Brooks
+S017,Sara,Youssef,7,7B,English,Term 1,79,78,F,Math Intervention,None,82,Ms. Chen
+S017,Sara,Youssef,7,7B,Math,Term 2,66,84,F,Math Intervention,Choir,69,Mr. Diaz
+S017,Sara,Youssef,7,7B,Science,Term 2,71,84,F,Math Intervention,Choir,73,Ms. Brooks
+S017,Sara,Youssef,7,7B,English,Term 2,82,84,F,Math Intervention,Choir,85,Ms. Chen
+S018,Leo,Nakamura,8,8B,Math,Term 1,87,94,M,None,Debate,90,Ms. Foster
+S018,Leo,Nakamura,8,8B,Science,Term 1,85,94,M,None,Debate,88,Mr. Singh
+S018,Leo,Nakamura,8,8B,English,Term 1,90,94,M,None,Debate,92,Ms. Park
+S018,Leo,Nakamura,8,8B,Math,Term 2,89,95,M,None,Debate,91,Ms. Foster
+S018,Leo,Nakamura,8,8B,Science,Term 2,88,95,M,None,Debate,90,Mr. Singh
+S018,Leo,Nakamura,8,8B,English,Term 2,92,95,M,None,Debate,94,Ms. Park
+S019,Fatima,Rahman,6,6A,Math,Term 1,72,89,F,None,Drama,80,Ms. Carter
+S019,Fatima,Rahman,6,6A,Science,Term 1,75,89,F,None,Drama,83,Mr. Okonkwo
+S019,Fatima,Rahman,6,6A,English,Term 1,81,89,F,None,Drama,86,Ms. Rivera
+S019,Fatima,Rahman,6,6A,Math,Term 2,78,91,F,None,Drama,84,Ms. Carter
+S019,Fatima,Rahman,6,6A,Science,Term 2,80,91,F,None,Drama,86,Mr. Okonkwo
+S019,Fatima,Rahman,6,6A,English,Term 2,84,91,F,None,Drama,88,Ms. Rivera
+S020,Chris,Baker,7,7A,Math,Term 1,65,80,M,Reading Support,Soccer,70,Mr. Diaz
+S020,Chris,Baker,7,7A,Science,Term 1,69,80,M,Reading Support,Soccer,73,Ms. Brooks
+S020,Chris,Baker,7,7A,English,Term 1,61,80,M,Reading Support,Soccer,66,Ms. Chen
+S020,Chris,Baker,7,7A,Math,Term 2,70,85,M,Reading Support,Soccer,75,Mr. Diaz
+S020,Chris,Baker,7,7A,Science,Term 2,74,85,M,Reading Support,Soccer,78,Ms. Brooks
+S020,Chris,Baker,7,7A,English,Term 2,68,85,M,Reading Support,Soccer,72,Ms. Chen
