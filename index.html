@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>From Numbers to Narratives · Data Analysis & Power BI</title>
+  <title>From Numbers to Narratives Â· Data Analysis & Power BI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -662,10 +662,49 @@
       margin-bottom: 0.75rem;
     }
 
+    .game-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0.75rem 0 1rem;
+      align-items: center;
+    }
+    .game-controls button {
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: rgba(18, 48, 68, 0.9);
+      color: var(--mist);
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .game-controls button.active {
+      background: rgba(45, 212, 191, 0.2);
+      color: var(--teal);
+      border-color: rgba(45, 212, 191, 0.5);
+    }
+    .game-controls button.action {
+      background: rgba(240, 180, 41, 0.18);
+      color: var(--amber);
+      border-color: rgba(240, 180, 41, 0.4);
+    }
+    .game-answer {
+      display: none;
+      margin-top: 1rem;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(45, 212, 191, 0.35);
+      background: rgba(45, 212, 191, 0.1);
+      color: var(--mist);
+      font-size: 1.15rem;
+      line-height: 1.4;
+    }
+    .game-answer.show { display: block; }
+
     @media (max-width: 900px) {
-      .grid-2, .grid-3, .grid-4, .viz-row, .compare, .kpi, .lab-steps, .split-story, .two-col-list {
-        grid-template-columns: 1fr;
-      }
+      .grid-2, .grid-3, .grid-4, .compare, .kpi, .lab-steps { grid-template-columns: 1fr; }
       h1 { font-size: 2.2rem; }
       .slide { overflow-y: auto; }
     }
@@ -674,498 +713,202 @@
 <body>
   <div class="deck" id="deck">
 
-    <!-- 1 TITLE -->
     <section class="slide hero active" data-title="Title">
-      <div class="tag"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;box-shadow:0 0 10px var(--teal)"></span> 60-minute professional learning</div>
+      <div class="tag"><span style="width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;box-shadow:0 0 10px var(--teal)"></span> 60 minutes · 10 slides</div>
       <h1>From Numbers to <span class="accent">Narratives</span></h1>
-      <p class="lede">A fast, hands-on session for Ahliyyah &amp; Mutran teachers — play, learn the mindset, then build in Power BI.</p>
-      <p class="meta">Game · 20 min teach · 40 min technical lab</p>
+      <p class="lede">Ahliyyah &amp; Mutran · grades 6–10 · all subjects — play, learn fast, then build in Power BI.</p>
+      <p class="meta">10 min game · 20 min teach · 30 min technical</p>
     </section>
 
-    <!-- 2 AGENDA -->
     <section class="slide" data-title="Agenda">
-      <div class="brand-row"><span><span class="dot"></span>Session roadmap</span><span>60 minutes</span></div>
-      <h2>Today’s journey</h2>
+      <div class="brand-row"><span><span class="dot"></span>Roadmap</span><span>Stay on pace</span></div>
+      <h2>Three blocks only</h2>
       <div class="grid-3">
-        <div class="card">
-          <strong class="amber">0–10 min</strong>
-          <p>Icebreaker: <em>Pattern Police</em> — 5 quick rounds. Find the pattern!</p>
-        </div>
-        <div class="card">
-          <strong class="accent">10–30 min</strong>
-          <p>Teaching sprint: biopsy mindset, 4-step engine, diagnose + act.</p>
-        </div>
-        <div class="card">
-          <strong class="coral">30–60 min</strong>
-          <p>Technical lab: Power BI demo, 3 builds, rapid 2-2-2 share.</p>
-        </div>
-      </div>
-      <div class="kpi">
-        <div class="stat"><span class="n">1</span><div class="t">Opener game</div></div>
-        <div class="stat"><span class="n">20</span><div class="t">Min teaching</div></div>
-        <div class="stat"><span class="n">40</span><div class="t">Min technical</div></div>
+        <div class="card"><strong class="amber">10 min</strong><p><em>Pattern Police</em> — 5 rounds on <strong>one</strong> board.</p></div>
+        <div class="card"><strong class="accent">20 min</strong><p>Teach — biopsy, patterns, diagnose, act, 2-2-2.</p></div>
+        <div class="card"><strong class="coral">30 min</strong><p>Technical — demo + 3 builds + share.</p></div>
       </div>
     </section>
 
-    <!-- 3 GAME RULES -->
-    <section class="slide" data-title="Pattern Police">
-      <div class="brand-row"><span><span class="dot"></span>Icebreaker</span><span>~10 minutes · teams of 3–4</span></div>
-      <div class="section-mark">Game · Pattern Police</div>
-      <h2>Find the pattern. <span class="accent">First team to shout it wins!</span></h2>
-      <div class="grid-3" style="margin-top:1rem">
-        <div class="card"><strong>Rounds 1–2</strong><p>Warm-up — shapes &amp; odd one out</p></div>
-        <div class="card"><strong>Rounds 3–4</strong><p>Numbers like a markbook</p></div>
-        <div class="card"><strong>Round 5</strong><p>Real teacher challenge</p></div>
+    <section class="slide" data-title="Pattern Police" id="game-slide">
+      <div class="brand-row"><span><span class="dot"></span>Icebreaker</span><span>Round buttons stay on this slide</span></div>
+      <div class="section-mark">Pattern Police · 5 rounds · teams shout the answer</div>
+      <div class="game-controls" id="game-rounds">
+        <button type="button" data-round="0" class="active">1</button>
+        <button type="button" data-round="1">2</button>
+        <button type="button" data-round="2">3</button>
+        <button type="button" data-round="3">4</button>
+        <button type="button" data-round="4">5</button>
+        <button type="button" class="action" id="game-reveal">Show answer</button>
       </div>
-      <div class="pill-row">
-        <span class="timer-chip">⏱ ~45–60 sec each</span>
-        <span class="pill">Shout when you see it</span>
-        <span class="pill">Any subject welcome</span>
-      </div>
+      <div id="game-title" style="font-family:Syne,sans-serif;font-size:clamp(1.5rem,3vw,2.2rem);margin-bottom:0.35rem"></div>
+      <p id="game-prompt" class="lede"></p>
+      <div id="game-body"></div>
+      <div class="game-answer" id="game-answer"></div>
     </section>
 
-    <!-- ROUND 1 -->
-    <section class="slide" data-title="Round 1">
-      <div class="round-chip">Round 1 · Shapes</div>
-      <h2>What comes next?</h2>
-      <div class="pattern-grid cols-6" style="margin-top:1.5rem">
-        <div class="cell teal">●</div>
-        <div class="cell teal">●</div>
-        <div class="cell amber">▲</div>
-        <div class="cell teal">●</div>
-        <div class="cell teal">●</div>
-        <div class="cell amber" style="opacity:0.35;border-style:dashed">?</div>
-      </div>
-      <div class="pill-row">
-        <span class="timer-chip">⏱ 45 seconds</span>
-      </div>
-    </section>
-
-    <section class="slide" data-title="Round 1 answer">
-      <div class="round-chip">Round 1 · Answer</div>
-      <h2>Two circles, then a triangle — then it repeats</h2>
-      <div class="pattern-grid cols-6" style="margin-top:1.25rem">
-        <div class="cell teal">●</div>
-        <div class="cell teal">●</div>
-        <div class="cell amber glow">▲</div>
-        <div class="cell teal">●</div>
-        <div class="cell teal">●</div>
-        <div class="cell amber glow">▲</div>
-      </div>
-      <div class="formula" style="margin-top:1.5rem;font-size:1.2rem">Nice — your brain just found a pattern</div>
-    </section>
-
-    <!-- ROUND 2 -->
-    <section class="slide" data-title="Round 2">
-      <div class="round-chip">Round 2 · Odd one out</div>
-      <h2>Which one does <span class="coral">not</span> belong?</h2>
-      <div class="pattern-grid cols-5" style="margin-top:1.5rem">
-        <div class="cell emoji">📘</div>
-        <div class="cell emoji">📘</div>
-        <div class="cell emoji">📗</div>
-        <div class="cell emoji">📘</div>
-        <div class="cell emoji">📘</div>
-      </div>
-      <div class="pill-row">
-        <span class="timer-chip">⏱ 45 seconds</span>
-        <span class="pill">Point and shout why</span>
-      </div>
-    </section>
-
-    <section class="slide" data-title="Round 2 answer">
-      <div class="round-chip">Round 2 · Answer</div>
-      <h2>The green book — everyone else is blue</h2>
-      <div class="pattern-grid cols-5" style="margin-top:1.25rem">
-        <div class="cell emoji dim">📘</div>
-        <div class="cell emoji dim">📘</div>
-        <div class="cell emoji glow" style="background:rgba(240,180,41,0.2)">📗</div>
-        <div class="cell emoji dim">📘</div>
-        <div class="cell emoji dim">📘</div>
-      </div>
-      <div class="formula" style="margin-top:1.5rem;font-size:1.2rem">Spotting the odd one out = the start of analysis</div>
-    </section>
-
-    <!-- ROUND 3 -->
-    <section class="slide" data-title="Round 3">
-      <div class="round-chip">Round 3 · Number grid</div>
-      <h2>What’s the pattern in these scores?</h2>
-      <p class="lede">Don’t calculate an average. Just look.</p>
-      <div class="pattern-grid cols-4" style="margin-top:1.25rem;width:min(520px,100%)">
-        <div class="cell">72</div><div class="cell teal">91</div><div class="cell">74</div><div class="cell">70</div>
-        <div class="cell">68</div><div class="cell teal">88</div><div class="cell">71</div><div class="cell">69</div>
-        <div class="cell">65</div><div class="cell teal">94</div><div class="cell">67</div><div class="cell">66</div>
-      </div>
-      <div class="pill-row">
-        <span class="timer-chip">⏱ 60 seconds</span>
-        <span class="pill">Look at columns</span>
-      </div>
-    </section>
-
-    <section class="slide" data-title="Round 3 answer">
-      <div class="round-chip">Round 3 · Answer</div>
-      <h2>The middle column has all the high scores</h2>
-      <div class="pattern-grid cols-4" style="margin-top:1.25rem;width:min(520px,100%)">
-        <div class="cell dim">72</div><div class="cell teal glow">91</div><div class="cell dim">74</div><div class="cell dim">70</div>
-        <div class="cell dim">68</div><div class="cell teal glow">88</div><div class="cell dim">71</div><div class="cell dim">69</div>
-        <div class="cell dim">65</div><div class="cell teal glow">94</div><div class="cell dim">67</div><div class="cell dim">66</div>
-      </div>
-      <p class="lede" style="margin-top:1.25rem">If you only looked at the class average, you’d miss that <span class="accent">one group is scoring much higher</span> than the rest.</p>
-    </section>
-
-    <!-- ROUND 4 -->
-    <section class="slide" data-title="Round 4">
-      <div class="round-chip">Round 4 · Homework &amp; scores</div>
-      <h2>Find the pattern</h2>
-      <table class="mini-table">
-        <thead>
-          <tr><th>Student</th><th>Homework done?</th><th>Test score</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="name">Sam</td><td>Yes</td><td class="ok">84</td></tr>
-          <tr><td class="name">Noor</td><td class="low">No</td><td class="low">58</td></tr>
-          <tr><td class="name">Alex</td><td>Yes</td><td class="ok">79</td></tr>
-          <tr><td class="name">Maya</td><td class="low">No</td><td class="low">61</td></tr>
-          <tr><td class="name">Jordan</td><td>Yes</td><td class="ok">88</td></tr>
-          <tr><td class="name">Lina</td><td class="low">No</td><td class="low">55</td></tr>
-        </tbody>
-      </table>
-      <div class="pill-row">
-        <span class="timer-chip">⏱ 60 seconds</span>
-        <span class="pill">Works in every subject</span>
-      </div>
-    </section>
-
-    <section class="slide" data-title="Round 4 answer">
-      <div class="round-chip">Round 4 · Answer</div>
-      <h2>No homework → lower test scores</h2>
-      <p class="lede">Every student who skipped homework scored in the 50s–60s. Every student who did homework scored in the 70s–80s.</p>
-      <div class="grid-3" style="margin-top:1.25rem">
-        <div class="card"><strong>What we saw</strong><p>A clear link between two columns</p></div>
-        <div class="card"><strong class="accent">What we ask next</strong><p>Why? Time? Clarity? Support?</p></div>
-        <div class="card"><strong class="amber">What we might do</strong><p>Check homework habits this week</p></div>
-      </div>
-    </section>
-
-    <!-- ROUND 5 -->
-    <section class="slide" data-title="Round 5">
-      <div class="round-chip">Round 5 · Class markbook</div>
-      <h2>Same class — what’s really going wrong?</h2>
-      <p class="lede">A, B, C = three parts of a unit (any subject: skills, tasks, or questions).</p>
-      <table class="mini-table">
-        <thead>
-          <tr><th>Student</th><th>Part A</th><th>Part B</th><th>Part C</th><th>Average</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="name">Sam</td><td class="ok">82</td><td class="low">54</td><td class="ok">80</td><td>72</td></tr>
-          <tr><td class="name">Noor</td><td class="ok">88</td><td class="low">61</td><td class="ok">85</td><td>78</td></tr>
-          <tr><td class="name">Alex</td><td class="ok">79</td><td class="low">58</td><td class="ok">81</td><td>73</td></tr>
-          <tr><td class="name">Maya</td><td class="ok">91</td><td class="low">63</td><td class="ok">89</td><td>81</td></tr>
-          <tr><td class="name">Jordan</td><td class="ok">84</td><td class="low">57</td><td class="ok">83</td><td>75</td></tr>
-        </tbody>
-      </table>
-      <div class="pill-row">
-        <span class="timer-chip">⏱ 60 seconds</span>
-        <span class="pill">Students… or one part of the unit?</span>
-      </div>
-    </section>
-
-    <section class="slide" data-title="Round 5 answer">
-      <div class="round-chip">Round 5 · Answer</div>
-      <h2>It’s not the students — it’s <span class="coral">Part B</span></h2>
-      <p class="lede">Everyone did fine on A and C. The whole class struggled on the same part.</p>
-      <div class="grid-3" style="margin-top:1.25rem">
-        <div class="card"><strong>Weak reaction</strong><p>“Sam needs a call home.”</p></div>
-        <div class="card"><strong class="accent">Strong reaction</strong><p>“Let’s reteach Part B to everyone.”</p></div>
-        <div class="card"><strong class="amber">Big idea</strong><p>Find the pattern first</p></div>
-      </div>
-      <div class="formula" style="margin-top:1.25rem;font-size:1.15rem">That’s data analysis — Power BI helps you spot it faster</div>
-    </section>
-
-    <!-- 5 AUTOPSY VS BIOPSY -->
-    <section class="slide" data-title="Autopsy vs Biopsy">
-      <div class="brand-row"><span><span class="dot"></span>Teach · 20 minutes</span><span>Mindset</span></div>
-      <h2>Shift from <span class="coral">autopsy</span> to <span class="accent">biopsy</span></h2>
+    <section class="slide" data-title="Teach mindset">
+      <div class="brand-row"><span><span class="dot"></span>Teach · ~10 min</span><span>Slide 4 of 10</span></div>
+      <h2>Autopsy → biopsy · then find patterns</h2>
       <div class="compare">
-        <div class="side bad">
-          <h3>Autopsy</h3>
-          <ul class="list">
-            <li><span class="num">×</span><span>End of unit · reactive</span></li>
-            <li><span class="num">×</span><span>Overall averages only</span></li>
-            <li><span class="num">×</span><span>Data as a requirement</span></li>
-            <li><span class="num">×</span><span>Result: file a grade</span></li>
-          </ul>
-        </div>
-        <div class="side good">
-          <h3>Biopsy</h3>
-          <ul class="list">
-            <li><span class="num">✓</span><span>Ongoing · proactive</span></li>
-            <li><span class="num">✓</span><span>Skills, groups, criteria</span></li>
-            <li><span class="num">✓</span><span>Data as diagnosis</span></li>
-            <li><span class="num">✓</span><span>Result: change teaching</span></li>
-          </ul>
-        </div>
+        <div class="side bad"><h3>Autopsy</h3><p style="color:var(--mist)">End of unit · averages only · file the grade</p></div>
+        <div class="side good"><h3>Biopsy</h3><p style="color:var(--mist)">While learning · find patterns · change teaching</p></div>
       </div>
+      <div class="flow" style="margin-top:1.25rem">
+        <span class="step">Look</span><span class="arrow">→</span>
+        <span class="step">Find patterns</span><span class="arrow">→</span>
+        <span class="step">Ask why</span><span class="arrow">→</span>
+        <span class="step">Take action</span>
+      </div>
+      <div class="formula" style="margin-top:1.25rem;font-size:1.2rem">Don’t stop at the class average</div>
     </section>
 
-    <!-- 6 ENGINE -->
-    <section class="slide" data-title="Analysis engine">
-      <div class="brand-row"><span><span class="dot"></span>Teach</span><span>Four moves</span></div>
-      <h2>Look → Patterns → Why → Action</h2>
-      <div class="lab-steps">
-        <div class="card"><div class="n">01</div><strong>Look</strong><p>Averages, distribution, outliers — never stop at the mean.</p></div>
-        <div class="card"><div class="n">02</div><strong>Find patterns</strong><p>Weakest subjects, groups, skills, or questions.</p></div>
-        <div class="card"><div class="n">03</div><strong>Ask why</strong><p>Instructional · design · readiness?</p></div>
-        <div class="card"><div class="n">04</div><strong>Take action</strong><p>Reteach · differentiate · adjust.</p></div>
-      </div>
-      <div class="formula" style="margin-top:1.25rem;font-size:1.2rem">Stopping after Look = autopsy</div>
-    </section>
-
-    <!-- 7 QUESTIONS + BEYOND AVERAGE -->
-    <section class="slide" data-title="Questions & averages">
-      <div class="brand-row"><span><span class="dot"></span>Teach</span><span>Ask better · look deeper</span></div>
-      <h2>Bad questions waste time. Averages hide stories.</h2>
-      <div class="grid-2">
-        <div>
-          <div class="compare" style="margin-top:0">
-            <div class="side bad" style="grid-column:1/-1">
-              <h3>Weak → Strong</h3>
-              <p style="color:var(--mist);margin-bottom:0.5rem">“Show me all scores” → “Which grade × subject dropped Term 1→2?”</p>
-              <p style="color:var(--mist)">“Who failed?” → “Which skills were hardest for the cohort?”</p>
-            </div>
-          </div>
-        </div>
-        <div class="grid-3" style="grid-template-columns:1fr;gap:0.75rem;margin-top:0">
-          <div class="card"><strong>Distribution</strong><p>Clustered or split?</p></div>
-          <div class="card"><strong>Highs</strong><p>Who needs a bigger challenge?</p></div>
-          <div class="card"><strong>Lows</strong><p>Who needs extra support?</p></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 8 DIAGNOSE + ACT -->
-    <section class="slide" data-title="Diagnose & act">
-      <div class="brand-row"><span><span class="dot"></span>Teach</span><span>Why + Monday move</span></div>
-      <h2>Diagnose, then pull a lever</h2>
+    <section class="slide" data-title="Teach act">
+      <div class="brand-row"><span><span class="dot"></span>Teach · ~10 min</span><span>Slide 5 of 10</span></div>
+      <h2>Diagnose · act · finish with 2-2-2</h2>
       <div class="grid-3">
-        <div class="card"><strong>Instructional</strong><p>Method misaligned?</p><p style="margin-top:0.5rem;color:var(--teal)">→ New strategy / medium</p></div>
-        <div class="card"><strong>Design</strong><p>Task or rubric unclear?</p><p style="margin-top:0.5rem;color:var(--teal)">→ Clarify assessment</p></div>
-        <div class="card"><strong>Readiness</strong><p>Missing prerequisites?</p><p style="margin-top:0.5rem;color:var(--amber)">→ Scaffold gaps</p></div>
+        <div class="card"><strong>Ask why</strong><p>Teaching method? Task unclear? Missing basics?</p></div>
+        <div class="card"><strong>Act</strong><p>Reteach · small groups · change next lesson</p></div>
+        <div class="card"><strong class="amber">2-2-2</strong><p>2 strengths · 2 gaps · 2 actions</p></div>
       </div>
-      <div class="flow" style="margin-top:1.5rem">
-        <span class="step">Reteach</span><span class="arrow">·</span>
-        <span class="step">Differentiate</span><span class="arrow">·</span>
-        <span class="step">Adjust unit</span>
-      </div>
-      <div class="formula" style="margin-top:1.25rem;font-size:1.15rem">Insight formula: Who + What + How much + So what</div>
+      <div class="formula" style="margin-top:1.5rem;font-size:1.15rem">Who + What + How much + So what</div>
     </section>
 
-    <!-- 9 2-2-2 PREVIEW -->
-    <section class="slide" data-title="2-2-2 rule">
-      <div class="brand-row"><span><span class="dot"></span>Teach · finish line</span><span>Then we build</span></div>
-      <h2>Your finish line today: the <span class="accent">2-2-2</span></h2>
-      <div class="grid-3">
-        <div class="card"><strong class="accent">2 Strengths</strong><p>Where did the cohort excel?</p></div>
-        <div class="card"><strong class="amber">2 Gaps</strong><p>Which patterns need attention?</p></div>
-        <div class="card"><strong class="coral">2 Actions</strong><p>Reteach, group, or redesign.</p></div>
-      </div>
-      <div class="formula" style="margin-top:1.5rem;font-size:1.2rem">Enough watching — Power BI time</div>
-    </section>
-
-    <!-- 10 TECH START -->
-    <section class="slide" data-title="Technical lab">
-      <div class="section-mark">Part 2 · Technical · 40 minutes</div>
-      <h2>Meet <span class="accent">Power BI</span> — then build</h2>
-      <p class="lede">Excel’s ambitious cousin: import a table, drag fields, slice live. You’ll use Ahliyyah &amp; Mutran sample data.</p>
-      <div class="lab-steps">
-        <div class="card"><div class="n">01</div><strong>Get data</strong><p>CSV / Excel → Load. Numbers must be numbers.</p></div>
-        <div class="card"><div class="n">02</div><strong>Visualize</strong><p>Drag fields → charts. Add Term / Grade / Subject slicers.</p></div>
-        <div class="card"><div class="n">03</div><strong>Diagnose</strong><p>Instructional · design · readiness?</p></div>
-        <div class="card"><div class="n">04</div><strong>2-2-2</strong><p>Strengths · gaps · actions.</p></div>
-      </div>
-    </section>
-
-    <!-- 11 LIVE DEMO -->
-    <section class="slide" data-title="Live demo">
-      <div class="brand-row"><span><span class="dot"></span>Technical</span><span>~4 min demo</span></div>
-      <h2>Watch once — then you do it</h2>
-      <ul class="list" style="margin-top:1rem;max-width:40rem">
-        <li><span class="num">1</span><span>Get data → Text/CSV → <strong style="color:var(--white)">ahliyyah-mutran-learning.csv</strong> → Load</span></li>
-        <li><span class="num">2</span><span>Bar chart: Subject on axis · Average of Score</span></li>
-        <li><span class="num">3</span><span>Add a <strong style="color:var(--white)">Term</strong> slicer · flip Term 1 ↔ Term 2</span></li>
-        <li><span class="num">4</span><span>That’s biopsy: live, sliceable, actionable</span></li>
+    <section class="slide" data-title="Lab start">
+      <div class="section-mark">Technical · ~30 min</div>
+      <h2>Demo once · then you build</h2>
+      <ul class="list" style="max-width:42rem">
+        <li><span class="num">1</span><span>Get data → CSV → ahliyyah-mutran-learning.csv</span></li>
+        <li><span class="num">2</span><span>Bar: Subject + Average of Score</span></li>
+        <li><span class="num">3</span><span>Add Term slicer · flip Term 1 ↔ 2</span></li>
       </ul>
-      <div class="pill-row">
-        <span class="pill">Excel fallback: PivotChart</span>
-        <span class="pill">File link in chat / handout</span>
-      </div>
-    </section>
-
-    <!-- 12 LAB OVERVIEW -->
-    <section class="slide" data-title="Lab overview">
-      <div class="brand-row"><span><span class="dot"></span>Technical sprint</span><span>3 challenges</span></div>
-      <h2>Lab brief: Ahliyyah &amp; Mutran</h2>
-      <p class="lede">20 students · 120 rows · Math, Science, English · Terms 1 &amp; 2 · attendance &amp; support</p>
       <div class="kpi">
-        <div class="stat"><span class="n">10</span><div class="t">Min · Challenge 1</div></div>
-        <div class="stat"><span class="n">10</span><div class="t">Min · Challenge 2</div></div>
-        <div class="stat"><span class="n">10</span><div class="t">Min · Challenge 3</div></div>
+        <div class="stat"><span class="n">8</span><div class="t">Min · Challenge 1</div></div>
+        <div class="stat"><span class="n">8</span><div class="t">Min · Challenge 2</div></div>
+        <div class="stat"><span class="n">8</span><div class="t">Min · Challenge 3</div></div>
       </div>
-      <p class="lede" style="margin-top:1.25rem">Then ~6 min rapid 2-2-2 share-out.</p>
     </section>
 
-    <!-- 13 CHALLENGE 1 -->
     <section class="slide" data-title="Challenge 1">
       <div class="challenge">
-        <span class="badge">Challenge 01 · Patterns</span>
-        <h2>Where are we strong — and weak?</h2>
-        <p class="lede">Bar chart: <span class="accent">Average Score by Subject</span> + Term slicer. Compare Term 1 vs Term 2.</p>
-        <div class="pill-row">
-          <span class="timer-chip">⏱ 10 minutes</span>
-          <span class="pill">Clustered bar / column</span>
-          <span class="pill">Bonus: GradeLevel</span>
-        </div>
-        <div class="card" style="margin-top:0.5rem">
-          <strong>Success</strong>
-          <p>Name the highest and lowest subject–term combo — and why a teacher should care.</p>
-        </div>
+        <span class="badge">Challenge 1 · 8 min</span>
+        <h2>Average Score by Subject + Term slicer</h2>
+        <p class="lede">Strongest / weakest? What changes Term 1 → Term 2?</p>
       </div>
     </section>
 
-    <!-- 14 CHALLENGE 2 -->
     <section class="slide" data-title="Challenge 2">
       <div class="challenge">
-        <span class="badge">Challenge 02 · Relationships</span>
-        <h2>Does showing up pay off?</h2>
-        <p class="lede">Scatter: <span class="accent">AttendancePct</span> (X) vs <span class="accent">Score</span> (Y). Optional color by LearningSupport.</p>
-        <div class="pill-row">
-          <span class="timer-chip">⏱ 10 minutes</span>
-          <span class="pill">Scatter chart</span>
-          <span class="pill">Find 1 outlier</span>
-        </div>
-        <div class="card" style="margin-top:0.5rem">
-          <strong>Success</strong>
-          <p>One sentence on the relationship + one outlier that breaks it.</p>
-        </div>
+        <span class="badge">Challenge 2 · 8 min</span>
+        <h2>Scatter: Attendance vs Score</h2>
+        <p class="lede">Is there a link? Find one surprising case.</p>
       </div>
     </section>
 
-    <!-- 15 CHALLENGE 3 -->
     <section class="slide" data-title="Challenge 3">
       <div class="challenge">
-        <span class="badge">Challenge 03 · Impact</span>
-        <h2>Who is growing?</h2>
-        <p class="lede">Term 1 vs Term 2 for <span class="accent">Math Intervention</span> / <span class="accent">Reading Support</span> vs None. Diagnose, then pick a lever.</p>
-        <div class="pill-row">
-          <span class="timer-chip">⏱ 10 minutes</span>
-          <span class="pill">Column or line</span>
-          <span class="pill">Reteach / differentiate / adjust</span>
-        </div>
-        <div class="card" style="margin-top:0.5rem">
-          <strong>Success</strong>
-          <p>Verdict with a number + one Monday move.</p>
-        </div>
+        <span class="badge">Challenge 3 · 8 min</span>
+        <h2>Term growth by Learning Support</h2>
+        <p class="lede">Who grew? What will you reteach or change?</p>
       </div>
     </section>
 
-    <!-- 16 SHARE OUT -->
-    <section class="slide" data-title="Share-out 2-2-2">
-      <div class="brand-row"><span><span class="dot"></span>Rapid share</span><span>~6 minutes</span></div>
-      <h2>Share your 2-2-2</h2>
-      <p class="lede">45–60 seconds. Screen + strengths, gaps, actions. No method monologues.</p>
+    <section class="slide" data-title="Share & close">
+      <div class="brand-row"><span><span class="dot"></span>Finish</span><span>~6 min</span></div>
+      <h2>Share a 2-2-2 · then go</h2>
       <div class="grid-3">
-        <div class="card"><strong class="accent">2 Strengths</strong><p>Where did the cohort excel?</p></div>
+        <div class="card"><strong class="accent">2 Strengths</strong><p>What looked good?</p></div>
         <div class="card"><strong class="amber">2 Gaps</strong><p>What needs attention?</p></div>
-        <div class="card"><strong class="coral">2 Actions</strong><p>What happens Monday?</p></div>
+        <div class="card"><strong class="coral">2 Actions</strong><p>What happens this week?</p></div>
       </div>
+      <div class="formula" style="margin-top:1.5rem">Find the pattern. Then do something about it.</div>
     </section>
-
-    <!-- 17 CLOSE -->
-    <section class="slide" data-title="Close">
-      <div class="brand-row"><span><span class="dot"></span>Takeaways</span><span>Leave with this</span></div>
-      <h2>Remember these three</h2>
-      <ul class="list" style="margin-top:1.5rem;max-width:42rem">
-        <li><span class="num">1</span><span>Find the pattern first — don’t stop at the average.</span></li>
-        <li><span class="num">2</span><span>Look → Patterns → Why → Action. Biopsy, not autopsy.</span></li>
-        <li><span class="num">3</span><span>Finish with a 2-2-2 — strengths, gaps, actions.</span></li>
-      </ul>
-      <div class="formula" style="margin-top:2rem">Thank you — one chart, one action, this week.</div>
-    </section>
-
   </div>
 
   <div class="footer-bar">
-    <div class="nav-hint"><kbd>←</kbd> <kbd>→</kbd> or click · <kbd>F</kbd> fullscreen</div>
+    <div class="nav-hint"><kbd>←</kbd> <kbd>→</kbd> · game: buttons 1–5 · <kbd>Space</kbd> answer · <kbd>F</kbd></div>
     <div class="progress"><i id="progress"></i></div>
-    <div id="counter">1 / 17</div>
+    <div id="counter">1 / 10</div>
   </div>
 
   <script>
+    const rounds = [
+      { title: "Round 1 · Shapes", prompt: "What comes next?",
+        body: '<div class="pattern-grid cols-6"><div class="cell teal">●</div><div class="cell teal">●</div><div class="cell amber">▲</div><div class="cell teal">●</div><div class="cell teal">●</div><div class="cell amber" style="opacity:.35;border-style:dashed">?</div></div>',
+        answer: "Two circles, then a triangle — it repeats. So ? is a triangle." },
+      { title: "Round 2 · Odd one out", prompt: "Which one does not belong?",
+        body: '<div class="pattern-grid cols-5"><div class="cell emoji">📘</div><div class="cell emoji">📘</div><div class="cell emoji">📗</div><div class="cell emoji">📘</div><div class="cell emoji">📘</div></div>',
+        answer: "The green book — all the others are blue." },
+      { title: "Round 3 · Number grid", prompt: "What’s the pattern? Don’t average — just look.",
+        body: '<div class="pattern-grid cols-4" style="width:min(480px,100%)"><div class="cell">72</div><div class="cell teal">91</div><div class="cell">74</div><div class="cell">70</div><div class="cell">68</div><div class="cell teal">88</div><div class="cell">71</div><div class="cell">69</div><div class="cell">65</div><div class="cell teal">94</div><div class="cell">67</div><div class="cell">66</div></div>',
+        answer: "The middle column has all the high scores." },
+      { title: "Round 4 · Homework & scores", prompt: "Find the pattern (any subject).",
+        body: '<table class="mini-table"><thead><tr><th>Student</th><th>Homework?</th><th>Test</th></tr></thead><tbody><tr><td class="name">Sam</td><td>Yes</td><td class="ok">84</td></tr><tr><td class="name">Noor</td><td class="low">No</td><td class="low">58</td></tr><tr><td class="name">Alex</td><td>Yes</td><td class="ok">79</td></tr><tr><td class="name">Maya</td><td class="low">No</td><td class="low">61</td></tr><tr><td class="name">Jordan</td><td>Yes</td><td class="ok">88</td></tr><tr><td class="name">Lina</td><td class="low">No</td><td class="low">55</td></tr></tbody></table>',
+        answer: "No homework → lower scores. Yes homework → higher scores." },
+      { title: "Round 5 · Class markbook", prompt: "Students — or one part of the unit?",
+        body: '<table class="mini-table"><thead><tr><th>Student</th><th>Part A</th><th>Part B</th><th>Part C</th><th>Avg</th></tr></thead><tbody><tr><td class="name">Sam</td><td class="ok">82</td><td class="low">54</td><td class="ok">80</td><td>72</td></tr><tr><td class="name">Noor</td><td class="ok">88</td><td class="low">61</td><td class="ok">85</td><td>78</td></tr><tr><td class="name">Alex</td><td class="ok">79</td><td class="low">58</td><td class="ok">81</td><td>73</td></tr><tr><td class="name">Maya</td><td class="ok">91</td><td class="low">63</td><td class="ok">89</td><td>81</td></tr><tr><td class="name">Jordan</td><td class="ok">84</td><td class="low">57</td><td class="ok">83</td><td>75</td></tr></tbody></table>',
+        answer: "Part B is low for everyone. Reteach Part B — don’t only blame one student." }
+    ];
+    let gameRound = 0, answerOn = false;
+    function renderGame() {
+      const r = rounds[gameRound];
+      document.getElementById("game-title").textContent = r.title;
+      document.getElementById("game-prompt").textContent = r.prompt;
+      document.getElementById("game-body").innerHTML = r.body;
+      const ans = document.getElementById("game-answer");
+      ans.textContent = r.answer;
+      ans.classList.toggle("show", answerOn);
+      document.getElementById("game-reveal").textContent = answerOn ? "Hide answer" : "Show answer";
+      document.querySelectorAll("#game-rounds [data-round]").forEach((b) => b.classList.toggle("active", Number(b.dataset.round) === gameRound));
+    }
+    document.getElementById("game-rounds").addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      e.stopPropagation();
+      if (btn.id === "game-reveal") { answerOn = !answerOn; renderGame(); return; }
+      if (btn.dataset.round != null) { gameRound = Number(btn.dataset.round); answerOn = false; renderGame(); }
+    });
+
     const slides = [...document.querySelectorAll(".slide")];
     const progress = document.getElementById("progress");
     const counter = document.getElementById("counter");
-    let index = 0;
-    let locking = false;
-
+    let index = 0, locking = false;
     function show(i) {
       if (locking) return;
       const next = Math.max(0, Math.min(slides.length - 1, i));
-      if (next === index && slides[index].classList.contains("active")) {
-        updateChrome();
-        return;
-      }
+      if (next === index && slides[index].classList.contains("active")) { updateChrome(); return; }
       locking = true;
       const prev = slides[index];
-      prev.classList.remove("active");
-      prev.classList.add("exit");
+      prev.classList.remove("active"); prev.classList.add("exit");
       index = next;
-      const cur = slides[index];
-      cur.classList.add("active");
+      slides[index].classList.add("active");
       updateChrome();
-      setTimeout(() => {
-        prev.classList.remove("exit");
-        locking = false;
-      }, 420);
+      setTimeout(() => { prev.classList.remove("exit"); locking = false; }, 420);
     }
-
     function updateChrome() {
       progress.style.width = ((index + 1) / slides.length) * 100 + "%";
-      counter.textContent = `${index + 1} / ${slides.length}`;
-      document.title = `${slides[index].dataset.title} · From Numbers to Narratives`;
+      counter.textContent = (index + 1) + " / " + slides.length;
+      document.title = slides[index].dataset.title + " · From Numbers to Narratives";
     }
-
     document.addEventListener("keydown", (e) => {
-      if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) {
-        e.preventDefault();
-        show(index + 1);
-      } else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) {
-        e.preventDefault();
-        show(index - 1);
-      } else if (e.key === "Home") {
-        show(0);
-      } else if (e.key === "End") {
-        show(slides.length - 1);
-      } else if (e.key.toLowerCase() === "f") {
+      if (["ArrowRight", "PageDown"].includes(e.key)) { e.preventDefault(); show(index + 1); }
+      else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); show(index - 1); }
+      else if (e.key === " " || e.key === "Enter") {
+        if (slides[index].id === "game-slide") { e.preventDefault(); answerOn = !answerOn; renderGame(); }
+        else if (e.key === " ") { e.preventDefault(); show(index + 1); }
+      } else if (e.key === "Home") show(0);
+      else if (e.key === "End") show(slides.length - 1);
+      else if (e.key.toLowerCase() === "f") {
         if (!document.fullscreenElement) document.documentElement.requestFullscreen();
         else document.exitFullscreen();
       }
     });
-
     document.getElementById("deck").addEventListener("click", (e) => {
       if (e.target.closest("a, button, kbd")) return;
-      const mid = window.innerWidth / 2;
-      if (e.clientX > mid) show(index + 1);
-      else show(index - 1);
+      if (slides[index].id === "game-slide") return;
+      if (e.clientX > window.innerWidth / 2) show(index + 1); else show(index - 1);
     });
-
-    let touchX = null;
-    document.addEventListener("touchstart", (e) => { touchX = e.changedTouches[0].screenX; }, { passive: true });
-    document.addEventListener("touchend", (e) => {
-      if (touchX == null) return;
-      const dx = e.changedTouches[0].screenX - touchX;
-      if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1));
-      touchX = null;
-    }, { passive: true });
-
+    renderGame();
     updateChrome();
   </script>
 </body>

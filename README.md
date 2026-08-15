@@ -15,14 +15,10 @@ Professional learning pack: **data analysis + Power BI** for Ahliyyah & Mutran t
 
 ## Session shape
 
-| Block | Time |
-|-------|------|
-| **Game: Pattern Police (5 rounds)** | ~10 min |
-| **Teaching sprint** | ~20 min |
-| **Technical lab** (Power BI demo + 3 challenges + 2-2-2) | ~40 min |
+| Block | Time | Slides |
+|-------|------|--------|
+| Pattern Police (5 rounds, **1 board**) | ~10 min | Slide 3 |
+| Teaching | ~20 min | Slides 4–5 |
+| Technical lab | ~30 min | Slides 6–10 |
 
-1. Open `index.html` (or the live link) → **F** fullscreen.
-2. Run the opener game, then the short teach.
-3. Share CSV + handout → demo → challenges → rapid share-out.
-
-Keyboard: `→` `←` · `F` fullscreen
+**Total: 10 slides** (not 25+). Game rounds use buttons on one slide.

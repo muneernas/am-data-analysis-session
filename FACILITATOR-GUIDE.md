@@ -1,49 +1,37 @@
-# From Numbers to Narratives
-## Facilitator guide · 60-minute session
+# Facilitator guide · 60 min · **10 slides**
 
-**Audience:** Grades 6–10 teachers · all subjects  
-**Live site:** https://muneernas.github.io/am-data-analysis-session/
+**Live:** https://muneernas.github.io/am-data-analysis-session/
 
----
+## Why only 10 slides?
 
-## Timing
+Earlier versions had 25+ slides (puzzle + answer × 5). That can’t fit a 20-minute teach.  
+Now: **one game board** (5 rounds via buttons) + **2 teach slides** + lab.
 
-| Block | Minutes | Clock | What happens |
-|------:|--------:|------:|--------------|
-| Title + agenda | 2 | 0:00–0:02 | Frame |
-| **Pattern Police (5 rounds)** | 10 | 0:02–0:12 | Icebreaker |
-| **Teaching sprint** | 18 | 0:12–0:30 | Mindset + engine |
-| **Technical lab** | 30 | 0:30–1:00 | Demo + builds + share |
+| # | Slide | Time |
+|--:|-------|-----:|
+| 1 | Title | 1 min |
+| 2 | Agenda | 1 min |
+| 3 | Pattern Police (rounds 1–5 on this slide) | 10 min |
+| 4 | Autopsy → biopsy + Look/Patterns/Why/Action | 10 min |
+| 5 | Diagnose · act · 2-2-2 | 10 min |
+| 6 | Power BI demo steps | 4 min |
+| 7–9 | Challenges 1–3 (leave on screen while they work) | 24 min |
+| 10 | 2-2-2 share + close | 6 min |
 
----
+## Game slide controls
 
-## Pattern Police · 5 rounds
+- Click **1 2 3 4 5** to change rounds (stay on slide 3)
+- **Show answer** or press **Space**
+- Use **← →** only when leaving the game for teaching
 
-Teams of 3–4. They shout when they see it. Keep it loud and fun.
+### Answers (plain language)
 
-| Round | Show | Answer (say in plain words) |
-|------:|------|-----------------------------|
-| 1 | ● ● ▲ ● ● ? | Two circles, then a triangle, repeat |
-| 2 | Blue books + one green | The green book doesn’t belong |
-| 3 | Number grid | The middle column has all the high scores |
-| 4 | Homework Yes/No + test scores | No homework → lower scores |
-| 5 | Part A / B / C markbook | Everyone is weak on Part B — reteach Part B, don’t blame one student |
+1. Two circles, then a triangle — repeats  
+2. Green book (others are blue)  
+3. Middle column = all the high scores  
+4. No homework → lower scores  
+5. Part B weak for everyone → reteach Part B  
 
-**Bridge after Round 5:**  
-“That’s data analysis. Next we do it with your eyes — then with Power BI.”
+## Pace rule
 
-Avoid jargon: no “enrichment lane,” “cohort,” “intervention” unless teachers use those words themselves.
-
----
-
-## Teaching + lab
-
-Same as before: biopsy → Look/Patterns/Why/Action → diagnose + act → 2-2-2 → Power BI demo → 3 challenges → share.
-
-CSV: https://muneernas.github.io/am-data-analysis-session/dataset/ahliyyah-mutran-learning.csv
-
----
-
-## Closing line
-
-> “Find the pattern. Then do something about it.”
+If you’re still on slide 4 after 25 minutes total, skip extra talk and go to the demo.
