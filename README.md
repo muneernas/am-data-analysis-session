@@ -18,7 +18,5 @@ Professional learning pack: **data analysis + Power BI** for Ahliyyah & Mutran t
 | Block | Time | Slides |
 |-------|------|--------|
 | Pattern Police (5 rounds, **1 board**) | ~10 min | Slide 3 |
-| Teaching | ~20 min | Slides 4–5 |
-| Technical lab | ~30 min | Slides 6–10 |
-
-**Total: 10 slides** (not 25+). Game rounds use buttons on one slide.
+| Teaching (**6 slides**) | ~20 min | Slides 4–9 |
+| Technical lab | ~30 min | Slides 10–14 |

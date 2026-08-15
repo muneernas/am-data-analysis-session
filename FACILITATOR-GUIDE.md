@@ -1,37 +1,36 @@
-# Facilitator guide · 60 min · **10 slides**
+# Facilitator guide · 60 min
 
 **Live:** https://muneernas.github.io/am-data-analysis-session/
 
-## Why only 10 slides?
-
-Earlier versions had 25+ slides (puzzle + answer × 5). That can’t fit a 20-minute teach.  
-Now: **one game board** (5 rounds via buttons) + **2 teach slides** + lab.
+## Slide map (~14 slides)
 
 | # | Slide | Time |
 |--:|-------|-----:|
-| 1 | Title | 1 min |
-| 2 | Agenda | 1 min |
-| 3 | Pattern Police (rounds 1–5 on this slide) | 10 min |
-| 4 | Autopsy → biopsy + Look/Patterns/Why/Action | 10 min |
-| 5 | Diagnose · act · 2-2-2 | 10 min |
-| 6 | Power BI demo steps | 4 min |
-| 7–9 | Challenges 1–3 (leave on screen while they work) | 24 min |
-| 10 | 2-2-2 share + close | 6 min |
+| 1 | Title | 1 |
+| 2 | Agenda | 1 |
+| 3 | Pattern Police (5 rounds, one board) | 10 |
+| 4 | Autopsy vs biopsy | 3 |
+| 5 | Four steps | 4 |
+| 6 | Beyond the average | 3 |
+| 7 | Better questions | 3 |
+| 8 | Ask why + act | 4 |
+| 9 | 2-2-2 finish line | 3 |
+| 10 | Power BI demo | 4 |
+| 11–13 | Challenges 1–3 | 24 |
+| 14 | Share + close | 6 |
 
-## Game slide controls
+**Teaching = slides 4–9 (~20 minutes).** Not one slide — six talkable slides.
 
-- Click **1 2 3 4 5** to change rounds (stay on slide 3)
-- **Show answer** or press **Space**
-- Use **← →** only when leaving the game for teaching
+## Game (slide 3)
 
-### Answers (plain language)
+Buttons **1–5** + **Show answer** / **Space**. Answers stay plain:
 
-1. Two circles, then a triangle — repeats  
-2. Green book (others are blue)  
-3. Middle column = all the high scores  
+1. Two circles, then triangle  
+2. Green book  
+3. Middle column = high scores  
 4. No homework → lower scores  
 5. Part B weak for everyone → reteach Part B  
 
-## Pace rule
+## Pace
 
-If you’re still on slide 4 after 25 minutes total, skip extra talk and go to the demo.
+If teaching runs long, keep all six teach slides but shorten talk — don’t skip 2-2-2 before the lab.
