@@ -112,9 +112,17 @@
   <div class="page">
     <header>
       <h1>From Numbers to Narratives</h1>
-      <p class="sub">Participant handout · Data analysis &amp; Power BI lab</p>
-      <p class="sub"><strong>Dataset:</strong> ahliyyah-mutran-learning.csv &nbsp;·&nbsp; <strong>Time:</strong> ~50 minutes hands-on</p>
+      <p class="sub">Participant handout · 60-min session · Game + teach + Power BI lab</p>
+      <p class="sub"><strong>Dataset:</strong> ahliyyah-mutran-learning.csv &nbsp;·&nbsp; <strong>Lab:</strong> ~40 minutes technical</p>
     </header>
+
+    <h2>Game · Beat the Average</h2>
+    <div class="box">
+      <span class="meta">Warm-up</span>
+      <h3>Class average = 74%. What question would you ask next?</h3>
+      <label>Our team’s dig-deeper question</label>
+      <textarea placeholder="Who / which subject / compared to what…"></textarea>
+    </div>
 
     <h2>Analysis engine (keep visible)</h2>
     <div class="formula">Look → Find patterns → Ask why → Take action</div>
@@ -129,65 +137,65 @@
         <li><strong>Design</strong> — Was the task or rubric unclear? → Clarify assessment</li>
         <li><strong>Readiness</strong> — Missing prerequisites? → Scaffold gaps</li>
       </ul>
+      <p style="margin-top:0.6rem"><strong>Levers:</strong> Reteach · Differentiate · Adjust unit</p>
     </div>
 
-    <h2>Quick start in Power BI</h2>
+    <h2>Quick start in Power BI (~4 min demo, then you)</h2>
     <div class="box">
       <ol>
-        <li>Open <strong>Power BI Desktop</strong> → <strong>Get data</strong> → <strong>Text/CSV</strong> → select the file → <strong>Load</strong>.</li>
-        <li>Confirm <em>Score</em>, <em>AttendancePct</em>, and <em>HomeworkCompletionPct</em> are numbers (Column tools → Data type).</li>
-        <li>Drag fields onto the canvas. Add <strong>Slicers</strong> for Term, GradeLevel, Subject.</li>
+        <li>Open <strong>Power BI Desktop</strong> → <strong>Get data</strong> → <strong>Text/CSV</strong> → Load.</li>
+        <li>Confirm <em>Score</em>, <em>AttendancePct</em>, <em>HomeworkCompletionPct</em> are numbers.</li>
+        <li>Bar: Subject + Average Score. Add a <strong>Term</strong> slicer.</li>
       </ol>
-      <p><em>Excel fallback:</em> Insert → PivotChart / Charts. Same challenges apply.</p>
+      <p><em>Excel fallback:</em> Insert → PivotChart. Same challenges apply.</p>
     </div>
 
-    <h2>Challenge 1 · Foundations (~12 min)</h2>
+    <h2>Challenge 1 · Patterns (~10 min)</h2>
     <div class="box">
       <span class="meta">Build</span>
-      <h3>Average Score by Subject — with a Term slicer</h3>
+      <h3>Average Score by Subject — Term slicer</h3>
       <ul>
-        <li>Which subject looks strongest? Weakest?</li>
-        <li>What changes when you switch Term 1 → Term 2?</li>
-        <li>Look beyond the average: any surprising highs or lows?</li>
+        <li>Strongest? Weakest?</li>
+        <li>What changes Term 1 → Term 2?</li>
       </ul>
       <label>My finding</label>
-      <textarea placeholder="Write one insight using the formula…"></textarea>
+      <textarea placeholder="Who + what + how much + so what…"></textarea>
     </div>
 
-    <h2>Challenge 2 · Relationships (~12 min)</h2>
+    <h2>Challenge 2 · Relationships (~10 min)</h2>
     <div class="box">
       <span class="meta">Build</span>
       <h3>Scatter: AttendancePct (X) vs Score (Y)</h3>
       <ul>
-        <li>Do you see a relationship?</li>
-        <li>Circle one outlier on your screen — what’s interesting about them?</li>
+        <li>Relationship?</li>
+        <li>One interesting outlier?</li>
       </ul>
       <label>My finding</label>
-      <textarea placeholder="Write one insight using the formula…"></textarea>
+      <textarea placeholder="Write one insight…"></textarea>
     </div>
 
-    <h2>Challenge 3 · Impact (~15 min)</h2>
+    <h2>Challenge 3 · Impact (~10 min)</h2>
     <div class="box">
       <span class="meta">Build</span>
-      <h3>Term 1 vs Term 2 growth by LearningSupport</h3>
+      <h3>Term growth by LearningSupport</h3>
       <ul>
-        <li>Compare Math Intervention / Reading Support vs None.</li>
-        <li>Diagnose: instructional, design, or readiness?</li>
-        <li>Choose a move: reteach / differentiate / adjust</li>
+        <li>Support vs None — who grew?</li>
+        <li>Diagnose: instructional / design / readiness?</li>
+        <li>Lever: reteach / differentiate / adjust</li>
       </ul>
       <label>My finding + Monday move</label>
-      <textarea placeholder="Insight + what should happen next week…"></textarea>
+      <textarea placeholder="Insight + action…"></textarea>
     </div>
 
-    <h2>Your 2-2-2 response (share-out)</h2>
+    <h2>Your 2-2-2 (rapid share)</h2>
     <div class="box">
-      <span class="meta">Minimum after every summative</span>
+      <span class="meta">45–60 seconds</span>
       <h3>2 Strengths</h3>
-      <textarea placeholder="Two areas where the cohort excelled…"></textarea>
+      <textarea placeholder="Two strengths…"></textarea>
       <h3 style="margin-top:0.75rem">2 Gaps</h3>
-      <textarea placeholder="Two patterns / groups / subjects that need attention…"></textarea>
+      <textarea placeholder="Two gaps…"></textarea>
       <h3 style="margin-top:0.75rem">2 Actions</h3>
-      <textarea placeholder="Two concrete teaching adjustments to implement soon…"></textarea>
+      <textarea placeholder="Two concrete actions…"></textarea>
     </div>
 
     <h2>Field cheat sheet</h2>
@@ -197,15 +205,14 @@
       </thead>
       <tbody>
         <tr><td>Score</td><td>Measure achievement</td></tr>
-        <tr><td>Term</td><td>Compare growth over time</td></tr>
+        <tr><td>Term</td><td>Compare growth</td></tr>
         <tr><td>Subject / GradeLevel</td><td>Find hotspots</td></tr>
         <tr><td>AttendancePct</td><td>Link engagement to outcomes</td></tr>
         <tr><td>LearningSupport</td><td>Evaluate interventions</td></tr>
-        <tr><td>Extracurricular</td><td>Explore context (carefully — not causation)</td></tr>
       </tbody>
     </table>
 
-    <p class="print-note">Print this page or fill it digitally. Bring your 2-2-2 to the share-out.</p>
+    <p class="print-note">Bring your 2-2-2 to the share-out.</p>
   </div>
 </body>
 </html>

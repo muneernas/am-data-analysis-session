@@ -1,26 +1,28 @@
 # From Numbers to Narratives
 
-Professional learning pack: **data analysis + Power BI** for teachers (90 minutes).
+Professional learning pack: **data analysis + Power BI** for Ahliyyah & Mutran teachers (**60 minutes**).
+
+**Live:** https://muneernas.github.io/am-data-analysis-session/
 
 ## What’s inside
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Engaging slide deck (fullscreen in browser) |
-| `handout.html` | Printable / fillable participant worksheet |
-| `FACILITATOR-GUIDE.md` | Timing, talking points, answer hints |
-| `dataset/ahliyyah-mutran-learning.csv` | Practice data for the lab |
-
-## How to run the session
-
-1. Open `index.html` in Chrome or Edge → press **F** for fullscreen.
-2. Present slides 1–15 (~35–40 min).
-3. Share the CSV + `handout.html` with teachers.
-4. Run Challenges 1–3 (~40 min) then share-out + close (~15 min).
+| `index.html` | Slide deck (fullscreen in browser) |
+| `handout.html` | Participant worksheet |
+| `FACILITATOR-GUIDE.md` | Timing, game script, talking points |
+| `dataset/ahliyyah-mutran-learning.csv` | Practice data |
 
 ## Session shape
 
-- **0:00–0:40** — Concepts, visual thinking, Power BI essentials  
-- **0:40–1:30** — Hands-on: load data, build visuals, write insights  
+| Block | Time |
+|-------|------|
+| **Game: Beat the Average** | ~8 min |
+| **Teaching sprint** | ~20 min |
+| **Technical lab** (Power BI demo + 3 challenges + 2-2-2) | ~40 min |
 
-Keyboard: `→` `←` to navigate · `F` fullscreen
+1. Open `index.html` (or the live link) → **F** fullscreen.
+2. Run the opener game, then the short teach.
+3. Share CSV + handout → demo → challenges → rapid share-out.
+
+Keyboard: `→` `←` · `F` fullscreen
