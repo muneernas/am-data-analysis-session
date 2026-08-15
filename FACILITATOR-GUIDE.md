@@ -1,70 +1,55 @@
 # Facilitator guide · From Numbers to Narratives
 
 **Audience:** Grades 6–10 · all subjects · Ahliyyah & Mutran  
-**Live:** https://muneernas.github.io/am-data-analysis-session/  
-**Design note:** Bright light theme · deeper step-by-step teaching flow
+**Live:** https://muneernas.github.io/am-data-analysis-session/
 
 ---
 
-## Session flow (step by step)
+## Session flow
 
-| Step | Block | ~Time | Slides |
-|-----:|-------|------:|--------|
-| 1 | Warm up — Pattern Police | 10 | Title → path → game → bridge |
-| 2 | Why data matters + what analysis is | 6 | Purpose + definition |
-| 3 | How to analyse (full method) | 18 | Autopsy/biopsy → engine → data types → questions → averages → worked example → why → act → 2-2-2 → traps |
-| 4 | Power BI tool | 8 | Meet Power BI → workflow → live demo |
-| 5 | Practice + share | 25 | Lab brief → 3 challenges → 2-2-2 share → close |
-
-**Total ~60–70 minutes** depending on discussion.
+| Step | Block | Focus |
+|-----:|-------|-------|
+| 1 | Warm up | Pattern Police |
+| 2 | What & where | What counts as data · 4 buckets · school sources · Locate→Export→Clean→Analyse |
+| 3 | How to analyse | Autopsy/biopsy · engine · questions · averages · example · why · act · 2-2-2 · traps |
+| 4 | Tools safely | **Privacy first** · AI risks · checklist · then Power BI |
+| 5 | Practice | Demo · 3 challenges · 2-2-2 share |
 
 ---
 
-## Why this version (for your boss / leadership)
+## Critical talking point — AI & privacy
 
-- **Not tip-lists:** Explicit pathway: Warm up → Why → How → Tool → Do it  
-- **More substance:** Worked example, traps, diagnostic matrix, Power BI stages  
-- **Still practical:** Ends in charts + 2-2-2 actions  
-- **All subjects:** Part A/B/C language works across departments  
+Say this clearly (do not soft-pedal):
+
+> “AI tools can help summarise anonymised tables. They are **dangerous** if you paste real student names, IDs, emails, or photos into public chats. Remove private information first. If a stranger could recognise the child, it is not ready for AI. Prefer Excel/Power BI on your device for identifiable school files.”
+
+Checklist to flash on screen:
+1. Remove identifiers  
+2. Replace with codes (S01…)  
+3. Follow school-approved tools  
+4. Never upload markbook photos with names  
+5. Verify AI suggestions against real numbers  
+6. Local tools first for real class data  
 
 ---
 
-## Pattern Police (one board)
+## Data “where to find it” examples
 
-Buttons **1–5** + Show answer. Keep energy high.
+Everyday: markbook, LMS, attendance, homework trackers.  
+School systems: SIS exports, Toddle/ManageBac (if used), shared drives, learning-support summaries **with permission**.
+
+---
+
+## Pattern Police answers
 
 1. Two circles → triangle  
-2. Green book odd one out  
-3. Middle column = high scores  
+2. Green book  
+3. Middle column high scores  
 4. No homework → lower scores  
-5. Part B weak for whole class → reteach Part B  
-
-**Bridge line:** “What you just did is Steps Look + Patterns + Action.”
-
----
-
-## Teaching talking points (don’t rush)
-
-1. **Autopsy vs biopsy** — ask which column matches current practice  
-2. **Four-step engine** — chant once: Look · Patterns · Why · Action  
-3. **Beyond average** — spread / highs / lows  
-4. **Worked example 74%** — surface vs pattern reading  
-5. **Diagnose** — teaching / task / basics  
-6. **2-2-2** — non-negotiable lab output  
-7. **Traps** — especially average addiction  
-
----
-
-## Technical lab
-
-Demo: Get data → bar by Subject → Term slicer.  
-Then Challenges 1–3 (8 min each). Circulate with:  
-“What’s the pattern?” · “Teaching, task, or basics?” · “What’s the Monday move?”
-
-CSV: https://muneernas.github.io/am-data-analysis-session/dataset/ahliyyah-mutran-learning.csv
+5. Part B weak for everyone → reteach Part B  
 
 ---
 
 ## Closing line
 
-> “Find the pattern. Then do something about it.”
+> “Know where the data lives. Clean it. Analyse it. Never feed private student details to public AI.”
