@@ -589,6 +589,79 @@
       font-weight: 600;
     }
 
+    .pattern-grid {
+      display: grid;
+      gap: 0.55rem;
+      margin-top: 1rem;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .pattern-grid.cols-6 { grid-template-columns: repeat(6, minmax(52px, 72px)); }
+    .pattern-grid.cols-4 { grid-template-columns: repeat(4, minmax(70px, 1fr)); }
+    .pattern-grid.cols-5 { grid-template-columns: repeat(5, minmax(64px, 1fr)); }
+
+    .pattern-grid .cell {
+      aspect-ratio: 1;
+      border-radius: 0.75rem;
+      display: grid;
+      place-items: center;
+      font-family: "Syne", sans-serif;
+      font-weight: 700;
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      border: 1px solid var(--line);
+      background: rgba(18, 48, 68, 0.9);
+      color: var(--mist);
+    }
+
+    .pattern-grid .cell.emoji { font-size: clamp(1.4rem, 3vw, 2rem); }
+    .pattern-grid .cell.teal { background: rgba(45, 212, 191, 0.25); color: var(--teal); border-color: rgba(45, 212, 191, 0.45); }
+    .pattern-grid .cell.amber { background: rgba(240, 180, 41, 0.22); color: var(--amber); border-color: rgba(240, 180, 41, 0.45); }
+    .pattern-grid .cell.coral { background: rgba(255, 122, 89, 0.22); color: var(--coral); border-color: rgba(255, 122, 89, 0.45); }
+    .pattern-grid .cell.dim { opacity: 0.45; }
+    .pattern-grid .cell.glow {
+      box-shadow: 0 0 0 2px var(--amber), 0 0 18px rgba(240, 180, 41, 0.35);
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+    }
+
+    .mini-table th, .mini-table td {
+      border: 1px solid var(--line);
+      padding: 0.55rem 0.7rem;
+      text-align: center;
+    }
+
+    .mini-table th {
+      background: rgba(18, 48, 68, 0.95);
+      color: var(--teal);
+      font-weight: 600;
+    }
+
+    .mini-table td { background: rgba(12, 36, 51, 0.65); color: var(--mist); }
+    .mini-table td.low { color: var(--coral); font-weight: 700; }
+    .mini-table td.ok { color: var(--teal); font-weight: 600; }
+    .mini-table .name { text-align: left; color: var(--white); }
+
+    .round-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(240, 180, 41, 0.15);
+      color: var(--amber);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
     @media (max-width: 900px) {
       .grid-2, .grid-3, .grid-4, .viz-row, .compare, .kpi, .lab-steps, .split-story, .two-col-list {
         grid-template-columns: 1fr;
@@ -616,7 +689,7 @@
       <div class="grid-3">
         <div class="card">
           <strong class="amber">0–8 min</strong>
-          <p>Warm-up game: <em>Beat the Average</em> — crack what 74% is hiding.</p>
+          <p>Icebreaker: <em>Pattern Police</em> — race to find the hidden pattern.</p>
         </div>
         <div class="card">
           <strong class="accent">8–28 min</strong>
@@ -634,44 +707,116 @@
       </div>
     </section>
 
-    <!-- 3 GAME INTRO -->
-    <section class="slide" data-title="Game">
-      <div class="brand-row"><span><span class="dot"></span>Warm-up</span><span>~6 minutes · teams of 3–4</span></div>
-      <div class="section-mark">Game · Beat the Average</div>
-      <h2>Class average: <span class="amber">74%</span></h2>
-      <p class="lede">That’s all you’re told. In 90 seconds, write <span class="accent">one sharp question</span> that could expose a problem this average is hiding.</p>
-      <div class="pill-row">
-        <span class="timer-chip">⏱ 90 seconds</span>
-        <span class="pill">One question per team</span>
-        <span class="pill">Best dig wins</span>
+    <!-- 3 GAME RULES -->
+    <section class="slide" data-title="Pattern Police">
+      <div class="brand-row"><span><span class="dot"></span>Icebreaker</span><span>~8 minutes · teams of 3–4</span></div>
+      <div class="section-mark">Game · Pattern Police</div>
+      <h2>Find the pattern. <span class="accent">First team to shout it wins the round.</span></h2>
+      <div class="grid-3" style="margin-top:1.25rem">
+        <div class="card"><strong class="amber">Round 1</strong><p>Warm-up eyes — shapes &amp; colors</p></div>
+        <div class="card"><strong class="accent">Round 2</strong><p>Number grid — look closer</p></div>
+        <div class="card"><strong class="coral">Round 3</strong><p>Fake markbook — teacher mode</p></div>
       </div>
-      <div class="card" style="margin-top:1.25rem">
-        <strong>Rules</strong>
-        <p>“Is attendance good?” is too soft. Aim for who / which subject / compared to what.</p>
+      <div class="pill-row">
+        <span class="timer-chip">⏱ ~45–60 sec per round</span>
+        <span class="pill">Stand &amp; shout your answer</span>
+        <span class="pill">Works for every subject</span>
       </div>
     </section>
 
-    <!-- 4 GAME REVEAL -->
-    <section class="slide" data-title="Game reveal">
-      <div class="brand-row"><span><span class="dot"></span>Reveal</span><span>Same average · Hidden story</span></div>
-      <h2>What 74% was hiding</h2>
-      <div class="split-story">
-        <div class="story-card">
-          <div>
-            <div class="who">Surface story</div>
-            <p class="said">“Class average is 74%. We’re fine. Moving on.”</p>
-          </div>
-          <div class="result">Autopsy — stops at the number</div>
-        </div>
-        <div class="story-card">
-          <div>
-            <div class="who">Biopsy story</div>
-            <p class="said">“Math Term 1 for boys under 80% attendance sits at <span class="amber">58%</span>. That’s where we intervene.”</p>
-          </div>
-          <div class="result">Biopsy — slices → action</div>
-        </div>
+    <!-- ROUND 1 -->
+    <section class="slide" data-title="Round 1">
+      <div class="round-chip">Round 1 · Warm-up</div>
+      <h2>What’s the pattern?</h2>
+      <p class="lede">Look at the row. What comes next — and why?</p>
+      <div class="pattern-grid cols-6" style="margin-top:1.5rem">
+        <div class="cell teal">●</div>
+        <div class="cell teal">●</div>
+        <div class="cell amber">▲</div>
+        <div class="cell teal">●</div>
+        <div class="cell teal">●</div>
+        <div class="cell amber" style="opacity:0.35;border-style:dashed">?</div>
       </div>
-      <div class="formula" style="margin-top:1.25rem;font-size:1.2rem">Your game questions = the start of real analysis</div>
+      <div class="pill-row">
+        <span class="timer-chip">⏱ 45 seconds</span>
+        <span class="pill">Hint: groups of three</span>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Round 1 answer">
+      <div class="round-chip">Round 1 · Answer</div>
+      <h2>Two circles, then a triangle — repeat</h2>
+      <div class="pattern-grid cols-6" style="margin-top:1.25rem">
+        <div class="cell teal">●</div>
+        <div class="cell teal">●</div>
+        <div class="cell amber glow">▲</div>
+        <div class="cell teal">●</div>
+        <div class="cell teal">●</div>
+        <div class="cell amber glow">▲</div>
+      </div>
+      <div class="formula" style="margin-top:1.5rem;font-size:1.2rem">Your eyes just did Step 2 of analysis: <span class="accent">Find patterns</span></div>
+    </section>
+
+    <!-- ROUND 2 -->
+    <section class="slide" data-title="Round 2">
+      <div class="round-chip">Round 2 · Numbers</div>
+      <h2>What’s weird about this grid?</h2>
+      <p class="lede">Don’t average it. Find the pattern.</p>
+      <div class="pattern-grid cols-4" style="margin-top:1.25rem;width:min(520px,100%)">
+        <div class="cell">72</div><div class="cell teal">91</div><div class="cell">74</div><div class="cell">70</div>
+        <div class="cell">68</div><div class="cell teal">88</div><div class="cell">71</div><div class="cell">69</div>
+        <div class="cell">65</div><div class="cell teal">94</div><div class="cell">67</div><div class="cell">66</div>
+      </div>
+      <div class="pill-row">
+        <span class="timer-chip">⏱ 60 seconds</span>
+        <span class="pill">Columns? Rows? Diagonals?</span>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Round 2 answer">
+      <div class="round-chip">Round 2 · Answer</div>
+      <h2>Column 2 is the enrichment lane</h2>
+      <div class="pattern-grid cols-4" style="margin-top:1.25rem;width:min(520px,100%)">
+        <div class="cell dim">72</div><div class="cell teal glow">91</div><div class="cell dim">74</div><div class="cell dim">70</div>
+        <div class="cell dim">68</div><div class="cell teal glow">88</div><div class="cell dim">71</div><div class="cell dim">69</div>
+        <div class="cell dim">65</div><div class="cell teal glow">94</div><div class="cell dim">67</div><div class="cell dim">66</div>
+      </div>
+      <p class="lede" style="margin-top:1.25rem">A class average would hide this. The <span class="accent">highs</span> need a different move than everyone else.</p>
+    </section>
+
+    <!-- ROUND 3 -->
+    <section class="slide" data-title="Round 3">
+      <div class="round-chip">Round 3 · Fake markbook</div>
+      <h2>Teacher challenge: find the pattern</h2>
+      <p class="lede">Works for any subject — treat A/B/C as skills, tasks, or criteria.</p>
+      <table class="mini-table">
+        <thead>
+          <tr><th>Student</th><th>Skill A</th><th>Skill B</th><th>Skill C</th><th>Avg</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="name">Sam</td><td class="ok">82</td><td class="low">54</td><td class="ok">80</td><td>72</td></tr>
+          <tr><td class="name">Noor</td><td class="ok">88</td><td class="low">61</td><td class="ok">85</td><td>78</td></tr>
+          <tr><td class="name">Alex</td><td class="ok">79</td><td class="low">58</td><td class="ok">81</td><td>73</td></tr>
+          <tr><td class="name">Maya</td><td class="ok">91</td><td class="low">63</td><td class="ok">89</td><td>81</td></tr>
+          <tr><td class="name">Jordan</td><td class="ok">84</td><td class="low">57</td><td class="ok">83</td><td>75</td></tr>
+        </tbody>
+      </table>
+      <div class="pill-row">
+        <span class="timer-chip">⏱ 60 seconds</span>
+        <span class="pill">Is it the students… or something else?</span>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Round 3 answer">
+      <div class="round-chip">Round 3 · Answer</div>
+      <h2>It’s not “who failed” — it’s <span class="coral">Skill B</span></h2>
+      <p class="lede">Every student is fine on A and C. The cohort struggle is one skill/task/criterion.</p>
+      <div class="grid-3" style="margin-top:1.25rem">
+        <div class="card"><strong>Wrong move</strong><p>“Call home about Sam.”</p></div>
+        <div class="card"><strong class="accent">Right move</strong><p>Reteach Skill B to the whole class.</p></div>
+        <div class="card"><strong class="amber">Analysis win</strong><p>Pattern &gt; average &gt; blame</p></div>
+      </div>
+      <div class="formula" style="margin-top:1.25rem;font-size:1.15rem">That’s data analysis — and Power BI helps you spot it faster</div>
     </section>
 
     <!-- 5 AUTOPSY VS BIOPSY -->
@@ -877,7 +1022,7 @@
       <div class="brand-row"><span><span class="dot"></span>Takeaways</span><span>Leave with this</span></div>
       <h2>Remember these three</h2>
       <ul class="list" style="margin-top:1.5rem;max-width:42rem">
-        <li><span class="num">1</span><span>Beat the average — ask the question the number is hiding.</span></li>
+        <li><span class="num">1</span><span>Find the pattern first — don’t stop at the average.</span></li>
         <li><span class="num">2</span><span>Look → Patterns → Why → Action. Biopsy, not autopsy.</span></li>
         <li><span class="num">3</span><span>Finish with a 2-2-2 — strengths, gaps, actions.</span></li>
       </ul>

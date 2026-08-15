@@ -1,9 +1,9 @@
 # From Numbers to Narratives
-## Facilitator guide · 60-minute session (game + 20 teach + 40 technical)
+## Facilitator guide · 60-minute session
 
-**Audience:** Teachers (mixed Power BI experience)  
+**Audience:** Grades 6–10 teachers · all subjects  
 **Live site:** https://muneernas.github.io/am-data-analysis-session/  
-**Dataset:** `dataset/ahliyyah-mutran-learning.csv` (or `.xlsx`)
+**Dataset:** `dataset/ahliyyah-mutran-learning.csv`
 
 ---
 
@@ -12,74 +12,54 @@
 | Block | Minutes | Clock | What happens |
 |------:|--------:|------:|--------------|
 | Title + agenda | 2 | 0:00–0:02 | Set the frame |
-| **Game: Beat the Average** | 6 | 0:02–0:08 | Teams crack what 74% hides |
-| **Teaching sprint** | 20 | 0:08–0:28 | Biopsy, 4-step, diagnose + act, 2-2-2 |
-| **Technical lab** | 40 | 0:28–1:00 | Demo + 3 challenges + rapid share |
+| **Icebreaker: Pattern Police** | 8 | 0:02–0:10 | 3 rounds · find the pattern |
+| **Teaching sprint** | 20 | 0:10–0:30 | Biopsy, 4-step, diagnose + act, 2-2-2 |
+| **Technical lab** | 30 | 0:30–1:00 | Demo + 3 challenges + rapid share |
+
+*If you need the full 40-min technical block, trim teaching to 18 min and openers to 2+6.*
 
 ---
 
-## Game facilitation · Beat the Average
+## Pattern Police · how to run it
 
-1. Show the slide with **Class average: 74%**.
-2. Form teams of 3–4.
-3. Start a visible 90-second timer.
-4. Each team writes **one dig-deeper question** (who / which subject / compared to what).
-5. Hear 3–4 teams. Cheer the sharpest.
-6. Flip to the reveal: surface story vs biopsy story (58% Math / low attendance).
-7. Bridge: “Those questions you just wrote? That’s analysis. Now we systematize it.”
+**Setup:** Teams of 3–4. They stand or sit ready to shout. Keep score loosely on a whiteboard if you want (optional).
 
-**Soft questions to bounce:** “Is attendance good?” → “Good compared to what — and for which group?”
+### Round 1 — shapes (45 sec)
+- Show the ● ● ▲ ● ● ? slide  
+- First team to shout the rule wins  
+- **Answer:** two circles, then a triangle — repeating  
+- Celebrate, flip to answer slide
 
----
+### Round 2 — numbers (60 sec)
+- Show the grid  
+- **Answer:** Column 2 is all highs (enrichment lane)  
+- Say: “An average would hide these students.”
 
-## Teaching sprint (20 min) — keep moving
+### Round 3 — fake markbook (60 sec)
+- Skill A/B/C works for **every subject** (tasks, criteria, standards)  
+- **Answer:** Skill B is weak for *everyone* — not a “bad student” story  
+- Bridge: “Wrong move = call home about Sam. Right move = reteach Skill B. That’s analysis.”
 
-| Slide | ~Min | Say this |
-|-------|-----:|----------|
-| Autopsy vs biopsy | 3 | “Which column is how we usually treat end-of-unit data?” |
-| 4-step engine | 4 | Chant: **Look · Patterns · Why · Action** |
-| Questions + averages | 5 | Weak→strong examples; highs / lows / distribution |
-| Diagnose + act | 5 | Instructional / design / readiness → reteach / differentiate / adjust |
-| 2-2-2 preview | 3 | “This is your finish line in the lab.” |
-
-Do **not** reopen long chart-type lectures. Save Power BI for the technical block.
+**Tone:** Keep it playful and loud. You’re warming the room up *and* previewing “Find patterns.”
 
 ---
 
-## Technical block (40 min)
+## Teaching sprint (20 min)
 
-| Piece | Minutes | Notes |
-|-------|--------:|-------|
-| Power BI intro + live demo | 6 | Get Data → bar by Subject → Term slicer |
-| Challenge 1 | 10 | Score by Subject + Term |
-| Challenge 2 | 10 | Attendance vs Score scatter |
-| Challenge 3 | 10 | Growth by LearningSupport + lever |
-| 2-2-2 share-out | 6 | 3–4 voices · 45–60 sec each |
-| Close | 2 | Three takeaways |
+Keep moving: autopsy/biopsy → 4-step engine → questions/averages → diagnose + act → 2-2-2 preview.
 
-**Circulate prompts:** “What’s hiding behind the average?” · “Instructional, design, or readiness?” · “What’s the Monday move?”
+Chant once: **Look · Patterns · Why · Action**
 
 ---
 
-## Materials to share before the lab
+## Technical block
 
-- Deck: https://muneernas.github.io/am-data-analysis-session/
-- Handout: https://muneernas.github.io/am-data-analysis-session/handout.html
-- CSV: https://muneernas.github.io/am-data-analysis-session/dataset/ahliyyah-mutran-learning.csv
+Demo → Challenge 1 (10) → Challenge 2 (10) → Challenge 3 (10) → 2-2-2 share (~6) → close.
 
----
-
-## Troubleshooting
-
-| Problem | Fix |
-|--------|-----|
-| CSV blocked in Excel | Right-click → Properties → Unblock |
-| Power BI types wrong | Score / Attendance = Decimal Number |
-| No Power BI | Excel PivotChart for Challenges 1 & 3 |
-| Running late | Cut Challenge 3 to 6 min; keep share-out |
+CSV: https://muneernas.github.io/am-data-analysis-session/dataset/ahliyyah-mutran-learning.csv
 
 ---
 
 ## Closing line
 
-> “Beat the average. Build the chart. Leave with a 2-2-2.”
+> “Find the pattern. Then do something about it.”

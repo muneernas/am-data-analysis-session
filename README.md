@@ -17,7 +17,7 @@ Professional learning pack: **data analysis + Power BI** for Ahliyyah & Mutran t
 
 | Block | Time |
 |-------|------|
-| **Game: Beat the Average** | ~8 min |
+| **Game: Pattern Police** | ~8 min |
 | **Teaching sprint** | ~20 min |
 | **Technical lab** (Power BI demo + 3 challenges + 2-2-2) | ~40 min |
 
