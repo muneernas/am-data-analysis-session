@@ -3,33 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>From Numbers to Narratives Â· Data Analysis & Power BI</title>
+  <title>From Numbers to Narratives · Data Analysis & Power BI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink: #07141c;
-      --deep: #0c2433;
-      --panel: #123044;
-      --line: rgba(125, 211, 198, 0.22);
-      --teal: #2dd4bf;
-      --teal-dim: #149e8c;
-      --amber: #f0b429;
-      --coral: #ff7a59;
-      --mist: #d7e6ef;
-      --soft: #9fb6c5;
-      --white: #f5fafc;
-      --slide-pad: clamp(2rem, 5vw, 4.5rem);
+      --bg: #f3f8fc;
+      --bg-2: #e8f4f8;
+      --ink: #123047;
+      --muted: #4a6678;
+      --line: rgba(18, 48, 71, 0.12);
+      --card: #ffffff;
+      --teal: #0f9f8a;
+      --teal-deep: #0b7a6a;
+      --sky: #1f8fd8;
+      --amber: #e8910f;
+      --coral: #e85a3c;
+      --lilac: #6b5ce0;
+      --soft: #d7ebf2;
+      --white: #ffffff;
+      --pad: clamp(1.75rem, 4.5vw, 3.75rem);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
       height: 100%;
-      background: var(--ink);
-      color: var(--white);
-      font-family: "Outfit", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
       overflow: hidden;
     }
 
@@ -38,165 +41,103 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 50% at 10% -10%, rgba(45, 212, 191, 0.18), transparent 55%),
-        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(240, 180, 41, 0.12), transparent 50%),
-        radial-gradient(ellipse 50% 40% at 80% 100%, rgba(255, 122, 89, 0.08), transparent 45%),
-        linear-gradient(160deg, #07141c 0%, #0c2433 45%, #0a1c28 100%);
+        radial-gradient(ellipse 70% 50% at 0% 0%, rgba(31, 143, 216, 0.18), transparent 55%),
+        radial-gradient(ellipse 55% 45% at 100% 0%, rgba(15, 159, 138, 0.16), transparent 50%),
+        radial-gradient(ellipse 50% 40% at 90% 100%, rgba(232, 145, 15, 0.14), transparent 45%),
+        linear-gradient(165deg, #f7fbfe 0%, #eef7fa 45%, #f5faf7 100%);
       z-index: 0;
       pointer-events: none;
     }
 
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(125, 211, 198, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(125, 211, 198, 0.04) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    .deck {
-      position: relative;
-      z-index: 1;
-      height: 100%;
-      width: 100%;
-    }
+    .deck { position: relative; z-index: 1; height: 100%; width: 100%; }
 
     .slide {
       position: absolute;
       inset: 0;
       display: none;
-      padding: var(--slide-pad);
+      padding: var(--pad);
+      padding-bottom: 4rem;
       opacity: 0;
-      transform: translateY(18px) scale(0.985);
-      transition: opacity 0.45s ease, transform 0.45s ease;
+      transform: translateY(14px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      overflow-y: auto;
     }
 
     .slide.active {
       display: flex;
       flex-direction: column;
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: none;
     }
 
     .slide.exit {
       display: flex;
       flex-direction: column;
       opacity: 0;
-      transform: translateY(-12px) scale(0.99);
+      transform: translateY(-10px);
     }
 
-    .brand-row {
+    .eyebrow {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
-      font-size: 0.85rem;
+      gap: 1rem;
+      margin-bottom: 1.1rem;
+      font-size: 0.82rem;
+      font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--soft);
+      color: var(--muted);
     }
 
-    .brand-row .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--teal);
-      display: inline-block;
-      margin-right: 0.55rem;
-      box-shadow: 0 0 12px rgba(45, 212, 191, 0.7);
+    .eyebrow .step {
+      color: var(--teal-deep);
+      background: rgba(15, 159, 138, 0.12);
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
     }
 
-    h1, h2, h3 {
-      font-family: "Syne", sans-serif;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
-    }
-
-    h1 { font-size: clamp(2.6rem, 6vw, 4.8rem); font-weight: 800; }
-    h2 { font-size: clamp(2rem, 4.2vw, 3.4rem); font-weight: 700; margin-bottom: 1rem; }
-    h3 { font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 700; color: var(--teal); }
+    h1, h2, h3 { font-family: "Fraunces", serif; letter-spacing: -0.02em; line-height: 1.12; }
+    h1 { font-size: clamp(2.4rem, 5.5vw, 4.2rem); font-weight: 800; max-width: 16ch; }
+    h2 { font-size: clamp(1.7rem, 3.6vw, 2.85rem); font-weight: 700; margin-bottom: 0.75rem; }
+    h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; }
 
     .lede {
-      font-size: clamp(1.1rem, 2vw, 1.45rem);
-      color: var(--mist);
-      max-width: 42rem;
+      font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+      color: var(--muted);
+      max-width: 44rem;
       line-height: 1.5;
-      font-weight: 300;
     }
 
-    .accent { color: var(--teal); }
+    .accent { color: var(--teal-deep); }
+    .sky { color: var(--sky); }
     .amber { color: var(--amber); }
     .coral { color: var(--coral); }
 
-    .hero {
-      justify-content: center;
-      gap: 1.25rem;
-    }
-
-    .hero .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.45rem 0.9rem;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: var(--teal);
-      font-size: 0.85rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+    .hero { justify-content: center; gap: 1rem; }
+    .hero .badge {
       width: fit-content;
-      backdrop-filter: blur(8px);
-      background: rgba(18, 48, 68, 0.45);
-      animation: floatIn 0.8s ease both;
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(15,159,138,0.15), rgba(31,143,216,0.15));
+      color: var(--teal-deep);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
+    .hero .meta { margin-top: 0.75rem; color: var(--muted); font-weight: 500; }
 
-    .hero h1 { animation: floatIn 0.9s ease 0.1s both; max-width: 14ch; }
-    .hero .lede { animation: floatIn 0.9s ease 0.2s both; }
-    .hero .meta { animation: floatIn 0.9s ease 0.3s both; margin-top: 1.5rem; color: var(--soft); }
-
-    @keyframes floatIn {
-      from { opacity: 0; transform: translateY(22px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.7; }
-      50% { transform: scale(1.08); opacity: 1; }
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 2rem;
-      flex: 1;
-      align-items: center;
-      min-height: 0;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-      margin-top: 1.5rem;
-    }
-
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; margin-top: 1.1rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.1rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem; margin-top: 1.1rem; }
 
     .card {
-      background: linear-gradient(160deg, rgba(18, 48, 68, 0.85), rgba(12, 36, 51, 0.7));
+      background: var(--card);
       border: 1px solid var(--line);
       border-radius: 1.1rem;
-      padding: 1.35rem 1.4rem;
+      padding: 1.15rem 1.2rem;
+      box-shadow: 0 10px 30px rgba(18, 48, 71, 0.05);
       position: relative;
       overflow: hidden;
     }
@@ -204,535 +145,268 @@
     .card::before {
       content: "";
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--teal), var(--amber));
-      opacity: 0.85;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--teal), var(--sky), var(--amber));
     }
 
-    .card strong {
-      display: block;
-      font-family: "Syne", sans-serif;
-      font-size: 1.15rem;
-      margin-bottom: 0.45rem;
+    .card.teal::before { background: var(--teal); }
+    .card.sky::before { background: var(--sky); }
+    .card.amber::before { background: var(--amber); }
+    .card.coral::before { background: var(--coral); }
+    .card.lilac::before { background: var(--lilac); }
+
+    .card p, .card li { color: var(--muted); font-size: 0.98rem; line-height: 1.45; }
+    .card strong { display: block; font-family: "Fraunces", serif; font-size: 1.15rem; color: var(--ink); margin-bottom: 0.35rem; }
+    .card .n {
+      font-family: "Fraunces", serif;
+      font-size: 1.85rem;
+      color: var(--sky);
+      line-height: 1;
+      margin-bottom: 0.35rem;
     }
 
-    .card p, .card li {
-      color: var(--mist);
-      font-size: 0.98rem;
-      line-height: 1.45;
-    }
-
-    .big-quote {
-      font-family: "Syne", sans-serif;
-      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-      line-height: 1.2;
-      max-width: 18ch;
-    }
-
-    .list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
-      margin-top: 1rem;
-    }
-
-    .list li {
-      display: flex;
-      gap: 0.9rem;
-      align-items: flex-start;
-      font-size: 1.15rem;
-      color: var(--mist);
-    }
-
+    .list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.85rem; }
+    .list li { display: flex; gap: 0.75rem; align-items: flex-start; color: var(--muted); font-size: 1.05rem; line-height: 1.4; }
     .list .num {
       flex-shrink: 0;
-      width: 2rem;
-      height: 2rem;
-      border-radius: 0.55rem;
-      background: rgba(45, 212, 191, 0.15);
-      color: var(--teal);
-      display: grid;
-      place-items: center;
+      width: 1.85rem; height: 1.85rem;
+      border-radius: 0.5rem;
+      display: grid; place-items: center;
+      background: rgba(31, 143, 216, 0.12);
+      color: var(--sky);
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
     .flow {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.65rem;
-      margin-top: 1.5rem;
-      align-items: center;
+      display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 1.1rem;
     }
-
     .flow .step {
-      padding: 0.75rem 1.1rem;
-      border-radius: 0.8rem;
-      background: rgba(18, 48, 68, 0.9);
+      padding: 0.7rem 1rem;
+      border-radius: 0.85rem;
+      background: var(--card);
       border: 1px solid var(--line);
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
-    .flow .arrow {
-      color: var(--amber);
       font-weight: 700;
+      box-shadow: 0 6px 18px rgba(18,48,71,0.04);
     }
+    .flow .arrow { color: var(--amber); font-weight: 800; }
 
-    .viz-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-top: 1.25rem;
-    }
-
-    .viz {
-      padding: 1.2rem;
-      border-radius: 1rem;
-      border: 1px solid var(--line);
-      background: rgba(12, 36, 51, 0.75);
-    }
-
-    .viz .label {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--soft);
-      margin-bottom: 0.75rem;
-    }
-
-    .bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 0.4rem;
-      height: 90px;
-    }
-
-    .bars span {
-      flex: 1;
-      border-radius: 0.3rem 0.3rem 0 0;
-      background: linear-gradient(180deg, var(--teal), var(--teal-dim));
-      animation: grow 1.2s ease both;
-    }
-
-    .bars span:nth-child(1) { height: 45%; animation-delay: 0.1s; }
-    .bars span:nth-child(2) { height: 70%; animation-delay: 0.2s; }
-    .bars span:nth-child(3) { height: 55%; animation-delay: 0.3s; }
-    .bars span:nth-child(4) { height: 90%; animation-delay: 0.4s; }
-    .bars span:nth-child(5) { height: 65%; animation-delay: 0.5s; }
-
-    @keyframes grow {
-      from { transform: scaleY(0); transform-origin: bottom; }
-      to { transform: scaleY(1); transform-origin: bottom; }
-    }
-
-    .line-chart {
-      height: 90px;
-      position: relative;
-    }
-
-    .line-chart svg { width: 100%; height: 100%; }
-
-    .donut {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      background: conic-gradient(var(--teal) 0 62%, var(--amber) 62% 85%, var(--coral) 85% 100%);
-      mask: radial-gradient(circle at center, transparent 42%, black 43%);
-      -webkit-mask: radial-gradient(circle at center, transparent 42%, black 43%);
-      animation: pulse 3s ease-in-out infinite;
-    }
-
-    .compare {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-      margin-top: 1.25rem;
-    }
-
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
     .compare .side {
-      padding: 1.4rem;
-      border-radius: 1rem;
-      border: 1px solid var(--line);
-      background: rgba(12, 36, 51, 0.7);
+      padding: 1.2rem;
+      border-radius: 1.1rem;
+      background: var(--card);
+      border: 2px solid var(--line);
     }
-
-    .compare .side.bad { border-color: rgba(255, 122, 89, 0.35); }
-    .compare .side.good { border-color: rgba(45, 212, 191, 0.4); }
-
-    .compare h3 { margin-bottom: 0.6rem; }
-    .compare.good h3, .side.good h3 { color: var(--teal); }
+    .side.bad { border-color: rgba(232, 90, 60, 0.35); background: #fff7f5; }
+    .side.good { border-color: rgba(15, 159, 138, 0.4); background: #f1fbf8; }
     .side.bad h3 { color: var(--coral); }
+    .side.good h3 { color: var(--teal-deep); }
 
-    .kpi {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .kpi .stat {
-      padding: 1.3rem;
+    .callout {
+      margin-top: 1.15rem;
+      padding: 1rem 1.25rem;
       border-radius: 1rem;
-      background: rgba(18, 48, 68, 0.85);
-      border: 1px solid var(--line);
+      background: linear-gradient(120deg, rgba(15,159,138,0.12), rgba(31,143,216,0.12));
+      border: 1px solid rgba(15,159,138,0.2);
+      font-family: "Fraunces", serif;
+      font-size: clamp(1.1rem, 2vw, 1.45rem);
       text-align: center;
+      color: var(--ink);
     }
 
-    .kpi .stat .n {
-      font-family: "Syne", sans-serif;
-      font-size: 2.4rem;
-      color: var(--amber);
-      display: block;
-      line-height: 1;
-    }
-
-    .kpi .stat .t {
-      color: var(--soft);
-      margin-top: 0.45rem;
-      font-size: 0.95rem;
-    }
-
-    .challenge {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      flex: 1;
-      justify-content: center;
-    }
-
-    .challenge .badge {
-      width: fit-content;
-      padding: 0.4rem 0.85rem;
-      border-radius: 999px;
-      background: rgba(240, 180, 41, 0.15);
-      color: var(--amber);
-      font-size: 0.85rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .timer-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.35rem 0.75rem;
-      border-radius: 0.5rem;
-      background: rgba(45, 212, 191, 0.12);
-      color: var(--teal);
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .footer-bar {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 5;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.85rem 1.5rem;
-      background: linear-gradient(180deg, transparent, rgba(7, 20, 28, 0.92));
-      font-size: 0.85rem;
-      color: var(--soft);
-    }
-
-    .progress {
-      flex: 1;
-      max-width: 280px;
-      height: 4px;
-      border-radius: 999px;
-      background: rgba(125, 211, 198, 0.15);
-      margin: 0 1.5rem;
-      overflow: hidden;
-    }
-
-    .progress > i {
-      display: block;
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--teal), var(--amber));
-      transition: width 0.35s ease;
-    }
-
-    .nav-hint kbd {
-      display: inline-block;
-      padding: 0.15rem 0.4rem;
-      border: 1px solid var(--line);
-      border-radius: 0.3rem;
-      font-family: inherit;
-      font-size: 0.75rem;
-      color: var(--mist);
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      margin-top: 1.25rem;
-    }
-
-    .pill {
-      padding: 0.55rem 0.95rem;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(18, 48, 68, 0.6);
-      color: var(--mist);
-      font-size: 0.95rem;
-    }
-
-    .two-col-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem 2rem;
-      margin-top: 1.25rem;
-    }
-
-    .two-col-list li {
-      color: var(--mist);
-      font-size: 1.1rem;
-      padding-left: 1.1rem;
-      position: relative;
-      list-style: none;
-    }
-
-    .two-col-list li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0.55rem;
-      width: 0.45rem;
-      height: 0.45rem;
-      border-radius: 50%;
-      background: var(--teal);
-    }
-
-    .formula {
-      margin-top: 1.5rem;
-      padding: 1.5rem 1.75rem;
-      border-radius: 1.1rem;
-      border: 1px solid var(--line);
-      background: linear-gradient(120deg, rgba(45, 212, 191, 0.12), rgba(240, 180, 41, 0.08));
-      font-family: "Syne", sans-serif;
-      font-size: clamp(1.3rem, 2.5vw, 2rem);
+    .kpi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; margin-top: 1.1rem; }
+    .kpi .stat {
       text-align: center;
-    }
-
-    .lab-steps {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      margin-top: 1.25rem;
-    }
-
-    .lab-steps .card .n {
-      font-family: "Syne", sans-serif;
-      font-size: 2rem;
-      color: var(--amber);
-      line-height: 1;
-      margin-bottom: 0.4rem;
-    }
-
-    .split-story {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-      margin-top: 1.25rem;
-    }
-
-    .story-card {
-      padding: 1.5rem;
-      border-radius: 1.1rem;
-      min-height: 220px;
+      padding: 1.1rem;
+      border-radius: 1rem;
+      background: var(--card);
       border: 1px solid var(--line);
-      background: rgba(12, 36, 51, 0.75);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
     }
-
-    .story-card .who {
-      font-size: 0.85rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--soft);
-      margin-bottom: 0.75rem;
-    }
-
-    .story-card .said {
-      font-size: 1.25rem;
-      line-height: 1.4;
-      flex: 1;
-    }
-
-    .story-card .result {
-      margin-top: 1rem;
-      padding-top: 0.85rem;
-      border-top: 1px solid var(--line);
-      color: var(--amber);
-      font-weight: 600;
-    }
-
-    .section-mark {
-      font-size: 0.9rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 0.75rem;
-      font-weight: 600;
-    }
-
-    .pattern-grid {
-      display: grid;
-      gap: 0.55rem;
-      margin-top: 1rem;
-      width: fit-content;
-      max-width: 100%;
-    }
-
-    .pattern-grid.cols-6 { grid-template-columns: repeat(6, minmax(52px, 72px)); }
-    .pattern-grid.cols-4 { grid-template-columns: repeat(4, minmax(70px, 1fr)); }
-    .pattern-grid.cols-5 { grid-template-columns: repeat(5, minmax(64px, 1fr)); }
-
-    .pattern-grid .cell {
-      aspect-ratio: 1;
-      border-radius: 0.75rem;
-      display: grid;
-      place-items: center;
-      font-family: "Syne", sans-serif;
-      font-weight: 700;
-      font-size: clamp(1rem, 2vw, 1.35rem);
-      border: 1px solid var(--line);
-      background: rgba(18, 48, 68, 0.9);
-      color: var(--mist);
-    }
-
-    .pattern-grid .cell.emoji { font-size: clamp(1.4rem, 3vw, 2rem); }
-    .pattern-grid .cell.teal { background: rgba(45, 212, 191, 0.25); color: var(--teal); border-color: rgba(45, 212, 191, 0.45); }
-    .pattern-grid .cell.amber { background: rgba(240, 180, 41, 0.22); color: var(--amber); border-color: rgba(240, 180, 41, 0.45); }
-    .pattern-grid .cell.coral { background: rgba(255, 122, 89, 0.22); color: var(--coral); border-color: rgba(255, 122, 89, 0.45); }
-    .pattern-grid .cell.dim { opacity: 0.45; }
-    .pattern-grid .cell.glow {
-      box-shadow: 0 0 0 2px var(--amber), 0 0 18px rgba(240, 180, 41, 0.35);
-    }
+    .kpi .n { display: block; font-family: "Fraunces", serif; font-size: 2.1rem; color: var(--sky); line-height: 1; }
+    .kpi .t { color: var(--muted); margin-top: 0.35rem; font-size: 0.92rem; }
 
     .mini-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 1rem;
-      font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+      margin-top: 0.85rem;
+      font-size: 0.95rem;
+      background: var(--card);
+      border-radius: 0.85rem;
+      overflow: hidden;
     }
-
     .mini-table th, .mini-table td {
       border: 1px solid var(--line);
-      padding: 0.55rem 0.7rem;
+      padding: 0.5rem 0.65rem;
       text-align: center;
     }
+    .mini-table th { background: #e7f3f8; color: var(--sky); }
+    .mini-table .name { text-align: left; font-weight: 600; color: var(--ink); }
+    .mini-table .low { color: var(--coral); font-weight: 700; }
+    .mini-table .ok { color: var(--teal-deep); font-weight: 700; }
 
-    .mini-table th {
-      background: rgba(18, 48, 68, 0.95);
-      color: var(--teal);
-      font-weight: 600;
-    }
-
-    .mini-table td { background: rgba(12, 36, 51, 0.65); color: var(--mist); }
-    .mini-table td.low { color: var(--coral); font-weight: 700; }
-    .mini-table td.ok { color: var(--teal); font-weight: 600; }
-    .mini-table .name { text-align: left; color: var(--white); }
-
-    .round-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.35rem 0.8rem;
-      border-radius: 999px;
-      background: rgba(240, 180, 41, 0.15);
-      color: var(--amber);
-      font-size: 0.85rem;
+    .pattern-grid { display: grid; gap: 0.5rem; margin-top: 0.85rem; width: fit-content; }
+    .pattern-grid.cols-6 { grid-template-columns: repeat(6, minmax(48px, 64px)); }
+    .pattern-grid.cols-5 { grid-template-columns: repeat(5, minmax(52px, 64px)); }
+    .pattern-grid.cols-4 { grid-template-columns: repeat(4, minmax(64px, 78px)); }
+    .pattern-grid .cell {
+      aspect-ratio: 1;
+      border-radius: 0.7rem;
+      display: grid; place-items: center;
+      font-family: "Fraunces", serif;
       font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 4px 12px rgba(18,48,71,0.04);
     }
+    .pattern-grid .cell.teal { background: #d8f5ef; color: var(--teal-deep); }
+    .pattern-grid .cell.amber { background: #ffe8c2; color: #b86d00; }
+    .pattern-grid .cell.emoji { font-size: 1.6rem; }
 
-    .game-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin: 0.75rem 0 1rem;
-      align-items: center;
-    }
+    .game-controls { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.6rem 0 0.85rem; }
     .game-controls button {
       font-family: inherit;
       cursor: pointer;
       border: 1px solid var(--line);
-      background: rgba(18, 48, 68, 0.9);
-      color: var(--mist);
-      padding: 0.45rem 0.85rem;
+      background: #fff;
+      color: var(--ink);
+      padding: 0.4rem 0.8rem;
       border-radius: 999px;
+      font-weight: 700;
       font-size: 0.9rem;
-      font-weight: 600;
     }
     .game-controls button.active {
-      background: rgba(45, 212, 191, 0.2);
-      color: var(--teal);
-      border-color: rgba(45, 212, 191, 0.5);
+      background: var(--sky);
+      color: #fff;
+      border-color: var(--sky);
     }
     .game-controls button.action {
-      background: rgba(240, 180, 41, 0.18);
-      color: var(--amber);
-      border-color: rgba(240, 180, 41, 0.4);
+      background: var(--amber);
+      color: #fff;
+      border-color: var(--amber);
     }
     .game-answer {
       display: none;
-      margin-top: 1rem;
-      padding: 1rem 1.2rem;
-      border-radius: 1rem;
-      border: 1px solid rgba(45, 212, 191, 0.35);
-      background: rgba(45, 212, 191, 0.1);
-      color: var(--mist);
-      font-size: 1.15rem;
-      line-height: 1.4;
+      margin-top: 0.85rem;
+      padding: 0.9rem 1.1rem;
+      border-radius: 0.9rem;
+      background: #e8faf5;
+      border: 1px solid rgba(15,159,138,0.3);
+      color: var(--teal-deep);
+      font-weight: 600;
+      font-size: 1.05rem;
     }
     .game-answer.show { display: block; }
 
+    .challenge { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.75rem; }
+    .badge {
+      width: fit-content;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(232,145,15,0.15);
+      color: #b86d00;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .footer-bar {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.35rem;
+      background: linear-gradient(180deg, transparent, rgba(243,248,252,0.95));
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .progress {
+      flex: 1; max-width: 260px; height: 5px; border-radius: 999px;
+      background: rgba(18,48,71,0.1); margin: 0 1.2rem; overflow: hidden;
+    }
+    .progress > i {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--teal), var(--sky), var(--amber));
+      transition: width 0.3s ease;
+    }
+    .nav-hint kbd {
+      display: inline-block;
+      padding: 0.12rem 0.35rem;
+      border: 1px solid var(--line);
+      border-radius: 0.3rem;
+      background: #fff;
+      font-family: inherit;
+      font-size: 0.72rem;
+    }
+
+    .pathway {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.55rem;
+      margin-top: 1.1rem;
+    }
+    .pathway .p {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 0.9rem;
+      padding: 0.85rem 0.7rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.92rem;
+      box-shadow: 0 6px 16px rgba(18,48,71,0.04);
+    }
+    .pathway .p span {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--sky);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
     @media (max-width: 900px) {
-      .grid-2, .grid-3, .grid-4, .compare, .kpi, .lab-steps { grid-template-columns: 1fr; }
-      h1 { font-size: 2.2rem; }
-      .slide { overflow-y: auto; }
+      .grid-2, .grid-3, .grid-4, .compare, .kpi, .pathway, .lab-steps { grid-template-columns: 1fr; }
+      h1 { font-size: 2.1rem; }
     }
   </style>
 </head>
 <body>
   <div class="deck" id="deck">
 
+    <!-- 1 -->
     <section class="slide hero active" data-title="Title">
-      <div class="tag"><span style="width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;box-shadow:0 0 10px var(--teal)"></span> 60 minutes · ~14 slides</div>
+      <div class="badge">Ahliyyah &amp; Mutran · Grades 6–10 · All subjects</div>
       <h1>From Numbers to <span class="accent">Narratives</span></h1>
-      <p class="lede">Ahliyyah &amp; Mutran · grades 6–10 · all subjects — play, learn fast, then build in Power BI.</p>
-      <p class="meta">10 min game · 20 min teach · 30 min technical</p>
+      <p class="lede">A step-by-step professional learning session: turn classroom data into clear patterns, sound judgments, and teaching actions — then practice in Power BI.</p>
+      <p class="meta">Icebreaker → Framework → Tool → Practice → Share</p>
     </section>
 
-    <section class="slide" data-title="Agenda">
-      <div class="brand-row"><span><span class="dot"></span>Roadmap</span><span>Stay on pace</span></div>
-      <h2>Three blocks only</h2>
-      <div class="grid-3">
-        <div class="card"><strong class="amber">10 min</strong><p><em>Pattern Police</em> — 5 rounds on <strong>one</strong> board.</p></div>
-        <div class="card"><strong class="accent">20 min</strong><p>Teaching — <strong>6 slides</strong> you can talk through properly.</p></div>
-        <div class="card"><strong class="coral">30 min</strong><p>Technical — demo + 3 builds + share.</p></div>
+    <!-- 2 -->
+    <section class="slide" data-title="Session path">
+      <div class="eyebrow"><span>How today is built</span><span class="step">Session map</span></div>
+      <h2>A clear path — not a pile of tips</h2>
+      <p class="lede">We move in order. Each step prepares the next.</p>
+      <div class="pathway">
+        <div class="p"><span>01</span>Warm up</div>
+        <div class="p"><span>02</span>Why data</div>
+        <div class="p"><span>03</span>How to analyse</div>
+        <div class="p"><span>04</span>Power BI</div>
+        <div class="p"><span>05</span>Do it</div>
+      </div>
+      <div class="kpi">
+        <div class="stat"><span class="n">~10</span><div class="t">Min icebreaker</div></div>
+        <div class="stat"><span class="n">~25</span><div class="t">Min teaching</div></div>
+        <div class="stat"><span class="n">~25</span><div class="t">Min technical</div></div>
       </div>
     </section>
 
+    <!-- 3 GAME -->
     <section class="slide" data-title="Pattern Police" id="game-slide">
-      <div class="brand-row"><span><span class="dot"></span>Icebreaker</span><span>Round buttons stay on this slide</span></div>
-      <div class="section-mark">Pattern Police · 5 rounds · teams shout the answer</div>
+      <div class="eyebrow"><span>Step 1 · Warm up</span><span class="step">Pattern Police</span></div>
+      <h2>Find the pattern — 5 rounds</h2>
+      <p class="lede">Teams of 3–4. Shout when you see it. This is the same skill you’ll use on markbooks later.</p>
       <div class="game-controls" id="game-rounds">
         <button type="button" data-round="0" class="active">1</button>
         <button type="button" data-round="1">2</button>
@@ -741,189 +415,357 @@
         <button type="button" data-round="4">5</button>
         <button type="button" class="action" id="game-reveal">Show answer</button>
       </div>
-      <div id="game-title" style="font-family:Syne,sans-serif;font-size:clamp(1.5rem,3vw,2.2rem);margin-bottom:0.35rem"></div>
+      <div id="game-title" style="font-family:Fraunces,serif;font-size:clamp(1.35rem,2.5vw,1.9rem);margin-bottom:0.25rem"></div>
       <p id="game-prompt" class="lede"></p>
       <div id="game-body"></div>
       <div class="game-answer" id="game-answer"></div>
     </section>
 
-    <!-- TEACH 1 -->
+    <!-- 4 Bridge -->
+    <section class="slide" data-title="Bridge">
+      <div class="eyebrow"><span>From game → classroom</span><span class="step">Connection</span></div>
+      <h2>What you just did <span class="accent">is</span> data analysis</h2>
+      <div class="grid-3">
+        <div class="card teal"><strong>You looked</strong><p>At shapes, numbers, and a markbook without rushing to an average.</p></div>
+        <div class="card sky"><strong>You found patterns</strong><p>Columns, links, and “whole class weak on Part B.”</p></div>
+        <div class="card amber"><strong>You implied action</strong><p>Reteach Part B — don’t only blame one student.</p></div>
+      </div>
+      <div class="callout">Next: we name the steps so you can repeat them every unit.</div>
+    </section>
+
+    <!-- 5 Why -->
+    <section class="slide" data-title="Why it matters">
+      <div class="eyebrow"><span>Step 2 · Why this matters</span><span class="step">Purpose</span></div>
+      <h2>Data doesn’t replace teacher judgment — it <span class="accent">sharpens</span> it</h2>
+      <div class="grid-2">
+        <div>
+          <ul class="list">
+            <li><span class="num">1</span><span>See who is slipping <em>before</em> the next report card.</span></li>
+            <li><span class="num">2</span><span>Check whether support and reteaching actually help.</span></li>
+            <li><span class="num">3</span><span>Talk to heads of department and parents with evidence, not vibes.</span></li>
+            <li><span class="num">4</span><span>Stop drowning in marksheets — start deciding.</span></li>
+          </ul>
+        </div>
+        <div class="card lilac">
+          <strong>For every subject</strong>
+          <p>Math, English, Science, Arabic, PE, Arts — the method is the same. Only the columns change (skills, tasks, criteria, standards).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 What is DA -->
+    <section class="slide" data-title="What is analysis">
+      <div class="eyebrow"><span>Step 2 · Definition</span><span class="step">Core idea</span></div>
+      <h2>What is data analysis — really?</h2>
+      <p class="lede">It is a disciplined habit: ask a useful question, look at evidence, find patterns, decide what to do.</p>
+      <div class="flow">
+        <span class="step">Question</span><span class="arrow">→</span>
+        <span class="step">Evidence</span><span class="arrow">→</span>
+        <span class="step">Pattern</span><span class="arrow">→</span>
+        <span class="step">Insight</span><span class="arrow">→</span>
+        <span class="step">Action</span>
+      </div>
+      <div class="grid-3" style="margin-top:1.25rem">
+        <div class="card"><strong>Not just charts</strong><p>A chart without a decision is decoration.</p></div>
+        <div class="card"><strong>Not only for experts</strong><p>If you can mark work, you can analyse patterns.</p></div>
+        <div class="card"><strong>Ends in Monday</strong><p>If nothing changes in class, you stopped too early.</p></div>
+      </div>
+    </section>
+
+    <!-- 7 Autopsy -->
     <section class="slide" data-title="Autopsy vs Biopsy">
-      <div class="brand-row"><span><span class="dot"></span>Teach 1 of 6</span><span>~3 minutes</span></div>
-      <h2>Shift from <span class="coral">autopsy</span> to <span class="accent">biopsy</span></h2>
+      <div class="eyebrow"><span>Step 3 · Mindset</span><span class="step">How we use data</span></div>
+      <h2>Autopsy vs biopsy</h2>
       <div class="compare">
         <div class="side bad">
-          <h3>Autopsy</h3>
+          <h3>Data as autopsy</h3>
           <ul class="list">
-            <li><span class="num">×</span><span>Look at results only at the end of the unit</span></li>
-            <li><span class="num">×</span><span>Stop at the class average</span></li>
-            <li><span class="num">×</span><span>Enter grades and move on</span></li>
+            <li><span class="num">×</span><span>Only after the unit ends</span></li>
+            <li><span class="num">×</span><span>Focus on overall averages</span></li>
+            <li><span class="num">×</span><span>Treat data as a reporting duty</span></li>
+            <li><span class="num">×</span><span>Result: grades filed, little change</span></li>
           </ul>
         </div>
         <div class="side good">
-          <h3>Biopsy</h3>
+          <h3>Data as biopsy</h3>
           <ul class="list">
-            <li><span class="num">✓</span><span>Look while students can still improve</span></li>
-            <li><span class="num">✓</span><span>Find patterns across tasks / groups</span></li>
-            <li><span class="num">✓</span><span>Change the next lesson because of what you see</span></li>
+            <li><span class="num">✓</span><span>During learning, while you can still help</span></li>
+            <li><span class="num">✓</span><span>Focus on skills, tasks, groups</span></li>
+            <li><span class="num">✓</span><span>Treat data as a diagnostic tool</span></li>
+            <li><span class="num">✓</span><span>Result: teaching adjustments</span></li>
           </ul>
         </div>
       </div>
     </section>
 
-    <!-- TEACH 2 -->
-    <section class="slide" data-title="Four steps">
-      <div class="brand-row"><span><span class="dot"></span>Teach 2 of 6</span><span>~4 minutes</span></div>
-      <h2>Four steps. Repeat every unit.</h2>
-      <div class="lab-steps">
-        <div class="card"><div class="n">01</div><strong>Look</strong><p>Open the marks. Notice highs, lows, and anything odd.</p></div>
-        <div class="card"><div class="n">02</div><strong>Find patterns</strong><p>Same weak task? Same group? Same homework habit?</p></div>
-        <div class="card"><div class="n">03</div><strong>Ask why</strong><p>Was it the teaching, the task, or missing basics?</p></div>
-        <div class="card"><div class="n">04</div><strong>Take action</strong><p>Reteach, regroup, or change the next lesson plan.</p></div>
+    <!-- 8 Engine -->
+    <section class="slide" data-title="Analysis engine">
+      <div class="eyebrow"><span>Step 3 · Method</span><span class="step">Four-step engine</span></div>
+      <h2>Look → Patterns → Why → Action</h2>
+      <div class="grid-2" style="grid-template-columns:1fr 1fr">
+        <div class="card sky"><div class="n">01</div><strong>Look</strong><p>Open the data. Check averages <em>and</em> the spread. Notice outliers.</p></div>
+        <div class="card teal"><div class="n">02</div><strong>Find patterns</strong><p>Which task, skill, group, or habit shows up again and again?</p></div>
+        <div class="card amber"><div class="n">03</div><strong>Ask why</strong><p>Teaching method? Unclear task? Missing prior skills?</p></div>
+        <div class="card coral"><div class="n">04</div><strong>Take action</strong><p>Reteach, regroup, or redesign the next lesson.</p></div>
       </div>
-      <div class="formula" style="margin-top:1.25rem;font-size:1.15rem">You practiced Step 2 in Pattern Police</div>
+      <div class="callout">Stopping after Look is autopsy. The engine only works if you act.</div>
     </section>
 
-    <!-- TEACH 3 -->
-    <section class="slide" data-title="Beyond the average">
-      <div class="brand-row"><span><span class="dot"></span>Teach 3 of 6</span><span>~3 minutes</span></div>
-      <h2>Class average 75% is not the full story</h2>
-      <p class="lede">Before you celebrate or panic, check three things:</p>
-      <div class="grid-3">
-        <div class="card"><strong>Spread</strong><p>Are most students near 75% — or split into high and low groups?</p></div>
-        <div class="card"><strong>High scores</strong><p>Who already gets it and needs a harder challenge?</p></div>
-        <div class="card"><strong>Low scores</strong><p>Who needs extra help this week — and on what?</p></div>
+    <!-- 9 School data -->
+    <section class="slide" data-title="Your data">
+      <div class="eyebrow"><span>Step 3 · Inputs</span><span class="step">What teachers already have</span></div>
+      <h2>You already sit on useful data</h2>
+      <div class="grid-4">
+        <div class="card teal"><strong>Achievement</strong><p>Scores, grades, growth between terms or tasks</p></div>
+        <div class="card sky"><strong>Engagement</strong><p>Attendance, homework completion, participation</p></div>
+        <div class="card amber"><strong>Support</strong><p>Reading support, math help, IEPs, interventions</p></div>
+        <div class="card lilac"><strong>Context</strong><p>Grade, section, gender, activities — use carefully</p></div>
       </div>
+      <p class="lede" style="margin-top:1.1rem">Today’s lab file includes all four — so the skills transfer to your own markbooks.</p>
     </section>
 
-    <!-- TEACH 4 -->
+    <!-- 10 Questions -->
     <section class="slide" data-title="Better questions">
-      <div class="brand-row"><span><span class="dot"></span>Teach 4 of 6</span><span>~3 minutes</span></div>
-      <h2>Charts answer questions. Weak questions waste time.</h2>
+      <div class="eyebrow"><span>Step 3 · Before any chart</span><span class="step">Questions</span></div>
+      <h2>Strong questions make strong analysis</h2>
       <div class="compare">
         <div class="side bad">
           <h3>Weak</h3>
           <ul class="list">
             <li><span class="num">×</span><span>“Show me all the scores.”</span></li>
-            <li><span class="num">×</span><span>“Is the class doing okay?”</span></li>
+            <li><span class="num">×</span><span>“Is the class okay?”</span></li>
             <li><span class="num">×</span><span>“Who failed?”</span></li>
           </ul>
         </div>
         <div class="side good">
           <h3>Strong</h3>
           <ul class="list">
-            <li><span class="num">✓</span><span>“Which part of the unit was hardest?”</span></li>
-            <li><span class="num">✓</span><span>“Who improved from Term 1 to Term 2?”</span></li>
-            <li><span class="num">✓</span><span>“Do students who skip homework score lower?”</span></li>
+            <li><span class="num">✓</span><span>“Which part of the unit was hardest for most students?”</span></li>
+            <li><span class="num">✓</span><span>“Who improved from Term 1 to Term 2 — and who didn’t?”</span></li>
+            <li><span class="num">✓</span><span>“Do students with low attendance also score lower?”</span></li>
           </ul>
         </div>
       </div>
+      <div class="callout">Move from “Who failed?” → “Which skill / task / habit is the problem?”</div>
     </section>
 
-    <!-- TEACH 5 -->
-    <section class="slide" data-title="Why and act">
-      <div class="brand-row"><span><span class="dot"></span>Teach 5 of 6</span><span>~4 minutes</span></div>
-      <h2>Ask why — then choose a move</h2>
+    <!-- 11 Beyond average -->
+    <section class="slide" data-title="Beyond averages">
+      <div class="eyebrow"><span>Step 3 · Look carefully</span><span class="step">Beyond the average</span></div>
+      <h2>Class average 75% is a starting point — not a story</h2>
       <div class="grid-3">
-        <div class="card"><strong>Teaching?</strong><p>Maybe the method didn’t match the skill.</p><p style="margin-top:0.5rem;color:var(--teal)">→ Try another way to teach it</p></div>
-        <div class="card"><strong>The task?</strong><p>Maybe the question or rubric was unclear.</p><p style="margin-top:0.5rem;color:var(--teal)">→ Fix the task next time</p></div>
-        <div class="card"><strong>Basics?</strong><p>Maybe students missed earlier skills.</p><p style="margin-top:0.5rem;color:var(--amber)">→ Build those basics first</p></div>
+        <div class="card sky"><strong>1 · Spread</strong><p>Are scores clustered near 75%, or split into two groups?</p></div>
+        <div class="card teal"><strong>2 · High scores</strong><p>Who already mastered it and needs a bigger challenge?</p></div>
+        <div class="card coral"><strong>3 · Low scores</strong><p>Who needs help this week — and on which part?</p></div>
       </div>
-      <div class="flow" style="margin-top:1.25rem">
-        <span class="step">Reteach the class</span><span class="arrow">·</span>
-        <span class="step">Small groups</span><span class="arrow">·</span>
-        <span class="step">Change next lesson</span>
+      <div class="callout">Rule: useful data is timely, easy to read, and ready to use in the next lesson.</div>
+    </section>
+
+    <!-- 12 Worked example -->
+    <section class="slide" data-title="Worked example">
+      <div class="eyebrow"><span>Step 3 · Example</span><span class="step">Same average, different action</span></div>
+      <h2>Worked example: average = 74%</h2>
+      <div class="grid-2">
+        <div class="card coral">
+          <strong>Surface reading</strong>
+          <p>“74%. We’re fine. Move on.”</p>
+          <p style="margin-top:0.6rem"><strong style="font-family:DM Sans,sans-serif;font-size:0.95rem;color:var(--coral)">Result</strong></p>
+          <p>No change in teaching.</p>
+        </div>
+        <div class="card teal">
+          <strong>Pattern reading</strong>
+          <p>“Math Term 1 for students under 80% attendance averages <span class="amber">58%</span>.”</p>
+          <p style="margin-top:0.6rem"><strong style="font-family:DM Sans,sans-serif;font-size:0.95rem;color:var(--teal-deep)">Result</strong></p>
+          <p>Target those students + attendance check-ins.</p>
+        </div>
+      </div>
+      <p class="lede" style="margin-top:1rem">Same overall number. Only the second reading creates a Monday move.</p>
+    </section>
+
+    <!-- 13 Diagnose -->
+    <section class="slide" data-title="Ask why">
+      <div class="eyebrow"><span>Step 3 · Diagnose</span><span class="step">Ask why</span></div>
+      <h2>Three places to look for the cause</h2>
+      <div class="grid-3">
+        <div class="card sky"><strong>Teaching</strong><p>Was the method a poor match for the skill?</p><p style="margin-top:0.55rem;color:var(--sky);font-weight:600">→ Try another approach or medium</p></div>
+        <div class="card amber"><strong>The task</strong><p>Was the question unclear or the rubric confusing?</p><p style="margin-top:0.55rem;color:var(--amber);font-weight:600">→ Clarify the task next time</p></div>
+        <div class="card coral"><strong>Basics</strong><p>Did students miss earlier skills they needed?</p><p style="margin-top:0.55rem;color:var(--coral);font-weight:600">→ Rebuild those basics first</p></div>
       </div>
     </section>
 
-    <!-- TEACH 6 -->
+    <!-- 14 Action -->
+    <section class="slide" data-title="Take action">
+      <div class="eyebrow"><span>Step 3 · Act</span><span class="step">Three teaching moves</span></div>
+      <h2>Turn a pattern into a teaching move</h2>
+      <div class="grid-3">
+        <div class="card teal"><strong>Reteach</strong><p>Whole-class gap → short, focused mini-lesson on one error pattern.</p></div>
+        <div class="card sky"><strong>Regroup</strong><p>Mixed understanding → flexible groups: support some, stretch others.</p></div>
+        <div class="card amber"><strong>Redesign</strong><p>Future units → change pacing, examples, or assessment design.</p></div>
+      </div>
+      <div class="callout">Insight formula: Who + What changed + By how much + So what</div>
+    </section>
+
+    <!-- 15 2-2-2 -->
     <section class="slide" data-title="2-2-2">
-      <div class="brand-row"><span><span class="dot"></span>Teach 6 of 6</span><span>~3 minutes · then lab</span></div>
-      <h2>Your finish line today: the <span class="accent">2-2-2</span></h2>
+      <div class="eyebrow"><span>Step 3 · Output</span><span class="step">Standard response</span></div>
+      <h2>After every summative: the <span class="accent">2-2-2</span></h2>
       <div class="grid-3">
-        <div class="card"><strong class="accent">2 Strengths</strong><p>Where did the class do well?</p></div>
-        <div class="card"><strong class="amber">2 Gaps</strong><p>What patterns need attention?</p></div>
-        <div class="card"><strong class="coral">2 Actions</strong><p>What will you change this week?</p></div>
+        <div class="card teal"><strong>2 Strengths</strong><p>Where did the class do well?</p></div>
+        <div class="card amber"><strong>2 Gaps</strong><p>Which patterns need attention?</p></div>
+        <div class="card coral"><strong>2 Actions</strong><p>What will you change this week?</p></div>
       </div>
-      <div class="formula" style="margin-top:1.25rem;font-size:1.15rem">Say it like this: Who + What + How much + So what</div>
-      <p class="lede" style="margin-top:1rem">Now we build charts that help you write that 2-2-2.</p>
+      <p class="lede" style="margin-top:1.1rem">This is your finish line in the lab — not a folder of screenshots.</p>
     </section>
 
-    <section class="slide" data-title="Lab start">
-      <div class="section-mark">Technical · ~30 min</div>
-      <h2>Demo once · then you build</h2>
-      <ul class="list" style="max-width:42rem">
-        <li><span class="num">1</span><span>Get data → CSV → ahliyyah-mutran-learning.csv</span></li>
-        <li><span class="num">2</span><span>Bar: Subject + Average of Score</span></li>
-        <li><span class="num">3</span><span>Add Term slicer · flip Term 1 ↔ 2</span></li>
+    <!-- 16 Traps -->
+    <section class="slide" data-title="Traps">
+      <div class="eyebrow"><span>Step 3 · Caution</span><span class="step">Common traps</span></div>
+      <h2>Four traps that fool smart teachers</h2>
+      <div class="grid-2">
+        <ul class="list">
+          <li><span class="num">1</span><span><strong style="color:var(--ink)">Average addiction</strong> — 74% can hide a group at 48%.</span></li>
+          <li><span class="num">2</span><span><strong style="color:var(--ink)">Link ≠ cause</strong> — robotics kids may score high for other reasons.</span></li>
+        </ul>
+        <ul class="list">
+          <li><span class="num">3</span><span><strong style="color:var(--ink)">Cherry-picking</strong> — one chart that only supports what we hoped.</span></li>
+          <li><span class="num">4</span><span><strong style="color:var(--ink)">Missing context</strong> — a drop may mean a harder assessment.</span></li>
+        </ul>
+      </div>
+      <div class="callout">Always ask: compared to what — and for whom?</div>
+    </section>
+
+    <!-- 17 Power BI intro -->
+    <section class="slide" data-title="Meet Power BI">
+      <div class="eyebrow"><span>Step 4 · Tool</span><span class="step">Microsoft Power BI</span></div>
+      <h2>Why Power BI?</h2>
+      <p class="lede">It turns tables into interactive visuals — filters, comparisons, and living reports you can explore with colleagues.</p>
+      <div class="grid-3">
+        <div class="card sky"><strong>Free Desktop</strong><p>Install on your laptop; works with CSV and Excel.</p></div>
+        <div class="card teal"><strong>Built for slicing</strong><p>Click Term, Grade, Subject — the charts update live.</p></div>
+        <div class="card amber"><strong>Teacher-friendly</strong><p>Drag fields. No coding required for today’s lab.</p></div>
+      </div>
+    </section>
+
+    <!-- 18 Power BI steps -->
+    <section class="slide" data-title="Power BI steps">
+      <div class="eyebrow"><span>Step 4 · Workflow</span><span class="step">Four stages</span></div>
+      <h2>Power BI — step by step</h2>
+      <div class="grid-2">
+        <div class="card"><div class="n">01</div><strong>Get data</strong><p>Home → Get data → Text/CSV or Excel → Load.</p></div>
+        <div class="card"><div class="n">02</div><strong>Check types</strong><p>Score and Attendance must be numbers (Decimal Number).</p></div>
+        <div class="card"><div class="n">03</div><strong>Build visuals</strong><p>Drag fields to Axis / Values. Add slicers for Term, Grade, Subject.</p></div>
+        <div class="card"><div class="n">04</div><strong>Write the 2-2-2</strong><p>Use the chart as evidence — then name strengths, gaps, actions.</p></div>
+      </div>
+    </section>
+
+    <!-- 19 Live demo -->
+    <section class="slide" data-title="Live demo">
+      <div class="eyebrow"><span>Step 4 · Watch once</span><span class="step">Demo</span></div>
+      <h2>Follow along — then you do it</h2>
+      <ul class="list">
+        <li><span class="num">1</span><span>Open <strong style="color:var(--ink)">ahliyyah-mutran-learning.csv</strong> in Power BI</span></li>
+        <li><span class="num">2</span><span>Clustered column: Subject on axis · Average of Score</span></li>
+        <li><span class="num">3</span><span>Insert a slicer for Term · click Term 1, then Term 2</span></li>
+        <li><span class="num">4</span><span>Say out loud one pattern you notice</span></li>
       </ul>
+      <div class="callout">Excel fallback: PivotChart works for Challenges 1 and 3</div>
+    </section>
+
+    <!-- 20 Lab brief -->
+    <section class="slide" data-title="Lab brief">
+      <div class="eyebrow"><span>Step 5 · Practice</span><span class="step">Lab brief</span></div>
+      <h2>Ahliyyah &amp; Mutran learning snapshot</h2>
+      <p class="lede">20 students · 120 rows · Math, Science, English · Terms 1 &amp; 2 · attendance &amp; learning support</p>
       <div class="kpi">
         <div class="stat"><span class="n">8</span><div class="t">Min · Challenge 1</div></div>
         <div class="stat"><span class="n">8</span><div class="t">Min · Challenge 2</div></div>
         <div class="stat"><span class="n">8</span><div class="t">Min · Challenge 3</div></div>
       </div>
+      <p class="lede" style="margin-top:1rem">Then ~6 minutes to share your 2-2-2.</p>
     </section>
 
+    <!-- 21 C1 -->
     <section class="slide" data-title="Challenge 1">
       <div class="challenge">
-        <span class="badge">Challenge 1 · 8 min</span>
-        <h2>Average Score by Subject + Term slicer</h2>
-        <p class="lede">Strongest / weakest? What changes Term 1 → Term 2?</p>
+        <span class="badge">Challenge 01 · Patterns · 8 min</span>
+        <h2>Where are we strong — and weak?</h2>
+        <p class="lede">Build Average Score by Subject. Add a Term slicer. Compare Term 1 vs Term 2.</p>
+        <div class="card" style="margin-top:0.5rem"><strong>Success</strong><p>Name the highest and lowest subject–term pair — and why a teacher should care.</p></div>
       </div>
     </section>
 
+    <!-- 22 C2 -->
     <section class="slide" data-title="Challenge 2">
       <div class="challenge">
-        <span class="badge">Challenge 2 · 8 min</span>
-        <h2>Scatter: Attendance vs Score</h2>
-        <p class="lede">Is there a link? Find one surprising case.</p>
+        <span class="badge">Challenge 02 · Relationships · 8 min</span>
+        <h2>Does showing up pay off?</h2>
+        <p class="lede">Scatter chart: AttendancePct on X, Score on Y. Optional: colour by LearningSupport.</p>
+        <div class="card" style="margin-top:0.5rem"><strong>Success</strong><p>One sentence on the link + one surprising case.</p></div>
       </div>
     </section>
 
+    <!-- 23 C3 -->
     <section class="slide" data-title="Challenge 3">
       <div class="challenge">
-        <span class="badge">Challenge 3 · 8 min</span>
-        <h2>Term growth by Learning Support</h2>
-        <p class="lede">Who grew? What will you reteach or change?</p>
+        <span class="badge">Challenge 03 · Impact · 8 min</span>
+        <h2>Who is growing?</h2>
+        <p class="lede">Compare Term 1 vs Term 2 by LearningSupport. Diagnose why. Choose a move: reteach / regroup / redesign.</p>
+        <div class="card" style="margin-top:0.5rem"><strong>Success</strong><p>A verdict with a number + one action for this week.</p></div>
       </div>
     </section>
 
-    <section class="slide" data-title="Share & close">
-      <div class="brand-row"><span><span class="dot"></span>Finish</span><span>~6 min</span></div>
-      <h2>Share a 2-2-2 · then go</h2>
+    <!-- 24 Share -->
+    <section class="slide" data-title="Share-out">
+      <div class="eyebrow"><span>Step 5 · Share</span><span class="step">2-2-2</span></div>
+      <h2>45–60 seconds: strengths · gaps · actions</h2>
       <div class="grid-3">
-        <div class="card"><strong class="accent">2 Strengths</strong><p>What looked good?</p></div>
-        <div class="card"><strong class="amber">2 Gaps</strong><p>What needs attention?</p></div>
-        <div class="card"><strong class="coral">2 Actions</strong><p>What happens this week?</p></div>
+        <div class="card teal"><strong>2 Strengths</strong><p>What looked solid?</p></div>
+        <div class="card amber"><strong>2 Gaps</strong><p>What pattern needs attention?</p></div>
+        <div class="card coral"><strong>2 Actions</strong><p>What happens this week?</p></div>
       </div>
-      <div class="formula" style="margin-top:1.5rem">Find the pattern. Then do something about it.</div>
+      <div class="callout">No method monologues — finding + evidence + action only</div>
     </section>
+
+    <!-- 25 Close -->
+    <section class="slide" data-title="Close">
+      <div class="eyebrow"><span>Takeaways</span><span class="step">Leave with this</span></div>
+      <h2>Remember the path</h2>
+      <ul class="list" style="max-width:44rem">
+        <li><span class="num">1</span><span>Biopsy, not autopsy — use data while learning is still happening.</span></li>
+        <li><span class="num">2</span><span>Look → Patterns → Why → Action. Never stop at the average.</span></li>
+        <li><span class="num">3</span><span>Ask strong questions before you build charts.</span></li>
+        <li><span class="num">4</span><span>Finish with a 2-2-2 — strengths, gaps, actions.</span></li>
+      </ul>
+      <div class="callout">Find the pattern. Then do something about it.</div>
+    </section>
+
   </div>
 
   <div class="footer-bar">
-    <div class="nav-hint"><kbd>←</kbd> <kbd>→</kbd> · game: buttons 1–5 · <kbd>Space</kbd> answer · <kbd>F</kbd></div>
+    <div class="nav-hint"><kbd>←</kbd> <kbd>→</kbd> · game: 1–5 + Show answer · <kbd>Space</kbd> · <kbd>F</kbd></div>
     <div class="progress"><i id="progress"></i></div>
-    <div id="counter">1 / 10</div>
+    <div id="counter">1 / 25</div>
   </div>
 
   <script>
     const rounds = [
       { title: "Round 1 · Shapes", prompt: "What comes next?",
-        body: '<div class="pattern-grid cols-6"><div class="cell teal">●</div><div class="cell teal">●</div><div class="cell amber">▲</div><div class="cell teal">●</div><div class="cell teal">●</div><div class="cell amber" style="opacity:.35;border-style:dashed">?</div></div>',
+        body: '<div class="pattern-grid cols-6"><div class="cell teal">●</div><div class="cell teal">●</div><div class="cell amber">▲</div><div class="cell teal">●</div><div class="cell teal">●</div><div class="cell amber" style="opacity:.4;border-style:dashed">?</div></div>',
         answer: "Two circles, then a triangle — it repeats. So ? is a triangle." },
       { title: "Round 2 · Odd one out", prompt: "Which one does not belong?",
         body: '<div class="pattern-grid cols-5"><div class="cell emoji">📘</div><div class="cell emoji">📘</div><div class="cell emoji">📗</div><div class="cell emoji">📘</div><div class="cell emoji">📘</div></div>',
         answer: "The green book — all the others are blue." },
       { title: "Round 3 · Number grid", prompt: "What’s the pattern? Don’t average — just look.",
-        body: '<div class="pattern-grid cols-4" style="width:min(480px,100%)"><div class="cell">72</div><div class="cell teal">91</div><div class="cell">74</div><div class="cell">70</div><div class="cell">68</div><div class="cell teal">88</div><div class="cell">71</div><div class="cell">69</div><div class="cell">65</div><div class="cell teal">94</div><div class="cell">67</div><div class="cell">66</div></div>',
+        body: '<div class="pattern-grid cols-4"><div class="cell">72</div><div class="cell teal">91</div><div class="cell">74</div><div class="cell">70</div><div class="cell">68</div><div class="cell teal">88</div><div class="cell">71</div><div class="cell">69</div><div class="cell">65</div><div class="cell teal">94</div><div class="cell">67</div><div class="cell">66</div></div>',
         answer: "The middle column has all the high scores." },
-      { title: "Round 4 · Homework & scores", prompt: "Find the pattern (any subject).",
+      { title: "Round 4 · Homework & scores", prompt: "Find the pattern (works in any subject).",
         body: '<table class="mini-table"><thead><tr><th>Student</th><th>Homework?</th><th>Test</th></tr></thead><tbody><tr><td class="name">Sam</td><td>Yes</td><td class="ok">84</td></tr><tr><td class="name">Noor</td><td class="low">No</td><td class="low">58</td></tr><tr><td class="name">Alex</td><td>Yes</td><td class="ok">79</td></tr><tr><td class="name">Maya</td><td class="low">No</td><td class="low">61</td></tr><tr><td class="name">Jordan</td><td>Yes</td><td class="ok">88</td></tr><tr><td class="name">Lina</td><td class="low">No</td><td class="low">55</td></tr></tbody></table>',
         answer: "No homework → lower scores. Yes homework → higher scores." },
       { title: "Round 5 · Class markbook", prompt: "Students — or one part of the unit?",
         body: '<table class="mini-table"><thead><tr><th>Student</th><th>Part A</th><th>Part B</th><th>Part C</th><th>Avg</th></tr></thead><tbody><tr><td class="name">Sam</td><td class="ok">82</td><td class="low">54</td><td class="ok">80</td><td>72</td></tr><tr><td class="name">Noor</td><td class="ok">88</td><td class="low">61</td><td class="ok">85</td><td>78</td></tr><tr><td class="name">Alex</td><td class="ok">79</td><td class="low">58</td><td class="ok">81</td><td>73</td></tr><tr><td class="name">Maya</td><td class="ok">91</td><td class="low">63</td><td class="ok">89</td><td>81</td></tr><tr><td class="name">Jordan</td><td class="ok">84</td><td class="low">57</td><td class="ok">83</td><td>75</td></tr></tbody></table>',
         answer: "Part B is low for everyone. Reteach Part B — don’t only blame one student." }
     ];
+
     let gameRound = 0, answerOn = false;
     function renderGame() {
       const r = rounds[gameRound];
@@ -934,7 +776,9 @@
       ans.textContent = r.answer;
       ans.classList.toggle("show", answerOn);
       document.getElementById("game-reveal").textContent = answerOn ? "Hide answer" : "Show answer";
-      document.querySelectorAll("#game-rounds [data-round]").forEach((b) => b.classList.toggle("active", Number(b.dataset.round) === gameRound));
+      document.querySelectorAll("#game-rounds [data-round]").forEach((b) => {
+        b.classList.toggle("active", Number(b.dataset.round) === gameRound);
+      });
     }
     document.getElementById("game-rounds").addEventListener("click", (e) => {
       const btn = e.target.closest("button");
@@ -948,23 +792,27 @@
     const progress = document.getElementById("progress");
     const counter = document.getElementById("counter");
     let index = 0, locking = false;
+
     function show(i) {
       if (locking) return;
       const next = Math.max(0, Math.min(slides.length - 1, i));
       if (next === index && slides[index].classList.contains("active")) { updateChrome(); return; }
       locking = true;
       const prev = slides[index];
-      prev.classList.remove("active"); prev.classList.add("exit");
+      prev.classList.remove("active");
+      prev.classList.add("exit");
       index = next;
       slides[index].classList.add("active");
       updateChrome();
-      setTimeout(() => { prev.classList.remove("exit"); locking = false; }, 420);
+      setTimeout(() => { prev.classList.remove("exit"); locking = false; }, 350);
     }
+
     function updateChrome() {
       progress.style.width = ((index + 1) / slides.length) * 100 + "%";
-      counter.textContent = (index + 1) + " / " + slides.length;
-      document.title = slides[index].dataset.title + " · From Numbers to Narratives";
+      counter.textContent = `${index + 1} / ${slides.length}`;
+      document.title = `${slides[index].dataset.title} · From Numbers to Narratives`;
     }
+
     document.addEventListener("keydown", (e) => {
       if (["ArrowRight", "PageDown"].includes(e.key)) { e.preventDefault(); show(index + 1); }
       else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); show(index - 1); }
@@ -978,11 +826,14 @@
         else document.exitFullscreen();
       }
     });
+
     document.getElementById("deck").addEventListener("click", (e) => {
       if (e.target.closest("a, button, kbd")) return;
       if (slides[index].id === "game-slide") return;
-      if (e.clientX > window.innerWidth / 2) show(index + 1); else show(index - 1);
+      if (e.clientX > window.innerWidth / 2) show(index + 1);
+      else show(index - 1);
     });
+
     renderGame();
     updateChrome();
   </script>

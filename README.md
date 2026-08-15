@@ -1,22 +1,24 @@
 # From Numbers to Narratives
 
-Professional learning pack: **data analysis + Power BI** for Ahliyyah & Mutran teachers (**60 minutes**).
+Professional learning for **Ahliyyah & Mutran** teachers (grades 6–10, all subjects): data analysis + Power BI.
 
 **Live:** https://muneernas.github.io/am-data-analysis-session/
 
-## What’s inside
+## Flow
+
+1. **Warm up** — Pattern Police icebreaker  
+2. **Why** — purpose of classroom data analysis  
+3. **How** — autopsy/biopsy, four-step engine, questions, averages, diagnosis, action, 2-2-2, traps  
+4. **Tool** — Power BI workflow + demo  
+5. **Do it** — three challenges + share-out  
+
+## Files
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Slide deck (fullscreen in browser) |
+| `index.html` | Slide deck |
 | `handout.html` | Participant worksheet |
-| `FACILITATOR-GUIDE.md` | Timing, game script, talking points |
-| `dataset/ahliyyah-mutran-learning.csv` | Practice data |
+| `FACILITATOR-GUIDE.md` | Timing & talking points |
+| `dataset/ahliyyah-mutran-learning.csv` | Lab data |
 
-## Session shape
-
-| Block | Time | Slides |
-|-------|------|--------|
-| Pattern Police (5 rounds, **1 board**) | ~10 min | Slide 3 |
-| Teaching (**6 slides**) | ~20 min | Slides 4–9 |
-| Technical lab | ~30 min | Slides 10–14 |
+Open `index.html` → **F** fullscreen · `→` `←` navigate · game uses on-slide buttons.

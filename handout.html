@@ -4,221 +4,107 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Participant Handout · From Numbers to Narratives</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Fraunces:wght@700&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --ink: #0c2433;
-      --teal: #0f766e;
-      --amber: #b45309;
-      --line: #d5e0e6;
-      --bg: #f7fafb;
-    }
+    :root { --ink:#123047; --teal:#0b7a6a; --sky:#1f8fd8; --amber:#b86d00; --line:#d5e4ec; --bg:#f3f8fc; }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "Outfit", sans-serif;
-      color: var(--ink);
-      background: var(--bg);
-      line-height: 1.45;
-    }
-    .page {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 3rem;
-    }
-    header {
-      border-bottom: 3px solid var(--teal);
-      padding-bottom: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    h1 {
-      font-family: "Syne", sans-serif;
-      font-size: 2rem;
-      margin: 0 0 0.35rem;
-    }
-    .sub { color: #4b6472; }
-    h2 {
-      font-family: "Syne", sans-serif;
-      font-size: 1.25rem;
-      color: var(--teal);
-      margin: 1.75rem 0 0.6rem;
-    }
-    .box {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 1rem 1.15rem;
-      margin: 0.75rem 0;
-    }
-    .box h3 {
-      margin: 0 0 0.4rem;
-      font-size: 1.05rem;
-    }
-    .meta {
-      display: inline-block;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--amber);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.35rem;
-    }
-    ul { margin: 0.4rem 0 0 1.1rem; padding: 0; }
-    li { margin: 0.25rem 0; }
-    .formula {
-      text-align: center;
-      font-family: "Syne", sans-serif;
-      font-size: 1.15rem;
-      padding: 1rem;
-      background: #e7f6f3;
-      border-radius: 10px;
-      margin: 1rem 0;
-    }
-    textarea, input[type="text"] {
-      width: 100%;
-      border: 1px dashed #9bb0bc;
-      border-radius: 8px;
-      padding: 0.65rem 0.75rem;
-      font: inherit;
-      background: #fff;
-      margin-top: 0.4rem;
-    }
-    textarea { min-height: 72px; resize: vertical; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.92rem;
-      background: #fff;
-    }
-    th, td {
-      border: 1px solid var(--line);
-      padding: 0.45rem 0.55rem;
-      text-align: left;
-    }
-    th { background: #e8f1f4; }
-    .print-note {
-      font-size: 0.85rem;
-      color: #5a7280;
-      margin-top: 2rem;
-    }
-    @media print {
-      body { background: #fff; }
-      .page { padding: 0; max-width: none; }
-      .box { break-inside: avoid; }
-    }
+    body { margin:0; font-family:"DM Sans",sans-serif; color:var(--ink); background:var(--bg); line-height:1.45; }
+    .page { max-width:900px; margin:0 auto; padding:2rem 1.5rem 3rem; }
+    header { border-bottom:4px solid var(--teal); padding-bottom:1rem; margin-bottom:1.4rem; }
+    h1 { font-family:"Fraunces",serif; font-size:2rem; margin:0 0 0.3rem; }
+    .sub { color:#4a6678; }
+    h2 { font-family:"Fraunces",serif; font-size:1.2rem; color:var(--teal); margin:1.6rem 0 0.55rem; }
+    .box { background:#fff; border:1px solid var(--line); border-radius:12px; padding:1rem 1.15rem; margin:0.7rem 0; }
+    .meta { display:inline-block; font-size:0.78rem; font-weight:700; color:var(--amber); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.35rem; }
+    .formula { text-align:center; font-family:"Fraunces",serif; font-size:1.1rem; padding:0.9rem; background:#e7f6f3; border-radius:10px; margin:0.8rem 0; }
+    textarea { width:100%; border:1px dashed #9bb0bc; border-radius:8px; padding:0.6rem 0.75rem; font:inherit; min-height:68px; margin-top:0.35rem; }
+    table { width:100%; border-collapse:collapse; font-size:0.92rem; background:#fff; }
+    th, td { border:1px solid var(--line); padding:0.45rem 0.55rem; text-align:left; }
+    th { background:#e7f3f8; }
+    ol, ul { margin:0.35rem 0 0 1.1rem; }
+    @media print { body { background:#fff; } .page { padding:0; } }
   </style>
 </head>
 <body>
   <div class="page">
     <header>
       <h1>From Numbers to Narratives</h1>
-      <p class="sub">Participant handout · 60-min session · Game + teach + Power BI lab</p>
-      <p class="sub"><strong>Dataset:</strong> ahliyyah-mutran-learning.csv &nbsp;·&nbsp; <strong>Lab:</strong> ~40 minutes technical</p>
+      <p class="sub">Participant handout · Ahliyyah &amp; Mutran · Grades 6–10 · All subjects</p>
+      <p class="sub"><strong>Dataset:</strong> ahliyyah-mutran-learning.csv</p>
     </header>
 
-    <h2>Icebreaker · Pattern Police (5 rounds)</h2>
-    <div class="box">
-      <span class="meta">Warm-up · teams · shout the answer</span>
-      <ol>
-        <li><strong>Shapes</strong> — what comes next?</li>
-        <li><strong>Odd one out</strong> — which doesn’t belong?</li>
-        <li><strong>Number grid</strong> — where are the high scores?</li>
-        <li><strong>Homework &amp; scores</strong> — what’s the link?</li>
-        <li><strong>Class markbook</strong> — students or one part of the unit?</li>
-      </ol>
-      <label>Round 5 — what pattern did your team see?</label>
-      <textarea placeholder="e.g. Part B is low for everyone…"></textarea>
-    </div>
+    <h2>Today’s path</h2>
+    <div class="formula">Warm up → Why data → How to analyse → Power BI → Practice → Share</div>
 
-    <h2>Analysis engine (keep visible)</h2>
+    <h2>Analysis engine</h2>
     <div class="formula">Look → Find patterns → Ask why → Take action</div>
 
     <h2>Insight formula</h2>
     <div class="formula">Who + What changed + By how much + So what</div>
 
-    <h2>Diagnostic matrix (Ask why)</h2>
+    <h2>Pattern Police notes</h2>
     <div class="box">
-      <ul>
-        <li><strong>Instructional</strong> — Was teaching misaligned with the skill? → Adjust strategy / medium</li>
-        <li><strong>Design</strong> — Was the task or rubric unclear? → Clarify assessment</li>
-        <li><strong>Readiness</strong> — Missing prerequisites? → Scaffold gaps</li>
-      </ul>
-      <p style="margin-top:0.6rem"><strong>Levers:</strong> Reteach · Differentiate · Adjust unit</p>
+      <span class="meta">Icebreaker</span>
+      <label>Round 5 pattern (Part A/B/C markbook)</label>
+      <textarea placeholder="What pattern did your team see?"></textarea>
     </div>
 
-    <h2>Quick start in Power BI (~4 min demo, then you)</h2>
+    <h2>Ask why (diagnostic)</h2>
+    <div class="box">
+      <ul>
+        <li><strong>Teaching</strong> — method didn’t match the skill → try another approach</li>
+        <li><strong>The task</strong> — unclear question/rubric → clarify next time</li>
+        <li><strong>Basics</strong> — missing prior skills → rebuild basics first</li>
+      </ul>
+      <p style="margin-top:0.55rem"><strong>Moves:</strong> Reteach · Regroup · Redesign</p>
+    </div>
+
+    <h2>Power BI quick start</h2>
     <div class="box">
       <ol>
-        <li>Open <strong>Power BI Desktop</strong> → <strong>Get data</strong> → <strong>Text/CSV</strong> → Load.</li>
-        <li>Confirm <em>Score</em>, <em>AttendancePct</em>, <em>HomeworkCompletionPct</em> are numbers.</li>
-        <li>Bar: Subject + Average Score. Add a <strong>Term</strong> slicer.</li>
+        <li>Get data → Text/CSV → Load</li>
+        <li>Score / AttendancePct = Decimal Number</li>
+        <li>Build chart → add Term / Grade / Subject slicers</li>
       </ol>
-      <p><em>Excel fallback:</em> Insert → PivotChart. Same challenges apply.</p>
     </div>
 
-    <h2>Challenge 1 · Patterns (~10 min)</h2>
+    <h2>Challenge 1 · Patterns (~8 min)</h2>
     <div class="box">
-      <span class="meta">Build</span>
-      <h3>Average Score by Subject — Term slicer</h3>
-      <ul>
-        <li>Strongest? Weakest?</li>
-        <li>What changes Term 1 → Term 2?</li>
-      </ul>
-      <label>My finding</label>
-      <textarea placeholder="Who + what + how much + so what…"></textarea>
+      <h3 style="margin:0 0 0.4rem;font-size:1.05rem">Average Score by Subject + Term slicer</h3>
+      <textarea placeholder="Highest / lowest + why it matters…"></textarea>
     </div>
 
-    <h2>Challenge 2 · Relationships (~10 min)</h2>
+    <h2>Challenge 2 · Relationships (~8 min)</h2>
     <div class="box">
-      <span class="meta">Build</span>
-      <h3>Scatter: AttendancePct (X) vs Score (Y)</h3>
-      <ul>
-        <li>Relationship?</li>
-        <li>One interesting outlier?</li>
-      </ul>
-      <label>My finding</label>
-      <textarea placeholder="Write one insight…"></textarea>
+      <h3 style="margin:0 0 0.4rem;font-size:1.05rem">Attendance vs Score scatter</h3>
+      <textarea placeholder="Link + one surprising case…"></textarea>
     </div>
 
-    <h2>Challenge 3 · Impact (~10 min)</h2>
+    <h2>Challenge 3 · Impact (~8 min)</h2>
     <div class="box">
-      <span class="meta">Build</span>
-      <h3>Term growth by LearningSupport</h3>
-      <ul>
-        <li>Support vs None — who grew?</li>
-        <li>Diagnose: instructional / design / readiness?</li>
-        <li>Lever: reteach / differentiate / adjust</li>
-      </ul>
-      <label>My finding + Monday move</label>
-      <textarea placeholder="Insight + action…"></textarea>
+      <h3 style="margin:0 0 0.4rem;font-size:1.05rem">Growth by Learning Support</h3>
+      <textarea placeholder="Verdict + reteach / regroup / redesign…"></textarea>
     </div>
 
-    <h2>Your 2-2-2 (rapid share)</h2>
+    <h2>My 2-2-2</h2>
     <div class="box">
-      <span class="meta">45–60 seconds</span>
-      <h3>2 Strengths</h3>
-      <textarea placeholder="Two strengths…"></textarea>
-      <h3 style="margin-top:0.75rem">2 Gaps</h3>
-      <textarea placeholder="Two gaps…"></textarea>
-      <h3 style="margin-top:0.75rem">2 Actions</h3>
-      <textarea placeholder="Two concrete actions…"></textarea>
+      <span class="meta">Share-out</span>
+      <label>2 Strengths</label><textarea></textarea>
+      <label style="display:block;margin-top:0.6rem">2 Gaps</label><textarea></textarea>
+      <label style="display:block;margin-top:0.6rem">2 Actions</label><textarea></textarea>
     </div>
 
     <h2>Field cheat sheet</h2>
     <table>
-      <thead>
-        <tr><th>Field</th><th>Use it to…</th></tr>
-      </thead>
+      <thead><tr><th>Field</th><th>Use it to…</th></tr></thead>
       <tbody>
-        <tr><td>Score</td><td>Measure achievement</td></tr>
-        <tr><td>Term</td><td>Compare growth</td></tr>
-        <tr><td>Subject / GradeLevel</td><td>Find hotspots</td></tr>
-        <tr><td>AttendancePct</td><td>Link engagement to outcomes</td></tr>
-        <tr><td>LearningSupport</td><td>Evaluate interventions</td></tr>
+        <tr><td>Score</td><td>Achievement</td></tr>
+        <tr><td>Term</td><td>Growth over time</td></tr>
+        <tr><td>Subject / GradeLevel</td><td>Hotspots</td></tr>
+        <tr><td>AttendancePct</td><td>Engagement link</td></tr>
+        <tr><td>LearningSupport</td><td>Intervention check</td></tr>
       </tbody>
     </table>
-
-    <p class="print-note">Bring your 2-2-2 to the share-out.</p>
   </div>
 </body>
 </html>
