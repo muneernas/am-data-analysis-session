@@ -58,6 +58,13 @@
     return a.reduce((s, n) => s + n, 0) / a.length;
   }
 
+  function median(nums) {
+    const a = nums.filter((n) => n != null && Number.isFinite(n)).sort((x, y) => x - y);
+    if (!a.length) return null;
+    const mid = Math.floor(a.length / 2);
+    return a.length % 2 ? a[mid] : (a[mid - 1] + a[mid]) / 2;
+  }
+
   function formatNum(n, digits = 1) {
     if (n == null || !Number.isFinite(n)) return "—";
     return Number.isInteger(n) ? String(n) : n.toFixed(digits);
@@ -335,7 +342,7 @@
     return state.rows.filter((r) => String(r[col] ?? "") === val);
   }
 
-  function groupAverage(rows, catCol, numCol) {
+  function groupStats(rows, catCol, numCol) {
     const buckets = new Map();
     for (const r of rows) {
       const cat = r[catCol];
@@ -348,12 +355,18 @@
     }
     let entries = [...buckets.entries()].map(([label, vals]) => ({
       label,
-      value: avg(vals),
+      avg: avg(vals),
+      median: median(vals),
       count: vals.length,
+      value: avg(vals), // legacy alias
     }));
-    entries.sort((a, b) => b.value - a.value);
+    entries.sort((a, b) => (b.avg ?? 0) - (a.avg ?? 0));
     if (entries.length > MAX_CATS) entries = entries.slice(0, MAX_CATS);
     return entries;
+  }
+
+  function groupAverage(rows, catCol, numCol) {
+    return groupStats(rows, catCol, numCol);
   }
 
   function groupCount(rows, catCol) {
@@ -389,6 +402,7 @@
       kpis.push({ label: "Criteria", value: String(unique(rows.map((r) => r.Criterion)).length) });
       const scores = rows.map((r) => toNumber(r.Score)).filter((n) => n != null);
       kpis.push({ label: "Avg mark", value: formatNum(avg(scores)) });
+      kpis.push({ label: "Median mark", value: formatNum(median(scores)) });
       kpis.push({ label: "Marks entered", value: String(scores.length) });
       return kpis;
     }
@@ -403,6 +417,7 @@
     if (school?.score) {
       const scores = rows.map((r) => toNumber(r[school.score])).filter((n) => n != null);
       kpis.push({ label: "Avg score", value: formatNum(avg(scores)) });
+      kpis.push({ label: "Median score", value: formatNum(median(scores)) });
       if (scores.length) {
         kpis.push({ label: "Min score", value: formatNum(Math.min(...scores), 0) });
         kpis.push({ label: "Max score", value: formatNum(Math.max(...scores), 0) });
@@ -470,15 +485,18 @@
   }
 
   // ——— charts ———
-  function makeChartCard(title, canvasId) {
+  function makeChartCard(title, canvasId, guide) {
     const card = document.createElement("div");
     card.className = "chart-card";
-    card.innerHTML = `<h3>${escapeHtml(title)}</h3><div class="chart-wrap"><canvas id="${canvasId}"></canvas></div>`;
+    const guideHtml = guide
+      ? `<p class="chart-guide"><strong>What to notice:</strong> ${escapeHtml(guide)}</p>`
+      : "";
+    card.innerHTML = `<h3>${escapeHtml(title)}</h3><div class="chart-wrap"><canvas id="${canvasId}"></canvas></div>${guideHtml}`;
     return card;
   }
 
-  function addBarChart(grid, id, title, labels, data, label) {
-    grid.appendChild(makeChartCard(title, id));
+  function addBarChart(grid, id, title, labels, data, label, guide) {
+    grid.appendChild(makeChartCard(title, id, guide));
     const chart = new Chart($(id), {
       type: "bar",
       data: {
@@ -505,8 +523,43 @@
     state.charts.push(chart);
   }
 
-  function addGroupedBar(grid, id, title, labels, datasets) {
-    grid.appendChild(makeChartCard(title, id));
+  function addAvgMedianBar(grid, id, title, entries, guide) {
+    if (!entries.length) return;
+    grid.appendChild(makeChartCard(title, id, guide));
+    const chart = new Chart($(id), {
+      type: "bar",
+      data: {
+        labels: entries.map((x) => x.label),
+        datasets: [
+          {
+            label: "Average",
+            data: entries.map((x) => x.avg),
+            backgroundColor: "rgba(31, 143, 216, 0.85)",
+            borderRadius: 6,
+          },
+          {
+            label: "Median",
+            data: entries.map((x) => x.median),
+            backgroundColor: "rgba(15, 159, 138, 0.85)",
+            borderRadius: 6,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: "bottom" } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: "rgba(18,48,71,0.06)" } },
+          x: { grid: { display: false } },
+        },
+      },
+    });
+    state.charts.push(chart);
+  }
+
+  function addGroupedBar(grid, id, title, labels, datasets, guide) {
+    grid.appendChild(makeChartCard(title, id, guide));
     const chart = new Chart($(id), {
       type: "bar",
       data: {
@@ -530,8 +583,8 @@
     state.charts.push(chart);
   }
 
-  function addScatter(grid, id, title, points, xTitle, yTitle) {
-    grid.appendChild(makeChartCard(title, id));
+  function addScatter(grid, id, title, points, xTitle, yTitle, guide) {
+    grid.appendChild(makeChartCard(title, id, guide));
     const chart = new Chart($(id), {
       type: "scatter",
       data: {
@@ -556,6 +609,34 @@
     state.charts.push(chart);
   }
 
+  function scoreDistribution(rows, scoreCol) {
+    const vals = rows.map((r) => toNumber(r[scoreCol])).filter((n) => n != null);
+    if (vals.length < 5) return null;
+    const max = Math.max(...vals);
+    if (max <= 10) {
+      const labels = [];
+      const data = [];
+      for (let i = 1; i <= 8; i++) {
+        labels.push(String(i));
+        data.push(vals.filter((v) => Math.round(v) === i).length);
+      }
+      return { labels, data, kind: "myp" };
+    }
+    const bins = [
+      { label: "0-49", min: 0, max: 49.999 },
+      { label: "50-59", min: 50, max: 59.999 },
+      { label: "60-69", min: 60, max: 69.999 },
+      { label: "70-79", min: 70, max: 79.999 },
+      { label: "80-89", min: 80, max: 89.999 },
+      { label: "90-100", min: 90, max: 100.001 },
+    ];
+    return {
+      labels: bins.map((b) => b.label),
+      data: bins.map((b) => vals.filter((v) => v >= b.min && v <= b.max).length),
+      kind: "pct",
+    };
+  }
+
   function termSubjectComparison(rows, subjectCol, termCol, scoreCol) {
     const terms = unique(rows.map((r) => r[termCol]))
       .filter((t) => t && t !== "—")
@@ -575,7 +656,7 @@
     return { labels: topSubjects.map(String), datasets };
   }
 
-  function studentAverages(rows, studentCol, scoreCol, limit = 10) {
+  function studentStats(rows, studentCol, scoreCol) {
     const buckets = new Map();
     for (const r of rows) {
       const s = String(r[studentCol] ?? "").trim();
@@ -585,10 +666,19 @@
       if (!buckets.has(s)) buckets.set(s, []);
       buckets.get(s).push(n);
     }
-    return [...buckets.entries()]
-      .map(([label, vals]) => ({ label: shortLabel(label), value: avg(vals), full: label }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, limit);
+    return [...buckets.entries()].map(([label, vals]) => ({
+      label: shortLabel(label),
+      avg: avg(vals),
+      median: median(vals),
+      full: label,
+    }));
+  }
+
+  function studentAverages(rows, studentCol, scoreCol, limit = 10) {
+    return studentStats(rows, studentCol, scoreCol)
+      .sort((a, b) => (b.avg ?? 0) - (a.avg ?? 0))
+      .slice(0, limit)
+      .map((x) => ({ ...x, value: x.avg }));
   }
 
   function renderCharts(rows, school, profile) {
@@ -608,35 +698,55 @@
     const numOverride = $("numOverride").value;
     let chartCount = 0;
 
+    const GUIDE = {
+      criterion:
+        "Compare average and median. If the median is much lower than the average, a few high marks may be hiding that most of the class is still struggling on that criterion.",
+      unit:
+        "Use this to spot which unit or reporting period was stronger or weaker overall. A big average-median gap means the class was uneven.",
+      unitCrit:
+        "Look for one criterion that dips across several units — that is often the best place to reteach or add practice.",
+      dist:
+        "Check where marks pile up. A cluster at the low end suggests reteaching; a cluster at the high end means many students are ready for extension.",
+      top:
+        "Strong overall performers. Ask: are they strong on every criterion, or only some? Use filters to check.",
+      low:
+        "Students with the lowest overall marks. Start support here, and check which criterion is pulling them down.",
+      support:
+        "Compare groups carefully — small group sizes can swing averages. Prefer the median when groups are uneven.",
+      grade:
+        "Use this to see if one grade band needs a different pitch or scaffold than another.",
+      scatter:
+        "Points trending up-right suggest attendance and score move together. Isolated low-score points with high attendance may need a different kind of support.",
+      generic:
+        "Average shows the overall level; median shows the typical student. When they diverge, dig into who is above or below the middle.",
+      counts:
+        "Counts show volume, not quality. Pair this with a score chart before deciding next steps.",
+    };
+
     if (school) {
       const scoreCol = numOverride || school.score;
       const catCol = catOverride || school.subject;
 
       if (scoreCol && catCol) {
-        const g = groupAverage(rows, catCol, scoreCol);
+        const g = groupStats(rows, catCol, scoreCol);
         if (g.length) {
-          addBarChart(
+          addAvgMedianBar(
             grid,
             "chart-subj",
-            state.mode === "criteria" ? "Average mark by criterion" : `Average ${shortLabel(scoreCol)} by ${shortLabel(catCol)}`,
-            g.map((x) => x.label),
-            g.map((x) => x.value),
-            `Avg ${scoreCol}`
+            state.mode === "criteria"
+              ? "Average and median by criterion"
+              : `${shortLabel(scoreCol)} by ${shortLabel(catCol)} (avg and median)`,
+            g,
+            state.mode === "criteria" ? GUIDE.criterion : GUIDE.generic
           );
           chartCount++;
         }
       }
 
       if (state.mode === "criteria" && school.term) {
-        const g = groupAverage(rows, school.term, school.score);
+        const g = groupStats(rows, school.term, school.score);
         if (g.length) {
-          addBarChart(
-            grid,
-            "chart-unit",
-            "Average mark by unit / period",
-            g.map((x) => x.label),
-            g.map((x) => x.value)
-          );
+          addAvgMedianBar(grid, "chart-unit", "Average and median by unit / period", g, GUIDE.unit);
           chartCount++;
         }
       }
@@ -648,12 +758,29 @@
             addGroupedBar(
               grid,
               "chart-term",
-              state.mode === "criteria" ? "Average mark by criterion & unit" : "Average Score by Subject & Term",
+              state.mode === "criteria" ? "Average mark by criterion and unit" : "Average score by subject and term",
               cmp.labels,
-              cmp.datasets
+              cmp.datasets,
+              GUIDE.unitCrit
             );
             chartCount++;
           }
+        }
+      }
+
+      if (scoreCol) {
+        const dist = scoreDistribution(rows, scoreCol);
+        if (dist) {
+          addBarChart(
+            grid,
+            "chart-dist",
+            dist.kind === "myp" ? "How many marks at each level (1-8)" : "Score distribution",
+            dist.labels,
+            dist.data,
+            "Count",
+            GUIDE.dist
+          );
+          chartCount++;
         }
       }
 
@@ -667,78 +794,72 @@
           .filter(Boolean)
           .slice(0, 500);
         if (points.length >= 5) {
-          addScatter(grid, "chart-scatter", "Attendance % vs Score", points, "Attendance %", "Score");
+          addScatter(grid, "chart-scatter", "Attendance % vs Score", points, "Attendance %", "Score", GUIDE.scatter);
           chartCount++;
         }
       }
 
       if (school.learningSupport && school.score) {
-        const g = groupAverage(rows, school.learningSupport, school.score);
+        const g = groupStats(rows, school.learningSupport, school.score);
         if (g.length) {
-          addBarChart(
-            grid,
-            "chart-support",
-            "Average Score by Learning Support",
-            g.map((x) => x.label),
-            g.map((x) => x.value)
-          );
+          addAvgMedianBar(grid, "chart-support", "Average and median by learning support", g, GUIDE.support);
           chartCount++;
         }
       }
 
       if (school.gradeLevel && school.score) {
-        const g = groupAverage(rows, school.gradeLevel, school.score);
+        const g = groupStats(rows, school.gradeLevel, school.score);
         if (g.length) {
-          addBarChart(
-            grid,
-            "chart-grade",
-            "Average Score by Grade Level",
-            g.map((x) => x.label),
-            g.map((x) => x.value)
-          );
+          addAvgMedianBar(grid, "chart-grade", "Average and median by grade level", g, GUIDE.grade);
           chartCount++;
         }
       }
 
-      // Student averages for criteria / wide markbooks
       if ((state.mode === "wide" || state.mode === "criteria") && school.score && (school.studentName || "Student")) {
         const studentCol = school.studentName || "Student";
-        const top = studentAverages(rows, studentCol, school.score, 8);
+        const all = studentStats(rows, studentCol, school.score).sort((a, b) => (b.avg ?? 0) - (a.avg ?? 0));
+        const top = all.slice(0, 8);
+        const low = [...all].sort((a, b) => (a.avg ?? 0) - (b.avg ?? 0)).slice(0, 8);
         if (top.length >= 3) {
-          addBarChart(
-            grid,
-            "chart-students-top",
-            "Highest overall averages",
-            top.map((x) => x.label),
-            top.map((x) => x.value)
-          );
+          addAvgMedianBar(grid, "chart-students-top", "Highest overall averages", top, GUIDE.top);
+          chartCount++;
+        }
+        if (low.length >= 3) {
+          addAvgMedianBar(grid, "chart-students-low", "Lowest overall averages", low, GUIDE.low);
           chartCount++;
         }
       }
     }
 
-    // Generic / fill-in charts
     if (chartCount < 2) {
       const cats = profile.filter((p) => p.isCategorical);
       const nums = profile.filter((p) => p.isNumeric && !isSensitiveKey(p.key));
       const catCol = catOverride || cats[0]?.name;
       const numCol = numOverride || nums[0]?.name;
       if (catCol && numCol) {
-        const g = groupAverage(rows, catCol, numCol);
+        const g = groupStats(rows, catCol, numCol);
         if (g.length) {
-          addBarChart(
+          addAvgMedianBar(
             grid,
             "chart-generic",
-            `Average ${shortLabel(numCol)} by ${shortLabel(catCol)}`,
-            g.map((x) => x.label),
-            g.map((x) => x.value)
+            `${shortLabel(numCol)} by ${shortLabel(catCol)} (avg and median)`,
+            g,
+            GUIDE.generic
           );
           chartCount++;
         }
       } else if (catCol && !numCol) {
         const g = groupCount(rows, catCol);
         if (g.length) {
-          addBarChart(grid, "chart-counts", `Count by ${shortLabel(catCol)}`, g.map((x) => x.label), g.map((x) => x.value), "Count");
+          addBarChart(
+            grid,
+            "chart-counts",
+            `Count by ${shortLabel(catCol)}`,
+            g.map((x) => x.label),
+            g.map((x) => x.value),
+            "Count",
+            GUIDE.counts
+          );
           chartCount++;
         }
       }
@@ -754,7 +875,15 @@
           .filter(Boolean)
           .slice(0, 400);
         if (points.length >= 5) {
-          addScatter(grid, "chart-gen-scatter", `${shortLabel(a)} vs ${shortLabel(b)}`, points, a, b);
+          addScatter(
+            grid,
+            "chart-gen-scatter",
+            `${shortLabel(a)} vs ${shortLabel(b)}`,
+            points,
+            a,
+            b,
+            GUIDE.scatter
+          );
           chartCount++;
         }
       }
