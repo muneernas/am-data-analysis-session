@@ -6,10 +6,14 @@
   const state = {
     workbook: null,
     sheetNames: [],
+    rawRows: [],
+    rawHeaders: [],
     rows: [],
     headers: [],
     profile: null,
     school: null,
+    mode: "generic", // school | wide | roster | generic
+    notice: "",
     charts: [],
     fileLabel: "",
   };
@@ -57,6 +61,74 @@
     state.charts = [];
   }
 
+  function isEmptyHeader(h) {
+    const s = String(h ?? "").trim();
+    return !s || /^__empty/i.test(s) || /^empty$/i.test(s);
+  }
+
+  function isSensitiveKey(key) {
+    return /\b(password|passwd|pwd)\b/.test(key);
+  }
+
+  function isIdentityKey(key) {
+    return (
+      /^(index|student name|student|name|first name|last name|full name)$/.test(key) ||
+      /\b(student name|first name|last name|full name|login name|username|user name)\b/.test(key) ||
+      /\b(id number|student id|district student id|national id)\b/.test(key) ||
+      key === "id" ||
+      key === "index"
+    );
+  }
+
+  function isMetaKey(key) {
+    return (
+      isSensitiveKey(key) ||
+      isIdentityKey(key) ||
+      /\b(nationality|birth country|birth|dob|day|month|year|email|phone|class(es)?|homeroom)\b/.test(key) ||
+      /\b(optional)\b/.test(key)
+    );
+  }
+
+  function looksLikeScoreColumn(name, profileCol, rows) {
+    const key = normalizeHeader(name);
+    if (isMetaKey(key) || isSensitiveKey(key)) return false;
+    if (!profileCol?.isNumeric) return false;
+    if (/\b(term|semester|score|mark|percent|assessment|exam|quiz|test|total|average|avg)\b/.test(key)) {
+      return true;
+    }
+    // School subject-style headers: "Math - Second Term"
+    if (/\s-\s/.test(String(name)) && profileCol.isNumeric) return true;
+    // Values mostly in 0–100 with decent fill
+    const vals = rows.map((r) => toNumber(r[name])).filter((n) => n != null);
+    if (vals.length < Math.max(3, Math.floor(rows.length * 0.3))) return false;
+    const inRange = vals.filter((n) => n >= 0 && n <= 100).length;
+    return inRange / vals.length >= 0.75;
+  }
+
+  function parseSubjectTerm(header) {
+    const raw = String(header).trim();
+    const parts = raw.split(/\s[-–—]\s/);
+    if (parts.length >= 2) {
+      return { subject: parts.slice(0, -1).join(" - ").trim(), term: parts[parts.length - 1].trim() };
+    }
+    return { subject: raw, term: "" };
+  }
+
+  function findStudentCol(headers) {
+    const scored = headers.map((h) => {
+      const k = normalizeHeader(h);
+      let score = 0;
+      if (k === "student name" || k.includes("student name")) score = 100;
+      else if (k === "name" || k === "full name") score = 90;
+      else if (k.includes("first name")) score = 70;
+      else if (k.includes("login name") || k.includes("username")) score = 40;
+      else if (k.includes("student") && !k.includes("id")) score = 60;
+      return { h, score };
+    });
+    scored.sort((a, b) => b.score - a.score);
+    return scored[0]?.score >= 40 ? scored[0].h : null;
+  }
+
   // ——— column profiling ———
   function profileColumns(rows, headers) {
     return headers.map((h) => {
@@ -67,14 +139,18 @@
       const uniq = unique(values.map((v) => (v == null ? "" : String(v).trim())).filter(Boolean));
       const numericRatio = nonEmpty ? numericCount / nonEmpty : 0;
       const isNumeric = numericRatio >= 0.7 && numericCount >= 3;
-      const isCategorical = !isNumeric && uniq.length >= 2 && uniq.length <= Math.max(40, rows.length * 0.6);
+      const key = normalizeHeader(h);
+      const tooManyUniques = uniq.length > Math.max(40, Math.floor(rows.length * 0.6));
+      const isCategorical =
+        !isNumeric && !isSensitiveKey(key) && uniq.length >= 2 && !tooManyUniques;
       return {
         name: h,
-        key: normalizeHeader(h),
+        key,
         isNumeric,
         isCategorical,
         uniqueCount: uniq.length,
         uniques: uniq.slice(0, 200),
+        nonEmpty,
       };
     });
   }
@@ -83,6 +159,7 @@
     const find = (...needles) => {
       for (const p of profile) {
         const k = p.key;
+        if (isSensitiveKey(k)) continue;
         if (needles.some((n) => k === n || k.includes(n))) return p.name;
       }
       return null;
@@ -94,8 +171,9 @@
       subject: find("subject", "course"),
       attendance: find("attendance"),
       gradeLevel: find("gradelevel", "grade level", "year group") || findExactGrade(profile),
-      learningSupport: find("learningsupport", "learning support", "support", "intervention"),
-      studentId: find("studentid", "student id", "id"),
+      learningSupport: find("learningsupport", "learning support", "intervention"),
+      studentId: find("studentid", "student id", "id number"),
+      studentName: find("student name", "full name"),
       homework: find("homework"),
     };
 
@@ -104,8 +182,48 @@
   }
 
   function findExactGrade(profile) {
-    const hit = profile.find((p) => p.key === "grade" && p.isCategorical);
+    const hit = profile.find((p) => (p.key === "grade" || p.key === "grade (optional)") && p.isCategorical);
     return hit ? hit.name : null;
+  }
+
+  function detectWideMarkbook(rows, headers, profile) {
+    const scoreCols = headers.filter((h) => {
+      const p = profile.find((x) => x.name === h);
+      return looksLikeScoreColumn(h, p, rows);
+    });
+    if (scoreCols.length < 3) return null;
+    const studentCol = findStudentCol(headers);
+    return { scoreCols, studentCol };
+  }
+
+  function isRosterOnly(headers, profile, rows) {
+    const keys = headers.map(normalizeHeader);
+    const hasLoginish = keys.some((k) => /password|login name|username|user name/.test(k));
+    const scoreish = profile.filter((p) => looksLikeScoreColumn(p.name, p, rows));
+    const usefulNumeric = profile.filter(
+      (p) => p.isNumeric && !isMetaKey(p.key) && !isSensitiveKey(p.key) && p.nonEmpty >= 3
+    );
+    return hasLoginish && scoreish.length === 0 && usefulNumeric.length === 0;
+  }
+
+  function unpivotWide(rows, scoreCols, studentCol) {
+    const out = [];
+    for (const r of rows) {
+      const student = studentCol ? String(r[studentCol] ?? "").trim() : "";
+      for (const col of scoreCols) {
+        const score = toNumber(r[col]);
+        if (score == null) continue;
+        const { subject, term } = parseSubjectTerm(col);
+        out.push({
+          Student: student,
+          Subject: subject,
+          Term: term || "—",
+          Score: score,
+          Assessment: col,
+        });
+      }
+    }
+    return out;
   }
 
   function filteredRows() {
@@ -136,13 +254,46 @@
     return entries;
   }
 
+  function groupCount(rows, catCol) {
+    const buckets = new Map();
+    for (const r of rows) {
+      const cat = r[catCol];
+      if (cat == null || String(cat).trim() === "") continue;
+      const key = String(cat);
+      buckets.set(key, (buckets.get(key) || 0) + 1);
+    }
+    let entries = [...buckets.entries()].map(([label, value]) => ({ label, value }));
+    entries.sort((a, b) => b.value - a.value);
+    if (entries.length > MAX_CATS) entries = entries.slice(0, MAX_CATS);
+    return entries;
+  }
+
   // ——— KPIs ———
   function buildKpis(rows, school, profile) {
-    const kpis = [{ label: "Rows", value: String(rows.length) }];
+    if (state.mode === "roster") {
+      return [
+        { label: "Students", value: String(state.rawRows.length) },
+        { label: "Score columns", value: "0" },
+        { label: "Charts", value: "N/A" },
+      ];
+    }
+
+    const kpis = [];
+
+    if (state.mode === "wide") {
+      kpis.push({ label: "Students", value: String(state.rawRows.length) });
+      kpis.push({ label: "Score cells", value: String(rows.length) });
+    } else {
+      kpis.push({ label: "Rows", value: String(rows.length) });
+    }
 
     if (school?.score) {
       const scores = rows.map((r) => toNumber(r[school.score])).filter((n) => n != null);
       kpis.push({ label: "Avg score", value: formatNum(avg(scores)) });
+      if (scores.length) {
+        kpis.push({ label: "Min score", value: formatNum(Math.min(...scores), 0) });
+        kpis.push({ label: "Max score", value: formatNum(Math.max(...scores), 0) });
+      }
     }
     if (school?.attendance) {
       const a = rows.map((r) => toNumber(r[school.attendance])).filter((n) => n != null);
@@ -150,12 +301,15 @@
     }
     if (school?.studentId) {
       kpis.push({ label: "Students", value: String(unique(rows.map((r) => r[school.studentId])).length) });
+    } else if (school?.studentName && state.mode !== "wide") {
+      kpis.push({ label: "Students", value: String(unique(rows.map((r) => r[school.studentName])).length) });
     }
     if (school?.subject) {
       kpis.push({ label: "Subjects", value: String(unique(rows.map((r) => r[school.subject])).length) });
     }
     if (school?.term) {
-      kpis.push({ label: "Terms", value: String(unique(rows.map((r) => r[school.term])).length) });
+      const terms = unique(rows.map((r) => r[school.term])).filter((t) => t && t !== "—");
+      if (terms.length) kpis.push({ label: "Terms", value: String(terms.length) });
     }
     if (school?.homework) {
       const h = rows.map((r) => toNumber(r[school.homework])).filter((n) => n != null);
@@ -163,24 +317,33 @@
     }
 
     if (!school) {
-      const nums = profile.filter((p) => p.isNumeric);
+      const nums = profile.filter((p) => p.isNumeric && !isSensitiveKey(p.key) && !isMetaKey(p.key));
       nums.slice(0, 3).forEach((p) => {
         const vals = rows.map((r) => toNumber(r[p.name])).filter((n) => n != null);
-        kpis.push({ label: `Avg ${p.name}`, value: formatNum(avg(vals)) });
+        kpis.push({ label: `Avg ${shortLabel(p.name)}`, value: formatNum(avg(vals)) });
       });
       const cats = profile.filter((p) => p.isCategorical);
       if (cats[0]) {
-        kpis.push({ label: `Unique ${cats[0].name}`, value: String(unique(rows.map((r) => r[cats[0].name])).length) });
+        kpis.push({
+          label: `Unique ${shortLabel(cats[0].name)}`,
+          value: String(unique(rows.map((r) => r[cats[0].name])).length),
+        });
       }
     }
 
     return kpis;
   }
 
+  function shortLabel(s) {
+    const t = String(s);
+    return t.length > 22 ? t.slice(0, 20) + "…" : t;
+  }
+
   function renderKpis(kpis) {
     $("kpiStrip").innerHTML = kpis
       .map(
-        (k) => `<div class="kpi"><div class="label">${escapeHtml(k.label)}</div><div class="value">${escapeHtml(k.value)}</div></div>`
+        (k) =>
+          `<div class="kpi"><div class="label">${escapeHtml(k.label)}</div><div class="value">${escapeHtml(k.value)}</div></div>`
       )
       .join("");
   }
@@ -254,14 +417,14 @@
     state.charts.push(chart);
   }
 
-  function addScatter(grid, id, title, points) {
+  function addScatter(grid, id, title, points, xTitle, yTitle) {
     grid.appendChild(makeChartCard(title, id));
     const chart = new Chart($(id), {
       type: "scatter",
       data: {
         datasets: [
           {
-            label: "Students / rows",
+            label: "Points",
             data: points,
             backgroundColor: "rgba(31, 143, 216, 0.55)",
           },
@@ -272,8 +435,8 @@
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { title: { display: true, text: "Attendance %" }, grid: { color: "rgba(18,48,71,0.06)" } },
-          y: { title: { display: true, text: "Score" }, grid: { color: "rgba(18,48,71,0.06)" } },
+          x: { title: { display: true, text: xTitle || "X" }, grid: { color: "rgba(18,48,71,0.06)" } },
+          y: { title: { display: true, text: yTitle || "Y" }, grid: { color: "rgba(18,48,71,0.06)" } },
         },
       },
     });
@@ -281,7 +444,9 @@
   }
 
   function termSubjectComparison(rows, subjectCol, termCol, scoreCol) {
-    const terms = unique(rows.map((r) => r[termCol])).slice(0, 4);
+    const terms = unique(rows.map((r) => r[termCol]))
+      .filter((t) => t && t !== "—")
+      .slice(0, 4);
     const subjects = unique(rows.map((r) => r[subjectCol]));
     const topSubjects = subjects.slice(0, MAX_CATS);
     const datasets = terms.map((term) => {
@@ -297,14 +462,37 @@
     return { labels: topSubjects.map(String), datasets };
   }
 
+  function studentAverages(rows, studentCol, scoreCol, limit = 10) {
+    const buckets = new Map();
+    for (const r of rows) {
+      const s = String(r[studentCol] ?? "").trim();
+      if (!s) continue;
+      const n = toNumber(r[scoreCol]);
+      if (n == null) continue;
+      if (!buckets.has(s)) buckets.set(s, []);
+      buckets.get(s).push(n);
+    }
+    return [...buckets.entries()]
+      .map(([label, vals]) => ({ label: shortLabel(label), value: avg(vals), full: label }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, limit);
+  }
+
   function renderCharts(rows, school, profile) {
     destroyCharts();
     const grid = $("chartsGrid");
     grid.innerHTML = "";
 
+    if (state.mode === "roster") {
+      grid.innerHTML = `<div class="notice-box">
+        <strong>This looks like a login / roster export</strong>, not a markbook with scores.
+        <p>Columns like login name and password can’t produce useful grade charts. Upload a file with subject or assessment scores (for example an Excel export with Math, English, Science columns), or use <em>Load sample dataset</em>.</p>
+      </div>`;
+      return;
+    }
+
     const catOverride = $("catOverride").value;
     const numOverride = $("numOverride").value;
-
     let chartCount = 0;
 
     if (school) {
@@ -317,7 +505,7 @@
           addBarChart(
             grid,
             "chart-subj",
-            `Average ${scoreCol} by ${catCol}`,
+            `Average ${shortLabel(scoreCol)} by ${shortLabel(catCol)}`,
             g.map((x) => x.label),
             g.map((x) => x.value),
             `Avg ${scoreCol}`
@@ -328,9 +516,11 @@
 
       if (school.subject && school.term && school.score) {
         const cmp = termSubjectComparison(rows, school.subject, school.term, school.score);
-        if (cmp.labels.length && cmp.datasets.length > 1) {
-          addGroupedBar(grid, "chart-term", "Average Score by Subject & Term", cmp.labels, cmp.datasets);
-          chartCount++;
+        if (cmp.labels.length && cmp.datasets.length >= 1 && cmp.datasets.some((d) => d.label !== "—")) {
+          if (cmp.datasets.length > 1) {
+            addGroupedBar(grid, "chart-term", "Average Score by Subject & Term", cmp.labels, cmp.datasets);
+            chartCount++;
+          }
         }
       }
 
@@ -344,7 +534,7 @@
           .filter(Boolean)
           .slice(0, 500);
         if (points.length >= 5) {
-          addScatter(grid, "chart-scatter", "Attendance % vs Score", points);
+          addScatter(grid, "chart-scatter", "Attendance % vs Score", points, "Attendance %", "Score");
           chartCount++;
         }
       }
@@ -376,12 +566,28 @@
           chartCount++;
         }
       }
+
+      // Wide markbook extras: student averages
+      if (state.mode === "wide" && school.score && (school.studentName || "Student")) {
+        const studentCol = school.studentName || "Student";
+        const top = studentAverages(rows, studentCol, school.score, 8);
+        if (top.length >= 3) {
+          addBarChart(
+            grid,
+            "chart-students-top",
+            "Highest overall averages (sample)",
+            top.map((x) => x.label),
+            top.map((x) => x.value)
+          );
+          chartCount++;
+        }
+      }
     }
 
     // Generic / fill-in charts
     if (chartCount < 2) {
       const cats = profile.filter((p) => p.isCategorical);
-      const nums = profile.filter((p) => p.isNumeric);
+      const nums = profile.filter((p) => p.isNumeric && !isSensitiveKey(p.key));
       const catCol = catOverride || cats[0]?.name;
       const numCol = numOverride || nums[0]?.name;
       if (catCol && numCol) {
@@ -390,10 +596,16 @@
           addBarChart(
             grid,
             "chart-generic",
-            `Average ${numCol} by ${catCol}`,
+            `Average ${shortLabel(numCol)} by ${shortLabel(catCol)}`,
             g.map((x) => x.label),
             g.map((x) => x.value)
           );
+          chartCount++;
+        }
+      } else if (catCol && !numCol) {
+        const g = groupCount(rows, catCol);
+        if (g.length) {
+          addBarChart(grid, "chart-counts", `Count by ${shortLabel(catCol)}`, g.map((x) => x.label), g.map((x) => x.value), "Count");
           chartCount++;
         }
       }
@@ -409,42 +621,27 @@
           .filter(Boolean)
           .slice(0, 400);
         if (points.length >= 5) {
-          grid.appendChild(makeChartCard(`${a} vs ${b}`, "chart-gen-scatter"));
-          const chart = new Chart($("chart-gen-scatter"), {
-            type: "scatter",
-            data: {
-              datasets: [{ label: "Points", data: points, backgroundColor: "rgba(15,159,138,0.5)" }],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: { legend: { display: false } },
-              scales: {
-                x: { title: { display: true, text: a } },
-                y: { title: { display: true, text: b } },
-              },
-            },
-          });
-          state.charts.push(chart);
+          addScatter(grid, "chart-gen-scatter", `${shortLabel(a)} vs ${shortLabel(b)}`, points, a, b);
           chartCount++;
         }
       }
     }
 
     if (!chartCount) {
-      grid.innerHTML = `<p class="empty-note">Could not build charts from this file. Try a sheet with clear headers and numeric columns.</p>`;
+      grid.innerHTML = `<p class="empty-note">Could not build charts from this file. Try a markbook with subject score columns, or the sample dataset.</p>`;
     }
   }
 
   function renderPreview(rows, headers) {
+    const safeHeaders = headers.filter((h) => !isSensitiveKey(normalizeHeader(h)));
     const slice = rows.slice(0, 8);
     if (!slice.length) {
       $("tablePreview").innerHTML = "<p class='empty-note'>No rows</p>";
       return;
     }
-    const head = headers.map((h) => `<th>${escapeHtml(h)}</th>`).join("");
+    const head = safeHeaders.map((h) => `<th>${escapeHtml(h)}</th>`).join("");
     const body = slice
-      .map((r) => `<tr>${headers.map((h) => `<td>${escapeHtml(r[h] ?? "")}</td>`).join("")}</tr>`)
+      .map((r) => `<tr>${safeHeaders.map((h) => `<td>${escapeHtml(r[h] ?? "")}</td>`).join("")}</tr>`)
       .join("");
     $("tablePreview").innerHTML = `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
   }
@@ -467,7 +664,7 @@
   function populateControls(headers, profile) {
     fillSelect($("sheetSelect"), state.sheetNames, false);
     const cats = profile.filter((p) => p.isCategorical).map((p) => p.name);
-    const nums = profile.filter((p) => p.isNumeric).map((p) => p.name);
+    const nums = profile.filter((p) => p.isNumeric && !isSensitiveKey(p.key)).map((p) => p.name);
     fillSelect($("filterCol"), cats, false);
     fillSelect($("catOverride"), cats, true);
     fillSelect($("numOverride"), nums, true);
@@ -484,7 +681,9 @@
       return;
     }
     const vals = unique(state.rows.map((r) => r[col])).sort((a, b) => String(a).localeCompare(String(b)));
-    sel.innerHTML = `<option value="">All</option>` + vals.map((v) => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
+    sel.innerHTML =
+      `<option value="">All</option>` +
+      vals.map((v) => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
     sel.disabled = false;
   }
 
@@ -493,25 +692,58 @@
     const school = state.school;
     const profile = state.profile;
     const pill = $("modePill");
-    if (school) {
+    const notice = $("fileNotice");
+
+    if (state.mode === "wide") {
+      pill.textContent = "Wide markbook mode";
+      pill.classList.remove("generic");
+    } else if (state.mode === "school") {
       pill.textContent = "School markbook mode";
       pill.classList.remove("generic");
+    } else if (state.mode === "roster") {
+      pill.textContent = "Roster / login file";
+      pill.classList.add("generic");
     } else {
       pill.textContent = "Generic mode";
       pill.classList.add("generic");
     }
+
+    if (notice) {
+      if (state.notice) {
+        notice.textContent = state.notice;
+        notice.classList.remove("hidden");
+      } else {
+        notice.textContent = "";
+        notice.classList.add("hidden");
+      }
+    }
+
     renderKpis(buildKpis(rows, school, profile));
     renderCharts(rows, school, profile);
-    renderPreview(rows, state.headers);
+    // Preview original upload shape (more familiar for teachers)
+    renderPreview(state.rawRows.length ? state.rawRows : rows, state.rawHeaders.length ? state.rawHeaders : state.headers);
     dashboard.classList.remove("hidden");
+  }
+
+  function cleanSheetRows(json) {
+    if (!json.length) return { rows: [], headers: [] };
+    let headers = Object.keys(json[0]).filter((h) => !isEmptyHeader(h));
+    // Drop columns that are entirely empty
+    headers = headers.filter((h) => json.some((r) => r[h] != null && String(r[h]).trim() !== ""));
+    const rows = json.map((r) => {
+      const o = {};
+      headers.forEach((h) => {
+        o[h] = r[h];
+      });
+      return o;
+    });
+    return { rows, headers };
   }
 
   function rowsFromSheet(workbook, sheetName) {
     const sheet = workbook.Sheets[sheetName];
     const json = XLSX.utils.sheet_to_json(sheet, { defval: "", raw: false });
-    if (!json.length) return { rows: [], headers: [] };
-    const headers = Object.keys(json[0]);
-    return { rows: json, headers };
+    return cleanSheetRows(json);
   }
 
   function loadWorkbook(workbook, label) {
@@ -532,10 +764,51 @@
 
   function applySheet(sheetName) {
     const { rows, headers } = rowsFromSheet(state.workbook, sheetName);
+    state.rawRows = rows;
+    state.rawHeaders = headers;
+    state.notice = "";
+
+    const rawProfile = profileColumns(rows, headers);
+
+    if (isRosterOnly(headers, rawProfile, rows)) {
+      state.rows = rows;
+      state.headers = headers;
+      state.profile = rawProfile;
+      state.school = null;
+      state.mode = "roster";
+      state.notice =
+        "Detected a student login/roster file (names + passwords). Charts need score columns — try a markbook export instead.";
+      return;
+    }
+
+    const wide = detectWideMarkbook(rows, headers, rawProfile);
+    if (wide) {
+      const longRows = unpivotWide(rows, wide.scoreCols, wide.studentCol);
+      state.rows = longRows;
+      state.headers = ["Student", "Subject", "Term", "Score", "Assessment"];
+      state.profile = profileColumns(longRows, state.headers);
+      state.school = {
+        score: "Score",
+        subject: "Subject",
+        term: "Term",
+        studentName: "Student",
+        attendance: null,
+        gradeLevel: null,
+        learningSupport: null,
+        studentId: null,
+        homework: null,
+      };
+      state.mode = "wide";
+      state.notice = `Wide markbook detected: ${wide.scoreCols.length} score columns reshaped into Subject / Score for charts.`;
+      return;
+    }
+
     state.rows = rows;
     state.headers = headers;
-    state.profile = profileColumns(rows, headers);
-    state.school = detectSchoolMap(state.profile);
+    state.profile = rawProfile;
+    state.school = detectSchoolMap(rawProfile);
+    state.mode = state.school ? "school" : "generic";
+    state.notice = "";
   }
 
   function parseArrayBuffer(buf, fileName) {
@@ -557,16 +830,16 @@
     reader.readAsArrayBuffer(file);
   }
 
-  async function loadSample() {
+  async function loadSampleFile(path, label) {
     try {
-      const res = await fetch("../dataset/ahliyyah-mutran-learning.csv");
+      const res = await fetch(path);
       if (!res.ok) throw new Error("fetch failed");
       const text = await res.text();
       const workbook = XLSX.read(text, { type: "string" });
-      loadWorkbook(workbook, "ahliyyah-mutran-learning.csv (sample)");
+      loadWorkbook(workbook, label);
     } catch (err) {
       console.error(err);
-      alert("Could not load the sample file. Check that dataset/ahliyyah-mutran-learning.csv is available.");
+      alert(`Could not load ${label}. Check that the sample file is available.`);
     }
   }
 
@@ -577,7 +850,11 @@
   });
   $("sampleBtn").addEventListener("click", (e) => {
     e.stopPropagation();
-    loadSample();
+    loadSampleFile("../dataset/ahliyyah-mutran-learning.csv", "ahliyyah-mutran-learning.csv (sample)");
+  });
+  $("sampleWideBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    loadSampleFile("../dataset/sample-wide-markbook.csv", "sample-wide-markbook.csv (wide markbook)");
   });
   dropzone.addEventListener("click", () => fileInput.click());
   fileInput.addEventListener("change", () => {

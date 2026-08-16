@@ -315,6 +315,31 @@ th { background: var(--soft); color: var(--sky); position: sticky; top: 0; }
   text-align: center;
 }
 
+.file-notice {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1.05rem;
+  border-radius: 0.9rem;
+  background: rgba(31, 143, 216, 0.1);
+  border: 1px solid rgba(31, 143, 216, 0.28);
+  color: #0f4f7a;
+  line-height: 1.45;
+}
+
+.notice-box {
+  grid-column: 1 / -1;
+  background: #fff;
+  border: 1px solid rgba(232, 145, 15, 0.4);
+  border-radius: 1rem;
+  padding: 1.25rem 1.4rem;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.notice-box p {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+}
+
 @media (max-width: 700px) {
   .top { flex-direction: column; }
 }

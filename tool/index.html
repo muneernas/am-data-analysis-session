@@ -17,14 +17,14 @@
       <div>
         <p class="eyebrow">Ahliyyah &amp; Mutran · Grades 6–10</p>
         <h1>Teacher Data Analyzer</h1>
-        <p class="lede">Upload an Excel or CSV file. We build KPIs and charts automatically — on this device only.</p>
+        <p class="lede">Upload a markbook or export with scores. We build KPIs and charts automatically — on this device only.</p>
       </div>
       <a class="link-slides" href="../index.html">Session slides</a>
     </header>
 
     <div class="privacy" role="status">
       <strong>Privacy:</strong> Your file is processed only in this browser. Nothing is uploaded to a server.
-      Prefer removing student names before sharing your screen.
+      Prefer removing student names before sharing your screen. Password columns are hidden in the preview.
     </div>
 
     <section class="upload-card" id="dropzone">
@@ -32,16 +32,18 @@
       <div class="upload-inner">
         <div class="upload-icon" aria-hidden="true">↑</div>
         <h2>Drop your Excel / CSV here</h2>
-        <p>or click to browse · .xlsx · .xls · .csv</p>
+        <p>Best with subject score columns (wide or long). Login/password lists won’t chart well.</p>
         <div class="upload-actions">
           <button type="button" class="btn primary" id="browseBtn">Choose file</button>
-          <button type="button" class="btn ghost" id="sampleBtn">Load sample dataset</button>
+          <button type="button" class="btn ghost" id="sampleBtn">Load sample (long)</button>
+          <button type="button" class="btn ghost" id="sampleWideBtn">Load sample (wide markbook)</button>
         </div>
         <p class="file-name" id="fileName"></p>
       </div>
     </section>
 
     <section class="dashboard hidden" id="dashboard">
+      <p class="file-notice hidden" id="fileNotice" role="status"></p>
       <div class="toolbar">
         <div class="field">
           <label for="sheetSelect">Sheet</label>
