@@ -1,6 +1,6 @@
 /* Teacher Data Analyzer — client-side only */
 (() => {
-  const COLORS = ["#1f8fd8", "#0f9f8a", "#e8910f", "#e85a3c", "#6b5ce0", "#2aa5a0", "#f0a202"];
+  const COLORS = ["#0b6b4f", "#c4a035", "#1a6f8a", "#b85c38", "#0e7d5c", "#d4b45a", "#2a8a6a"];
   const MAX_CATS = 12;
 
   const state = {
@@ -515,7 +515,7 @@
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          y: { beginAtZero: true, grid: { color: "rgba(18,48,71,0.06)" } },
+          y: { beginAtZero: true, grid: { color: "rgba(20,48,40,0.06)" } },
           x: { grid: { display: false } },
         },
       },
@@ -534,13 +534,13 @@
           {
             label: "Average",
             data: entries.map((x) => x.avg),
-            backgroundColor: "rgba(31, 143, 216, 0.85)",
+            backgroundColor: "rgba(11, 107, 79, 0.88)",
             borderRadius: 6,
           },
           {
             label: "Median",
             data: entries.map((x) => x.median),
-            backgroundColor: "rgba(15, 159, 138, 0.85)",
+            backgroundColor: "rgba(196, 160, 53, 0.9)",
             borderRadius: 6,
           },
         ],
@@ -550,7 +550,7 @@
         maintainAspectRatio: false,
         plugins: { legend: { position: "bottom" } },
         scales: {
-          y: { beginAtZero: true, grid: { color: "rgba(18,48,71,0.06)" } },
+          y: { beginAtZero: true, grid: { color: "rgba(20,48,40,0.06)" } },
           x: { grid: { display: false } },
         },
       },
@@ -575,7 +575,7 @@
         maintainAspectRatio: false,
         plugins: { legend: { position: "bottom" } },
         scales: {
-          y: { beginAtZero: true, grid: { color: "rgba(18,48,71,0.06)" } },
+          y: { beginAtZero: true, grid: { color: "rgba(20,48,40,0.06)" } },
           x: { grid: { display: false } },
         },
       },
@@ -592,7 +592,7 @@
           {
             label: "Points",
             data: points,
-            backgroundColor: "rgba(31, 143, 216, 0.55)",
+            backgroundColor: "rgba(11, 107, 79, 0.55)",
           },
         ],
       },
@@ -601,8 +601,8 @@
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { title: { display: true, text: xTitle || "X" }, grid: { color: "rgba(18,48,71,0.06)" } },
-          y: { title: { display: true, text: yTitle || "Y" }, grid: { color: "rgba(18,48,71,0.06)" } },
+          x: { title: { display: true, text: xTitle || "X" }, grid: { color: "rgba(20,48,40,0.06)" } },
+          y: { title: { display: true, text: yTitle || "Y" }, grid: { color: "rgba(20,48,40,0.06)" } },
         },
       },
     });
@@ -1134,12 +1134,12 @@
     try {
       const res = await fetch(path);
       if (!res.ok) throw new Error("fetch failed");
-      const text = await res.text();
-      const workbook = XLSX.read(text, { type: "string" });
+      const buf = await res.arrayBuffer();
+      const workbook = XLSX.read(new Uint8Array(buf), { type: "array" });
       loadWorkbook(workbook, label);
     } catch (err) {
       console.error(err);
-      alert(`Could not load ${label}. Check that the sample file is available.`);
+      alert(`Could not load ${label}. Check that the template file is available.`);
     }
   }
 
@@ -1148,18 +1148,20 @@
     e.stopPropagation();
     fileInput.click();
   });
-  $("sampleBtn").addEventListener("click", (e) => {
+  $("downloadTemplate").addEventListener("click", (e) => {
     e.stopPropagation();
-    loadSampleFile("../dataset/ahliyyah-mutran-learning.csv", "ahliyyah-mutran-learning.csv (sample)");
   });
-  $("sampleWideBtn").addEventListener("click", (e) => {
+  $("loadTemplateBtn").addEventListener("click", (e) => {
     e.stopPropagation();
     loadSampleFile(
-      "../dataset/sample-subject-gradebook.csv",
-      "sample-subject-gradebook.csv (Math-style units + criteria)"
+      "templates/subject-gradebook-template.xlsx",
+      "AM subject gradebook template"
     );
   });
-  dropzone.addEventListener("click", () => fileInput.click());
+  dropzone.addEventListener("click", (e) => {
+    if (e.target.closest("a, button")) return;
+    fileInput.click();
+  });
   fileInput.addEventListener("change", () => {
     if (fileInput.files?.[0]) handleFile(fileInput.files[0]);
   });
