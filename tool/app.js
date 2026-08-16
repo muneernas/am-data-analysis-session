@@ -1,6 +1,6 @@
 /* Teacher Data Analyzer — client-side only */
 (() => {
-  const COLORS = ["#0b6b4f", "#c4a035", "#1a6f8a", "#b85c38", "#0e7d5c", "#d4b45a", "#2a8a6a"];
+  const COLORS = ["#207028", "#f2b334", "#67c04d", "#766e65", "#f32735", "#00188a", "#c2bdb7"];
   const MAX_CATS = 12;
 
   const state = {
@@ -515,7 +515,7 @@
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          y: { beginAtZero: true, grid: { color: "rgba(20,48,40,0.06)" } },
+          y: { beginAtZero: true, grid: { color: "rgba(118,110,101,0.12)" } },
           x: { grid: { display: false } },
         },
       },
@@ -534,13 +534,13 @@
           {
             label: "Average",
             data: entries.map((x) => x.avg),
-            backgroundColor: "rgba(11, 107, 79, 0.88)",
+            backgroundColor: "rgba(32, 112, 40, 0.9)",
             borderRadius: 6,
           },
           {
             label: "Median",
             data: entries.map((x) => x.median),
-            backgroundColor: "rgba(196, 160, 53, 0.9)",
+            backgroundColor: "rgba(242, 179, 52, 0.92)",
             borderRadius: 6,
           },
         ],
@@ -550,7 +550,7 @@
         maintainAspectRatio: false,
         plugins: { legend: { position: "bottom" } },
         scales: {
-          y: { beginAtZero: true, grid: { color: "rgba(20,48,40,0.06)" } },
+          y: { beginAtZero: true, grid: { color: "rgba(118,110,101,0.12)" } },
           x: { grid: { display: false } },
         },
       },
@@ -575,7 +575,7 @@
         maintainAspectRatio: false,
         plugins: { legend: { position: "bottom" } },
         scales: {
-          y: { beginAtZero: true, grid: { color: "rgba(20,48,40,0.06)" } },
+          y: { beginAtZero: true, grid: { color: "rgba(118,110,101,0.12)" } },
           x: { grid: { display: false } },
         },
       },
@@ -592,7 +592,7 @@
           {
             label: "Points",
             data: points,
-            backgroundColor: "rgba(11, 107, 79, 0.55)",
+            backgroundColor: "rgba(32, 112, 40, 0.55)",
           },
         ],
       },
@@ -601,12 +601,146 @@
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { title: { display: true, text: xTitle || "X" }, grid: { color: "rgba(20,48,40,0.06)" } },
-          y: { title: { display: true, text: yTitle || "Y" }, grid: { color: "rgba(20,48,40,0.06)" } },
+          x: { title: { display: true, text: xTitle || "X" }, grid: { color: "rgba(118,110,101,0.12)" } },
+          y: { title: { display: true, text: yTitle || "Y" }, grid: { color: "rgba(118,110,101,0.12)" } },
         },
       },
     });
     state.charts.push(chart);
+  }
+
+  function heatColor(score) {
+    if (score == null || !Number.isFinite(score)) return null;
+    const t = Math.max(0, Math.min(1, (score - 1) / 7));
+    let r, g, b;
+    if (t < 0.5) {
+      const u = t / 0.5;
+      r = Math.round(243 + (242 - 243) * u);
+      g = Math.round(39 + (179 - 39) * u);
+      b = Math.round(53 + (52 - 53) * u);
+    } else {
+      const u = (t - 0.5) / 0.5;
+      r = Math.round(242 + (32 - 242) * u);
+      g = Math.round(179 + (112 - 179) * u);
+      b = Math.round(52 + (40 - 52) * u);
+    }
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function tinyName(name, i) {
+    const s = String(name || "").trim();
+    if (!s) return `S${i + 1}`;
+    const parts = s.split(/\s+/);
+    if (parts.length === 1) return shortLabel(parts[0]);
+    return shortLabel(`${parts[0]} ${parts[parts.length - 1].charAt(0)}.`);
+  }
+
+  function buildStudentCriterionMatrix(rows, studentCol, criterionCol, scoreCol, unitCol) {
+    const students = unique(rows.map((r) => r[studentCol])).slice(0, 24);
+    const criteria = unique(rows.map((r) => r[criterionCol]));
+    let unitFilter = null;
+    if (unitCol) {
+      const units = unique(rows.map((r) => r[unitCol])).filter((u) => u && u !== "—");
+      const endish = units.find((u) => /end of/i.test(u));
+      const progress = units.find((u) => /progress/i.test(u));
+      unitFilter = endish || progress || units[units.length - 1] || null;
+    }
+    const scoped = unitFilter ? rows.filter((r) => String(r[unitCol]) === String(unitFilter)) : rows;
+    const matrix = criteria.map((crit) =>
+      students.map((stu) => {
+        const vals = scoped
+          .filter((r) => String(r[studentCol]) === String(stu) && String(r[criterionCol]) === String(crit))
+          .map((r) => toNumber(r[scoreCol]))
+          .filter((n) => n != null);
+        return avg(vals);
+      })
+    );
+    const rowAvgs = matrix.map((row) => avg(row.filter((n) => n != null)));
+    return { students, criteria, matrix, rowAvgs, unitLabel: unitFilter };
+  }
+
+  function buildUnitCriterionMatrix(rows, unitCol, criterionCol, scoreCol) {
+    const units = unique(rows.map((r) => r[unitCol])).filter((u) => u && u !== "—");
+    const criteria = unique(rows.map((r) => r[criterionCol]));
+    const matrix = criteria.map((crit) =>
+      units.map((unit) => {
+        const vals = rows
+          .filter((r) => String(r[unitCol]) === String(unit) && String(r[criterionCol]) === String(crit))
+          .map((r) => toNumber(r[scoreCol]))
+          .filter((n) => n != null);
+        return avg(vals);
+      })
+    );
+    return { units, criteria, matrix };
+  }
+
+  function addHeatmapCard(grid, title, colLabels, rowLabels, matrix, rowAvgs, guide, subtitle) {
+    const card = document.createElement("div");
+    card.className = "chart-card wide";
+    const sub = subtitle ? `<p style="margin:0 0 0.55rem;color:var(--muted);font-size:0.88rem">${escapeHtml(subtitle)}</p>` : "";
+    let head =
+      `<th class="row-label"></th>` +
+      colLabels.map((c, i) => `<th title="${escapeHtml(c)}">${escapeHtml(tinyName(c, i))}</th>`).join("");
+    if (rowAvgs) head += `<th>Avg</th>`;
+    const body = rowLabels
+      .map((rowLabel, ri) => {
+        const cells = matrix[ri]
+          .map((v) => {
+            if (v == null) return `<td class="heat empty">·</td>`;
+            return `<td class="heat" style="background:${heatColor(v)}" title="${escapeHtml(rowLabel)}: ${formatNum(v)}">${formatNum(v, 1)}</td>`;
+          })
+          .join("");
+        const avgCell =
+          rowAvgs && rowAvgs[ri] != null
+            ? `<td class="heat" style="background:${heatColor(rowAvgs[ri])}">${formatNum(rowAvgs[ri], 1)}</td>`
+            : "";
+        return `<tr><td class="row-label" title="${escapeHtml(rowLabel)}">${escapeHtml(shortLabel(rowLabel))}</td>${cells}${avgCell}</tr>`;
+      })
+      .join("");
+    card.innerHTML = `
+      <h3>${escapeHtml(title)}</h3>
+      ${sub}
+      <div class="heatmap-wrap">
+        <table class="heatmap"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>
+      </div>
+      <div class="heatmap-legend">
+        <span><i style="background:#f32735"></i> Needs support</span>
+        <span><i style="background:#f2b334"></i> Developing</span>
+        <span><i style="background:#207028"></i> Mastery</span>
+      </div>
+      <p class="chart-guide"><strong>What to notice:</strong> ${escapeHtml(guide)}</p>`;
+    grid.appendChild(card);
+  }
+
+  function criterionScatterPoints(rows, studentCol, criterionCol, scoreCol) {
+    const criteria = unique(rows.map((r) => r[criterionCol]));
+    if (criteria.length < 2) return null;
+    const ranked = criteria
+      .map((c) => ({
+        c,
+        n: rows.filter((r) => String(r[criterionCol]) === String(c) && toNumber(r[scoreCol]) != null).length,
+      }))
+      .sort((a, b) => b.n - a.n);
+    const xCrit = ranked[0].c;
+    const yCrit = ranked[1].c;
+    const points = [];
+    unique(rows.map((r) => r[studentCol])).forEach((stu) => {
+      const x = avg(
+        rows
+          .filter((r) => String(r[studentCol]) === String(stu) && String(r[criterionCol]) === String(xCrit))
+          .map((r) => toNumber(r[scoreCol]))
+          .filter((n) => n != null)
+      );
+      const y = avg(
+        rows
+          .filter((r) => String(r[studentCol]) === String(stu) && String(r[criterionCol]) === String(yCrit))
+          .map((r) => toNumber(r[scoreCol]))
+          .filter((n) => n != null)
+      );
+      if (x != null && y != null) points.push({ x, y });
+    });
+    if (points.length < 5) return null;
+    return { points, xCrit, yCrit };
   }
 
   function scoreDistribution(rows, scoreCol) {
@@ -721,11 +855,61 @@
         "Average shows the overall level; median shows the typical student. When they diverge, dig into who is above or below the middle.",
       counts:
         "Counts show volume, not quality. Pair this with a score chart before deciding next steps.",
+      heatStudent:
+        "Dark green = mastery, gold = developing, red = needs support. Scan down a column for a student profile, or across a row for a weak criterion.",
+      heatUnit:
+        "Compare criteria across units. A red streak in one criterion across units is a reteach signal.",
+      critScatter:
+        "Each point is a student. Points high on both axes are strong in both criteria; bottom-left need support in both.",
     };
 
     if (school) {
       const scoreCol = numOverride || school.score;
       const catCol = catOverride || school.subject;
+
+      if (state.mode === "criteria" && school.studentName && school.subject && school.score) {
+        const hm = buildStudentCriterionMatrix(rows, school.studentName, school.subject, school.score, school.term);
+        if (hm.criteria.length && hm.students.length) {
+          addHeatmapCard(
+            grid,
+            "Criterion × student heatmap",
+            hm.students,
+            hm.criteria,
+            hm.matrix,
+            hm.rowAvgs,
+            GUIDE.heatStudent,
+            hm.unitLabel ? `Showing: ${hm.unitLabel}` : "Averaged across available units"
+          );
+          chartCount++;
+        }
+        const um = buildUnitCriterionMatrix(rows, school.term, school.subject, school.score);
+        if (um.units.length >= 2 && um.criteria.length) {
+          addHeatmapCard(
+            grid,
+            "Criterion × unit heatmap",
+            um.units,
+            um.criteria,
+            um.matrix,
+            null,
+            GUIDE.heatUnit,
+            "Class averages by criterion and unit / period"
+          );
+          chartCount++;
+        }
+        const sc = criterionScatterPoints(rows, school.studentName, school.subject, school.score);
+        if (sc) {
+          addScatter(
+            grid,
+            "chart-crit-scatter",
+            `${shortLabel(sc.xCrit)} vs ${shortLabel(sc.yCrit)}`,
+            sc.points,
+            sc.xCrit,
+            sc.yCrit,
+            GUIDE.critScatter
+          );
+          chartCount++;
+        }
+      }
 
       if (scoreCol && catCol) {
         const g = groupStats(rows, catCol, scoreCol);
