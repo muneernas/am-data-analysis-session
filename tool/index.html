@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Data Analyzer · Ahliyyah & Mutran</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <div>
+        <p class="eyebrow">Ahliyyah &amp; Mutran · Grades 6–10</p>
+        <h1>Teacher Data Analyzer</h1>
+        <p class="lede">Upload an Excel or CSV file. We build KPIs and charts automatically — on this device only.</p>
+      </div>
+      <a class="link-slides" href="../index.html">Session slides</a>
+    </header>
+
+    <div class="privacy" role="status">
+      <strong>Privacy:</strong> Your file is processed only in this browser. Nothing is uploaded to a server.
+      Prefer removing student names before sharing your screen.
+    </div>
+
+    <section class="upload-card" id="dropzone">
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" hidden />
+      <div class="upload-inner">
+        <div class="upload-icon" aria-hidden="true">↑</div>
+        <h2>Drop your Excel / CSV here</h2>
+        <p>or click to browse · .xlsx · .xls · .csv</p>
+        <div class="upload-actions">
+          <button type="button" class="btn primary" id="browseBtn">Choose file</button>
+          <button type="button" class="btn ghost" id="sampleBtn">Load sample dataset</button>
+        </div>
+        <p class="file-name" id="fileName"></p>
+      </div>
+    </section>
+
+    <section class="dashboard hidden" id="dashboard">
+      <div class="toolbar">
+        <div class="field">
+          <label for="sheetSelect">Sheet</label>
+          <select id="sheetSelect"></select>
+        </div>
+        <div class="field">
+          <label for="filterCol">Filter column</label>
+          <select id="filterCol"><option value="">None</option></select>
+        </div>
+        <div class="field">
+          <label for="filterVal">Filter value</label>
+          <select id="filterVal" disabled><option value="">All</option></select>
+        </div>
+        <div class="field">
+          <label for="catOverride">Category (X)</label>
+          <select id="catOverride"><option value="">Auto</option></select>
+        </div>
+        <div class="field">
+          <label for="numOverride">Numeric (Y)</label>
+          <select id="numOverride"><option value="">Auto</option></select>
+        </div>
+        <div class="mode-pill" id="modePill">Detecting…</div>
+      </div>
+
+      <div class="kpis" id="kpiStrip"></div>
+
+      <div class="charts" id="chartsGrid"></div>
+
+      <details class="preview">
+        <summary>Preview first rows</summary>
+        <div class="table-wrap" id="tablePreview"></div>
+      </details>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
