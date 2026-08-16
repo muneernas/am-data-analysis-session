@@ -12,10 +12,11 @@
     headers: [],
     profile: null,
     school: null,
-    mode: "generic", // school | wide | roster | generic
+    mode: "generic", // school | wide | criteria | roster | generic
     notice: "",
     charts: [],
     fileLabel: "",
+    subjectHint: "",
   };
 
   const $ = (id) => document.getElementById(id);
@@ -36,9 +37,15 @@
     if (v == null || v === "") return null;
     if (typeof v === "number" && Number.isFinite(v)) return v;
     const s = String(v).replace(/,/g, "").replace(/%/g, "").trim();
-    if (!s) return null;
+    if (!s || s === "-" || s === "–" || s === "—" || /^n\/?a$/i.test(s)) return null;
     const n = Number(s);
     return Number.isFinite(n) ? n : null;
+  }
+
+  function subjectFromFileName(label) {
+    const s = String(label || "");
+    const m = s.match(/-\s*([^-]+?)\s*-\s*Grade\s*\d/i);
+    return m ? m[1].trim() : "";
   }
 
   function unique(arr) {
@@ -98,11 +105,106 @@
     }
     // School subject-style headers: "Math - Second Term"
     if (/\s-\s/.test(String(name)) && profileCol.isNumeric) return true;
-    // Values mostly in 0–100 with decent fill
+    // Values mostly in common mark scales (0–100 or MYP 0–8)
     const vals = rows.map((r) => toNumber(r[name])).filter((n) => n != null);
     if (vals.length < Math.max(3, Math.floor(rows.length * 0.3))) return false;
-    const inRange = vals.filter((n) => n >= 0 && n <= 100).length;
-    return inRange / vals.length >= 0.75;
+    const in100 = vals.filter((n) => n >= 0 && n <= 100).length;
+    const in8 = vals.filter((n) => n >= 0 && n <= 8).length;
+    return in100 / vals.length >= 0.75 || in8 / vals.length >= 0.75;
+  }
+
+  function forwardFillUnits(row) {
+    let last = "";
+    return (row || []).map((cell, idx) => {
+      if (idx === 0) return "";
+      const t = String(cell ?? "").trim();
+      if (t) {
+        last = t;
+        return t;
+      }
+      return last;
+    });
+  }
+
+  function detectCriteriaGradebook(aoa) {
+    if (!aoa || aoa.length < 3) return false;
+    const r0 = aoa[0] || [];
+    const r1 = aoa[1] || [];
+    if (!/student\s*name/i.test(String(r1[0] ?? ""))) return false;
+    const crits = r1
+      .slice(1)
+      .map((c) => String(c ?? "").trim())
+      .filter(Boolean);
+    if (crits.length < 4) return false;
+    const units = forwardFillUnits(r0);
+    const unitLabels = unique(units.slice(1).filter(Boolean));
+    const hasUnits = unitLabels.some((u) => /unit|progress|term|report|end of|summative/i.test(u));
+    const uniqCrit = new Set(crits.map((c) => c.toLowerCase()));
+    const hasRepeats = uniqCrit.size >= 2 && uniqCrit.size < crits.length;
+    return hasUnits || hasRepeats;
+  }
+
+  function parseCriteriaGradebook(aoa) {
+    const units = forwardFillUnits(aoa[0] || []);
+    const criteria = aoa[1] || [];
+    const longRows = [];
+    let missing = 0;
+    let filled = 0;
+
+    for (let r = 2; r < aoa.length; r++) {
+      const row = aoa[r] || [];
+      const student = String(row[0] ?? "").trim();
+      if (!student) continue;
+      for (let c = 1; c < criteria.length; c++) {
+        const criterion = String(criteria[c] ?? "").trim();
+        if (!criterion) continue;
+        const unit = String(units[c] ?? "").trim() || "—";
+        const raw = row[c];
+        const blank = raw == null || String(raw).trim() === "" || String(raw).trim() === "-";
+        const score = toNumber(raw);
+        if (score == null) {
+          if (blank || String(raw).trim() === "-") missing++;
+          continue;
+        }
+        filled++;
+        longRows.push({
+          Student: student,
+          Unit: unit,
+          Criterion: criterion,
+          Score: score,
+        });
+      }
+    }
+
+    const flatHeaders = criteria.map((crit, c) => {
+      if (c === 0) return "Student Name";
+      const criterion = String(crit ?? "").trim();
+      const unit = String(units[c] ?? "").trim();
+      return unit ? `${unit} · ${criterion}` : criterion;
+    });
+
+    const previewRows = [];
+    for (let r = 2; r < aoa.length; r++) {
+      const row = aoa[r] || [];
+      const student = String(row[0] ?? "").trim();
+      if (!student) continue;
+      const obj = {};
+      flatHeaders.forEach((h, c) => {
+        obj[h] = c === 0 ? student : row[c] ?? "";
+      });
+      previewRows.push(obj);
+    }
+
+    return {
+      longRows,
+      flatHeaders,
+      previewRows,
+      filled,
+      missing,
+      unitCount: unique(longRows.map((r) => r.Unit)).length,
+      criterionCount: unique(longRows.map((r) => r.Criterion)).length,
+      studentCount: unique(longRows.map((r) => r.Student)).length,
+    };
   }
 
   function parseSubjectTerm(header) {
@@ -279,6 +381,17 @@
     }
 
     const kpis = [];
+
+    if (state.mode === "criteria") {
+      kpis.push({ label: "Students", value: String(unique(rows.map((r) => r.Student)).length) });
+      if (state.subjectHint) kpis.push({ label: "Subject", value: state.subjectHint });
+      kpis.push({ label: "Units / periods", value: String(unique(rows.map((r) => r.Unit)).filter((u) => u && u !== "—").length) });
+      kpis.push({ label: "Criteria", value: String(unique(rows.map((r) => r.Criterion)).length) });
+      const scores = rows.map((r) => toNumber(r.Score)).filter((n) => n != null);
+      kpis.push({ label: "Avg mark", value: formatNum(avg(scores)) });
+      kpis.push({ label: "Marks entered", value: String(scores.length) });
+      return kpis;
+    }
 
     if (state.mode === "wide") {
       kpis.push({ label: "Students", value: String(state.rawRows.length) });
@@ -505,10 +618,24 @@
           addBarChart(
             grid,
             "chart-subj",
-            `Average ${shortLabel(scoreCol)} by ${shortLabel(catCol)}`,
+            state.mode === "criteria" ? "Average mark by criterion" : `Average ${shortLabel(scoreCol)} by ${shortLabel(catCol)}`,
             g.map((x) => x.label),
             g.map((x) => x.value),
             `Avg ${scoreCol}`
+          );
+          chartCount++;
+        }
+      }
+
+      if (state.mode === "criteria" && school.term) {
+        const g = groupAverage(rows, school.term, school.score);
+        if (g.length) {
+          addBarChart(
+            grid,
+            "chart-unit",
+            "Average mark by unit / period",
+            g.map((x) => x.label),
+            g.map((x) => x.value)
           );
           chartCount++;
         }
@@ -518,7 +645,13 @@
         const cmp = termSubjectComparison(rows, school.subject, school.term, school.score);
         if (cmp.labels.length && cmp.datasets.length >= 1 && cmp.datasets.some((d) => d.label !== "—")) {
           if (cmp.datasets.length > 1) {
-            addGroupedBar(grid, "chart-term", "Average Score by Subject & Term", cmp.labels, cmp.datasets);
+            addGroupedBar(
+              grid,
+              "chart-term",
+              state.mode === "criteria" ? "Average mark by criterion & unit" : "Average Score by Subject & Term",
+              cmp.labels,
+              cmp.datasets
+            );
             chartCount++;
           }
         }
@@ -567,15 +700,15 @@
         }
       }
 
-      // Wide markbook extras: student averages
-      if (state.mode === "wide" && school.score && (school.studentName || "Student")) {
+      // Student averages for criteria / wide markbooks
+      if ((state.mode === "wide" || state.mode === "criteria") && school.score && (school.studentName || "Student")) {
         const studentCol = school.studentName || "Student";
         const top = studentAverages(rows, studentCol, school.score, 8);
         if (top.length >= 3) {
           addBarChart(
             grid,
             "chart-students-top",
-            "Highest overall averages (sample)",
+            "Highest overall averages",
             top.map((x) => x.label),
             top.map((x) => x.value)
           );
@@ -697,6 +830,11 @@
     if (state.mode === "wide") {
       pill.textContent = "Wide markbook mode";
       pill.classList.remove("generic");
+    } else if (state.mode === "criteria") {
+      pill.textContent = state.subjectHint
+        ? `Subject gradebook · ${state.subjectHint}`
+        : "Subject gradebook (units + criteria)";
+      pill.classList.remove("generic");
     } else if (state.mode === "school") {
       pill.textContent = "School markbook mode";
       pill.classList.remove("generic");
@@ -746,10 +884,16 @@
     return cleanSheetRows(json);
   }
 
+  function sheetToAoa(workbook, sheetName) {
+    const sheet = workbook.Sheets[sheetName];
+    return XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "", raw: false });
+  }
+
   function loadWorkbook(workbook, label) {
     state.workbook = workbook;
     state.sheetNames = workbook.SheetNames || [];
     state.fileLabel = label || "";
+    state.subjectHint = subjectFromFileName(label);
     $("fileName").textContent = label ? `Loaded: ${label}` : "";
     if (!state.sheetNames.length) {
       alert("No sheets found in this file.");
@@ -763,10 +907,37 @@
   }
 
   function applySheet(sheetName) {
+    state.notice = "";
+    const aoa = sheetToAoa(state.workbook, sheetName);
+
+    // Per-subject gradebooks: row 1 = units, row 2 = criteria (Analysing, Organizing, …)
+    if (detectCriteriaGradebook(aoa)) {
+      const parsed = parseCriteriaGradebook(aoa);
+      state.rawRows = parsed.previewRows;
+      state.rawHeaders = parsed.flatHeaders;
+      state.rows = parsed.longRows;
+      state.headers = ["Student", "Unit", "Criterion", "Score"];
+      state.profile = profileColumns(parsed.longRows, state.headers);
+      state.school = {
+        score: "Score",
+        subject: "Criterion",
+        term: "Unit",
+        studentName: "Student",
+        attendance: null,
+        gradeLevel: null,
+        learningSupport: null,
+        studentId: null,
+        homework: null,
+      };
+      state.mode = "criteria";
+      const subj = state.subjectHint ? ` (${state.subjectHint})` : "";
+      state.notice = `Subject gradebook${subj}: unit row + criteria row detected. ${parsed.filled} marks charted across ${parsed.unitCount} units and ${parsed.criterionCount} criteria (dashes skipped).`;
+      return;
+    }
+
     const { rows, headers } = rowsFromSheet(state.workbook, sheetName);
     state.rawRows = rows;
     state.rawHeaders = headers;
-    state.notice = "";
 
     const rawProfile = profileColumns(rows, headers);
 
@@ -854,7 +1025,10 @@
   });
   $("sampleWideBtn").addEventListener("click", (e) => {
     e.stopPropagation();
-    loadSampleFile("../dataset/sample-wide-markbook.csv", "sample-wide-markbook.csv (wide markbook)");
+    loadSampleFile(
+      "../dataset/sample-subject-gradebook.csv",
+      "sample-subject-gradebook.csv (Math-style units + criteria)"
+    );
   });
   dropzone.addEventListener("click", () => fileInput.click());
   fileInput.addEventListener("change", () => {
