@@ -1,42 +1,20 @@
-# Facilitator guide · From Numbers to Narratives
+# Facilitator guide · From Marks to Moves
 
 **Audience:** Grades 6–10 · all subjects · Ahliyyah & Mutran  
-**Live:** https://muneernas.github.io/am-data-analysis-session/
+**Live:** https://muneernas.github.io/am-data-analysis-session/  
+**Analyzer:** https://muneernas.github.io/am-data-analysis-session/tool/
 
 ---
 
-## Session flow
+## Session flow (~55 min)
 
 | Step | Block | Focus |
 |-----:|-------|-------|
-| 1 | Warm up | Pattern Police |
-| 2 | What & where | What counts as data · 4 buckets · school sources · Locate→Export→Clean→Analyse |
-| 3 | How to analyse | Autopsy/biopsy · engine · questions · averages · example · why · act · 2-2-2 · traps |
-| 4 | Tools safely | **Privacy first** · AI risks · checklist · then Power BI |
-| 5 | Practice | Demo · 3 challenges · 2-2-2 share |
-
----
-
-## Critical talking point — AI & privacy
-
-Say this clearly (do not soft-pedal):
-
-> “AI tools can help summarise anonymised tables. They are **dangerous** if you paste real student names, IDs, emails, or photos into public chats. Remove private information first. If a stranger could recognise the child, it is not ready for AI. Prefer Excel/Power BI on your device for identifiable school files.”
-
-Checklist to flash on screen:
-1. Remove identifiers  
-2. Replace with codes (S01…)  
-3. Follow school-approved tools  
-4. Never upload markbook photos with names  
-5. Verify AI suggestions against real numbers  
-6. Local tools first for real class data  
-
----
-
-## Data “where to find it” examples
-
-Everyday: markbook, LMS, attendance, homework trackers.  
-School systems: SIS exports, Toddle/ManageBac (if used), shared drives, learning-support summaries **with permission**.
+| 1 | Warm up | Pattern Police (5 rounds) |
+| 2 | What is an insight | Number vs insight · autopsy/biopsy |
+| 3 | Read the gradebook | Units + criteria · average vs median · heatmap |
+| 4 | Analyzer | Upload export · 3 challenges |
+| 5 | Share | 2-2-2 |
 
 ---
 
@@ -46,10 +24,29 @@ School systems: SIS exports, Toddle/ManageBac (if used), shared drives, learning
 2. Green book  
 3. Middle column high scores  
 4. No homework → lower scores  
-5. Part B weak for everyone → reteach Part B  
+5. Organizing low for everyone → reteach Organizing  
+
+---
+
+## Critical talking points
+
+**Insight formula:** Who + which criterion/unit + compared to what + so we will…
+
+**Average vs median:** If they disagree, the class is uneven — that *is* the finding.
+
+**Dashes:** Not assessed yet. Do not treat as zero.
+
+**Privacy:** The analyzer runs in the browser. Never paste identifiable student data into public AI.
+
+---
+
+## Lab files
+
+Teachers should upload their own subject gradebook export (row 1 = units, row 2 = criteria).  
+Fallback: **Try template** on `/tool/`.
 
 ---
 
 ## Closing line
 
-> “Know where the data lives. Clean it. Analyse it. Never feed private student details to public AI.”
+> “A number is not an insight. Find the pattern. Then do something about it on Monday.”

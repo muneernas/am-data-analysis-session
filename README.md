@@ -1,30 +1,28 @@
-# From Numbers to Narratives
+# From Marks to Moves
 
-Professional learning for **Ahliyyah & Mutran** teachers (grades 6–10, all subjects): data analysis, privacy-safe tools, and a hands-on analyzer.
+Professional learning for **Ahliyyah & Mutran** teachers (grades 6–10, all subjects): data analysis, insights, and a hands-on gradebook analyzer.
 
-**Live:** https://muneernas.github.io/am-data-analysis-session/
+**Live deck:** https://muneernas.github.io/am-data-analysis-session/
 
-**Teacher Data Analyzer (hands-on):** https://muneernas.github.io/am-data-analysis-session/tool/
-
-Upload an Excel or CSV in the browser — KPIs and charts are built on your device only (nothing is uploaded to a server).
+**Teacher Data Analyzer:** https://muneernas.github.io/am-data-analysis-session/tool/
 
 ## Flow
 
 1. **Warm up** — Pattern Police  
-2. **What & where** — what counts as data, four buckets, school sources, Locate→Export→Clean→Act  
-3. **How** — analysis method, questions, averages, diagnosis, 2-2-2, traps  
-4. **Tools safely** — privacy first, AI risks, then practice with the analyzer  
-5. **Practice** — challenges + share-out  
+2. **What is an insight** — number vs pattern vs Monday move  
+3. **Read the gradebook** — units + criteria, average vs median, heatmaps  
+4. **Analyzer** — upload your export (on this device only)  
+5. **2-2-2** — strengths, gaps, actions  
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Slide deck |
-| `tool/` | Teacher Data Analyzer (upload → KPIs + charts) |
+| `index.html` | New session deck (From Marks to Moves) |
+| `from-numbers-to-narratives.html` | Previous deck, kept as reference |
+| `tool/` | Teacher Data Analyzer |
 | `handout.html` | Participant worksheet |
 | `FACILITATOR-GUIDE.md` | Timing & talking points |
-| `dataset/ahliyyah-mutran-learning.csv` | Sample / lab data |
+| `dataset/` | Sample files |
 
-Open `index.html` → **F** fullscreen · `→` `←` navigate · game uses on-slide buttons.
-Open `tool/index.html` (or the live `/tool/` link) to analyze a markbook or the sample dataset.
+Open `index.html` → **F** fullscreen · `→` `←` navigate · Pattern Police uses on-slide buttons.

@@ -3,27 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>From Numbers to Narratives · Data Analysis & Power BI</title>
+  <title>From Marks to Moves · Data Analysis &amp; Insights</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #f3f8fc;
-      --bg-2: #e8f4f8;
-      --ink: #123047;
-      --muted: #4a6678;
-      --line: rgba(18, 48, 71, 0.12);
+      --gray: #766e65;
+      --gold: #f2b334;
+      --silver: #c2bdb7;
+      --green: #207028;
+      --lime: #67c04d;
+      --alert: #f32735;
+      --navy: #00188a;
+      --ink: #2a2622;
+      --muted: #766e65;
+      --line: rgba(118, 110, 101, 0.22);
       --card: #ffffff;
-      --teal: #0f9f8a;
-      --teal-deep: #0b7a6a;
-      --sky: #1f8fd8;
-      --amber: #e8910f;
-      --coral: #e85a3c;
-      --lilac: #6b5ce0;
-      --soft: #d7ebf2;
-      --white: #ffffff;
-      --pad: clamp(1.75rem, 4.5vw, 3.75rem);
+      --bg: #f4f2ef;
+      --black: #0e0e0e;
+      --pad: clamp(1.6rem, 4.2vw, 3.4rem);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,10 +40,9 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 70% 50% at 0% 0%, rgba(31, 143, 216, 0.18), transparent 55%),
-        radial-gradient(ellipse 55% 45% at 100% 0%, rgba(15, 159, 138, 0.16), transparent 50%),
-        radial-gradient(ellipse 50% 40% at 90% 100%, rgba(232, 145, 15, 0.14), transparent 45%),
-        linear-gradient(165deg, #f7fbfe 0%, #eef7fa 45%, #f5faf7 100%);
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(242, 179, 52, 0.18), transparent 55%),
+        radial-gradient(ellipse 50% 45% at 0% 0%, rgba(32, 112, 40, 0.1), transparent 50%),
+        linear-gradient(180deg, #f7f5f2 0%, #efece7 100%);
       z-index: 0;
       pointer-events: none;
     }
@@ -62,351 +60,205 @@
       transition: opacity 0.35s ease, transform 0.35s ease;
       overflow-y: auto;
     }
-
-    .slide.active {
-      display: flex;
-      flex-direction: column;
-      opacity: 1;
-      transform: none;
-    }
-
-    .slide.exit {
-      display: flex;
-      flex-direction: column;
-      opacity: 0;
-      transform: translateY(-10px);
-    }
+    .slide.active { display: flex; flex-direction: column; opacity: 1; transform: none; }
+    .slide.exit { display: flex; flex-direction: column; opacity: 0; transform: translateY(-10px); }
 
     .eyebrow {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1.1rem;
-      font-size: 0.82rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+      margin-bottom: 1rem; font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
     }
-
     .eyebrow .step {
-      color: var(--teal-deep);
-      background: rgba(15, 159, 138, 0.12);
-      padding: 0.3rem 0.7rem;
-      border-radius: 999px;
+      color: var(--green);
+      background: rgba(32, 112, 40, 0.12);
+      padding: 0.28rem 0.7rem; border-radius: 999px;
     }
 
     h1, h2, h3 { font-family: "Fraunces", serif; letter-spacing: -0.02em; line-height: 1.12; }
-    h1 { font-size: clamp(2.4rem, 5.5vw, 4.2rem); font-weight: 800; max-width: 16ch; }
-    h2 { font-size: clamp(1.7rem, 3.6vw, 2.85rem); font-weight: 700; margin-bottom: 0.75rem; }
-    h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; }
+    h1 { font-size: clamp(2.3rem, 5.2vw, 4rem); font-weight: 800; max-width: 16ch; }
+    h2 { font-size: clamp(1.6rem, 3.4vw, 2.7rem); font-weight: 700; margin-bottom: 0.7rem; }
+    h3 { font-size: 1.12rem; font-weight: 700; margin-bottom: 0.35rem; }
 
-    .lede {
-      font-size: clamp(1.05rem, 1.8vw, 1.3rem);
-      color: var(--muted);
-      max-width: 44rem;
-      line-height: 1.5;
-    }
+    .lede { font-size: clamp(1.02rem, 1.7vw, 1.25rem); color: var(--muted); max-width: 44rem; line-height: 1.5; }
+    .accent { color: var(--green); }
+    .gold { color: #b8860b; }
+    .alert { color: var(--alert); }
 
-    .accent { color: var(--teal-deep); }
-    .sky { color: var(--sky); }
-    .amber { color: var(--amber); }
-    .coral { color: var(--coral); }
-
-    .hero { justify-content: center; gap: 1rem; }
+    .hero { justify-content: center; gap: 0.85rem; }
+    .hero-top { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.35rem; }
+    .hero-top img { height: 52px; width: auto; background: #0e0e0e; border-radius: 0.7rem; padding: 0.35rem 0.55rem; }
     .hero .badge {
-      width: fit-content;
-      padding: 0.45rem 0.95rem;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(15,159,138,0.15), rgba(31,143,216,0.15));
-      color: var(--teal-deep);
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      width: fit-content; padding: 0.4rem 0.9rem; border-radius: 999px;
+      background: rgba(32, 112, 40, 0.12); color: var(--green);
+      font-weight: 700; font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
     }
-    .hero .meta { margin-top: 0.75rem; color: var(--muted); font-weight: 500; }
+    .hero .meta { margin-top: 0.55rem; color: var(--muted); font-weight: 500; }
+    .hero a.tool-link {
+      margin-top: 1rem; width: fit-content; text-decoration: none; font-weight: 700;
+      color: #fff; background: var(--green); padding: 0.6rem 1.1rem; border-radius: 999px;
+    }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; margin-top: 1.1rem; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.1rem; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem; margin-top: 1.1rem; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; margin-top: 1rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-top: 1rem; }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 1.1rem;
-      padding: 1.15rem 1.2rem;
-      box-shadow: 0 10px 30px rgba(18, 48, 71, 0.05);
-      position: relative;
-      overflow: hidden;
+      background: var(--card); border: 1px solid var(--line); border-radius: 1rem;
+      padding: 1.05rem 1.1rem; position: relative; overflow: hidden;
     }
-
     .card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--teal), var(--sky), var(--amber));
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--green), var(--gold), var(--lime));
     }
+    .card.green::before { background: var(--green); }
+    .card.gold::before { background: var(--gold); }
+    .card.alert::before { background: var(--alert); }
+    .card.navy::before { background: var(--navy); }
+    .card p, .card li { color: var(--muted); font-size: 0.96rem; line-height: 1.45; }
+    .card strong { display: block; font-family: "Fraunces", serif; font-size: 1.12rem; color: var(--ink); margin-bottom: 0.3rem; }
+    .card .n { font-family: "Fraunces", serif; font-size: 1.75rem; color: var(--green); line-height: 1; margin-bottom: 0.3rem; }
 
-    .card.teal::before { background: var(--teal); }
-    .card.sky::before { background: var(--sky); }
-    .card.amber::before { background: var(--amber); }
-    .card.coral::before { background: var(--coral); }
-    .card.lilac::before { background: var(--lilac); }
-
-    .card p, .card li { color: var(--muted); font-size: 0.98rem; line-height: 1.45; }
-    .card strong { display: block; font-family: "Fraunces", serif; font-size: 1.15rem; color: var(--ink); margin-bottom: 0.35rem; }
-    .card .n {
-      font-family: "Fraunces", serif;
-      font-size: 1.85rem;
-      color: var(--sky);
-      line-height: 1;
-      margin-bottom: 0.35rem;
-    }
-
-    .list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.85rem; }
-    .list li { display: flex; gap: 0.75rem; align-items: flex-start; color: var(--muted); font-size: 1.05rem; line-height: 1.4; }
+    .list { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; margin-top: 0.75rem; }
+    .list li { display: flex; gap: 0.7rem; align-items: flex-start; color: var(--muted); font-size: 1.02rem; line-height: 1.4; }
     .list .num {
-      flex-shrink: 0;
-      width: 1.85rem; height: 1.85rem;
-      border-radius: 0.5rem;
-      display: grid; place-items: center;
-      background: rgba(31, 143, 216, 0.12);
-      color: var(--sky);
-      font-weight: 700;
-      font-size: 0.85rem;
+      flex-shrink: 0; width: 1.75rem; height: 1.75rem; border-radius: 0.45rem;
+      display: grid; place-items: center; background: rgba(32, 112, 40, 0.12);
+      color: var(--green); font-weight: 700; font-size: 0.82rem;
     }
 
-    .flow {
-      display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 1.1rem;
-    }
+    .flow { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 1rem; }
     .flow .step {
-      padding: 0.7rem 1rem;
-      border-radius: 0.85rem;
-      background: var(--card);
-      border: 1px solid var(--line);
-      font-weight: 700;
-      box-shadow: 0 6px 18px rgba(18,48,71,0.04);
+      padding: 0.65rem 0.95rem; border-radius: 0.8rem; background: var(--card);
+      border: 1px solid var(--line); font-weight: 700;
     }
-    .flow .arrow { color: var(--amber); font-weight: 800; }
+    .flow .arrow { color: var(--gold); font-weight: 800; }
 
     .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
-    .compare .side {
-      padding: 1.2rem;
-      border-radius: 1.1rem;
-      background: var(--card);
-      border: 2px solid var(--line);
-    }
-    .side.bad { border-color: rgba(232, 90, 60, 0.35); background: #fff7f5; }
-    .side.good { border-color: rgba(15, 159, 138, 0.4); background: #f1fbf8; }
-    .side.bad h3 { color: var(--coral); }
-    .side.good h3 { color: var(--teal-deep); }
+    .compare .side { padding: 1.1rem; border-radius: 1rem; background: var(--card); border: 2px solid var(--line); }
+    .side.bad { border-color: rgba(243, 39, 53, 0.35); background: #fff6f6; }
+    .side.good { border-color: rgba(32, 112, 40, 0.4); background: #f3faf3; }
+    .side.bad h3 { color: var(--alert); }
+    .side.good h3 { color: var(--green); }
 
     .callout {
-      margin-top: 1.15rem;
-      padding: 1rem 1.25rem;
-      border-radius: 1rem;
-      background: linear-gradient(120deg, rgba(15,159,138,0.12), rgba(31,143,216,0.12));
-      border: 1px solid rgba(15,159,138,0.2);
-      font-family: "Fraunces", serif;
-      font-size: clamp(1.1rem, 2vw, 1.45rem);
-      text-align: center;
-      color: var(--ink);
+      margin-top: 1.05rem; padding: 0.95rem 1.15rem; border-radius: 0.95rem;
+      background: rgba(32, 112, 40, 0.1); border: 1px solid rgba(32, 112, 40, 0.2);
+      font-family: "Fraunces", serif; font-size: clamp(1.05rem, 1.9vw, 1.35rem);
+      text-align: center; color: var(--ink);
     }
 
-    .kpi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; margin-top: 1.1rem; }
-    .kpi .stat {
-      text-align: center;
-      padding: 1.1rem;
-      border-radius: 1rem;
-      background: var(--card);
-      border: 1px solid var(--line);
-    }
-    .kpi .n { display: block; font-family: "Fraunces", serif; font-size: 2.1rem; color: var(--sky); line-height: 1; }
-    .kpi .t { color: var(--muted); margin-top: 0.35rem; font-size: 0.92rem; }
+    .kpi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-top: 1rem; }
+    .kpi .stat { text-align: center; padding: 1rem; border-radius: 0.95rem; background: var(--card); border: 1px solid var(--line); }
+    .kpi .n { display: block; font-family: "Fraunces", serif; font-size: 2rem; color: var(--green); line-height: 1; }
+    .kpi .t { color: var(--muted); margin-top: 0.3rem; font-size: 0.9rem; }
 
     .mini-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 0.85rem;
-      font-size: 0.95rem;
-      background: var(--card);
-      border-radius: 0.85rem;
-      overflow: hidden;
+      width: 100%; border-collapse: collapse; margin-top: 0.75rem; font-size: 0.92rem;
+      background: var(--card); border-radius: 0.8rem; overflow: hidden;
     }
-    .mini-table th, .mini-table td {
-      border: 1px solid var(--line);
-      padding: 0.5rem 0.65rem;
-      text-align: center;
-    }
-    .mini-table th { background: #e7f3f8; color: var(--sky); }
+    .mini-table th, .mini-table td { border: 1px solid var(--line); padding: 0.45rem 0.55rem; text-align: center; }
+    .mini-table th { background: #ece8e2; color: var(--green); }
     .mini-table .name { text-align: left; font-weight: 600; color: var(--ink); }
-    .mini-table .low { color: var(--coral); font-weight: 700; }
-    .mini-table .ok { color: var(--teal-deep); font-weight: 700; }
+    .mini-table .low { color: var(--alert); font-weight: 700; }
+    .mini-table .ok { color: var(--green); font-weight: 700; }
+    .mini-table .mid { color: #b8860b; font-weight: 700; }
 
-    .pattern-grid { display: grid; gap: 0.5rem; margin-top: 0.85rem; width: fit-content; }
+    .heatcell { display: inline-block; min-width: 2rem; padding: 0.2rem 0.35rem; border-radius: 0.3rem; color: #fff; font-weight: 700; }
+    .h-red { background: #f32735; }
+    .h-gold { background: #f2b334; color: #2a2622; }
+    .h-green { background: #207028; }
+
+    .pattern-grid { display: grid; gap: 0.5rem; margin-top: 0.8rem; width: fit-content; }
     .pattern-grid.cols-6 { grid-template-columns: repeat(6, minmax(48px, 64px)); }
     .pattern-grid.cols-5 { grid-template-columns: repeat(5, minmax(52px, 64px)); }
     .pattern-grid.cols-4 { grid-template-columns: repeat(4, minmax(64px, 78px)); }
     .pattern-grid .cell {
-      aspect-ratio: 1;
-      border-radius: 0.7rem;
-      display: grid; place-items: center;
-      font-family: "Fraunces", serif;
-      font-weight: 700;
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--ink);
-      box-shadow: 0 4px 12px rgba(18,48,71,0.04);
+      aspect-ratio: 1; border-radius: 0.65rem; display: grid; place-items: center;
+      font-family: "Fraunces", serif; font-weight: 700; border: 1px solid var(--line);
+      background: #fff; color: var(--ink);
     }
-    .pattern-grid .cell.teal { background: #d8f5ef; color: var(--teal-deep); }
-    .pattern-grid .cell.amber { background: #ffe8c2; color: #b86d00; }
-    .pattern-grid .cell.emoji { font-size: 1.6rem; }
+    .pattern-grid .cell.teal { background: #d8f0d4; color: var(--green); }
+    .pattern-grid .cell.amber { background: #ffe8b8; color: #8a6508; }
+    .pattern-grid .cell.emoji { font-size: 1.55rem; }
 
-    .game-controls { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.6rem 0 0.85rem; }
+    .game-controls { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.55rem 0 0.75rem; }
     .game-controls button {
-      font-family: inherit;
-      cursor: pointer;
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--ink);
-      padding: 0.4rem 0.8rem;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 0.9rem;
+      font-family: inherit; cursor: pointer; border: 1px solid var(--line); background: #fff;
+      color: var(--ink); padding: 0.38rem 0.75rem; border-radius: 999px; font-weight: 700; font-size: 0.88rem;
     }
-    .game-controls button.active {
-      background: var(--sky);
-      color: #fff;
-      border-color: var(--sky);
-    }
-    .game-controls button.action {
-      background: var(--amber);
-      color: #fff;
-      border-color: var(--amber);
-    }
+    .game-controls button.active { background: var(--green); color: #fff; border-color: var(--green); }
+    .game-controls button.action { background: var(--gold); color: #2a2622; border-color: var(--gold); }
     .game-answer {
-      display: none;
-      margin-top: 0.85rem;
-      padding: 0.9rem 1.1rem;
-      border-radius: 0.9rem;
-      background: #e8faf5;
-      border: 1px solid rgba(15,159,138,0.3);
-      color: var(--teal-deep);
-      font-weight: 600;
-      font-size: 1.05rem;
+      display: none; margin-top: 0.8rem; padding: 0.85rem 1rem; border-radius: 0.85rem;
+      background: #eaf6ea; border: 1px solid rgba(32, 112, 40, 0.3); color: var(--green); font-weight: 600;
     }
     .game-answer.show { display: block; }
 
-    .challenge { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.75rem; }
-    .badge {
-      width: fit-content;
-      padding: 0.35rem 0.8rem;
-      border-radius: 999px;
-      background: rgba(232,145,15,0.15);
-      color: #b86d00;
-      font-weight: 700;
-      font-size: 0.82rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+    .pathway { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-top: 1rem; }
+    .pathway .p {
+      background: #fff; border: 1px solid var(--line); border-radius: 0.85rem;
+      padding: 0.8rem 0.6rem; text-align: center; font-weight: 700; font-size: 0.9rem;
+    }
+    .pathway .p span {
+      display: block; font-size: 0.72rem; font-weight: 700; color: var(--green);
+      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.25rem;
     }
 
     .footer-bar {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0.75rem 1.35rem;
-      background: linear-gradient(180deg, transparent, rgba(243,248,252,0.95));
-      color: var(--muted);
-      font-size: 0.82rem;
+      padding: 0.7rem 1.25rem; background: linear-gradient(180deg, transparent, rgba(244, 242, 239, 0.96));
+      color: var(--muted); font-size: 0.8rem;
     }
-    .progress {
-      flex: 1; max-width: 260px; height: 5px; border-radius: 999px;
-      background: rgba(18,48,71,0.1); margin: 0 1.2rem; overflow: hidden;
-    }
-    .progress > i {
-      display: block; height: 100%; width: 0%;
-      background: linear-gradient(90deg, var(--teal), var(--sky), var(--amber));
-      transition: width 0.3s ease;
-    }
+    .progress { flex: 1; max-width: 240px; height: 5px; border-radius: 999px; background: rgba(118,110,101,0.18); margin: 0 1.1rem; overflow: hidden; }
+    .progress > i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--gold)); transition: width 0.3s ease; }
     .nav-hint kbd {
-      display: inline-block;
-      padding: 0.12rem 0.35rem;
-      border: 1px solid var(--line);
-      border-radius: 0.3rem;
-      background: #fff;
-      font-family: inherit;
-      font-size: 0.72rem;
-    }
-
-    .pathway {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 0.55rem;
-      margin-top: 1.1rem;
-    }
-    .pathway .p {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 0.9rem;
-      padding: 0.85rem 0.7rem;
-      text-align: center;
-      font-weight: 700;
-      font-size: 0.92rem;
-      box-shadow: 0 6px 16px rgba(18,48,71,0.04);
-    }
-    .pathway .p span {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--sky);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-bottom: 0.3rem;
+      display: inline-block; padding: 0.1rem 0.32rem; border: 1px solid var(--line);
+      border-radius: 0.28rem; background: #fff; font-family: inherit; font-size: 0.7rem;
     }
 
     @media (max-width: 900px) {
-      .grid-2, .grid-3, .grid-4, .compare, .kpi, .pathway, .lab-steps { grid-template-columns: 1fr; }
-      h1 { font-size: 2.1rem; }
+      .grid-2, .grid-3, .grid-4, .compare, .kpi, .pathway { grid-template-columns: 1fr; }
+      h1 { font-size: 2rem; }
     }
   </style>
 </head>
 <body>
   <div class="deck" id="deck">
 
-    <!-- 1 -->
     <section class="slide hero active" data-title="Title">
+      <div class="hero-top">
+        <img src="tool/assets/am-logo.png" alt="Ahliyyah &amp; Mutran" />
+      </div>
       <div class="badge">Ahliyyah &amp; Mutran · Grades 6–10 · All subjects</div>
-      <h1>From Numbers to <span class="accent">Narratives</span></h1>
-      <p class="lede">A step-by-step professional learning session: turn classroom data into clear patterns, sound judgments, and teaching actions — then practice in Power BI.</p>
-      <p class="meta">Warm up → What &amp; where → How → Tools safely → Practice</p>
+      <h1>From Marks to <span class="accent">Moves</span></h1>
+      <p class="lede">Data analysis and insights for teachers: read a gradebook, name the pattern, write a next step you can use on Monday.</p>
+      <p class="meta">Warm up → What an insight is → How to read your gradebook → Practice in the analyzer</p>
+      <a class="tool-link" href="tool/index.html">Open the Teacher Data Analyzer</a>
     </section>
 
-    <!-- 2 -->
     <section class="slide" data-title="Session path">
       <div class="eyebrow"><span>How today is built</span><span class="step">Session map</span></div>
-      <h2>A clear path — not a pile of tips</h2>
-      <p class="lede">We move in order. Each step prepares the next.</p>
+      <h2>A path from numbers to a teaching move</h2>
+      <p class="lede">We will not stop at charts. Every chart must earn a sentence — and that sentence must earn an action.</p>
       <div class="pathway">
         <div class="p"><span>01</span>Warm up</div>
-        <div class="p"><span>02</span>Why + what data</div>
-        <div class="p"><span>03</span>How to analyse</div>
-        <div class="p"><span>04</span>Tools safely</div>
-        <div class="p"><span>05</span>Practice</div>
+        <div class="p"><span>02</span>What is an insight</div>
+        <div class="p"><span>03</span>Read the gradebook</div>
+        <div class="p"><span>04</span>Use the analyzer</div>
+        <div class="p"><span>05</span>Write a 2-2-2</div>
       </div>
       <div class="kpi">
         <div class="stat"><span class="n">~10</span><div class="t">Min icebreaker</div></div>
-        <div class="stat"><span class="n">~25</span><div class="t">Min teaching</div></div>
-        <div class="stat"><span class="n">~25</span><div class="t">Min technical</div></div>
+        <div class="stat"><span class="n">~20</span><div class="t">Min teaching</div></div>
+        <div class="stat"><span class="n">~25</span><div class="t">Min hands-on</div></div>
       </div>
     </section>
 
-    <!-- 3 GAME -->
     <section class="slide" data-title="Pattern Police" id="game-slide">
       <div class="eyebrow"><span>Step 1 · Warm up</span><span class="step">Pattern Police</span></div>
       <h2>Find the pattern — 5 rounds</h2>
-      <p class="lede">Teams of 3–4. Shout when you see it. This is the same skill you’ll use on markbooks later.</p>
+      <p class="lede">Teams of 3–4. Shout when you see it. This is the same skill you will use on a markbook.</p>
       <div class="game-controls" id="game-rounds">
         <button type="button" data-round="0" class="active">1</button>
         <button type="button" data-round="1">2</button>
@@ -415,456 +267,295 @@
         <button type="button" data-round="4">5</button>
         <button type="button" class="action" id="game-reveal">Show answer</button>
       </div>
-      <div id="game-title" style="font-family:Fraunces,serif;font-size:clamp(1.35rem,2.5vw,1.9rem);margin-bottom:0.25rem"></div>
+      <div id="game-title" style="font-family:Fraunces,serif;font-size:clamp(1.3rem,2.4vw,1.85rem);margin-bottom:0.2rem"></div>
       <p id="game-prompt" class="lede"></p>
       <div id="game-body"></div>
       <div class="game-answer" id="game-answer"></div>
     </section>
 
-    <!-- 4 Bridge -->
     <section class="slide" data-title="Bridge">
       <div class="eyebrow"><span>From game → classroom</span><span class="step">Connection</span></div>
-      <h2>What you just did <span class="accent">is</span> data analysis</h2>
+      <h2>What you just did <span class="accent">is</span> analysis</h2>
       <div class="grid-3">
-        <div class="card teal"><strong>You looked</strong><p>At shapes, numbers, and a markbook without rushing to an average.</p></div>
-        <div class="card sky"><strong>You found patterns</strong><p>Columns, links, and “whole class weak on Part B.”</p></div>
-        <div class="card amber"><strong>You implied action</strong><p>Reteach Part B — don’t only blame one student.</p></div>
+        <div class="card green"><strong>You looked</strong><p>At shapes, numbers, and a markbook without rushing to an average.</p></div>
+        <div class="card gold"><strong>You found a pattern</strong><p>A column, a habit, or one criterion that was weak for the whole class.</p></div>
+        <div class="card navy"><strong>You implied a move</strong><p>Reteach that criterion — don’t only blame one student.</p></div>
       </div>
-      <div class="callout">Next: we name the steps so you can repeat them every unit.</div>
+      <div class="callout">A number is not an insight. An insight is a pattern you can act on.</div>
     </section>
 
-    <!-- 5 Why -->
-    <section class="slide" data-title="Why it matters">
-      <div class="eyebrow"><span>Step 2 · Why this matters</span><span class="step">Purpose</span></div>
-      <h2>Data doesn’t replace teacher judgment — it <span class="accent">sharpens</span> it</h2>
-      <div class="grid-2">
-        <div>
+    <section class="slide" data-title="Number vs insight">
+      <div class="eyebrow"><span>Step 2 · Definition</span><span class="step">Core idea</span></div>
+      <h2>Number → pattern → insight → move</h2>
+      <div class="compare">
+        <div class="side bad">
+          <h3>A number</h3>
           <ul class="list">
-            <li><span class="num">1</span><span>See who is slipping <em>before</em> the next report card.</span></li>
-            <li><span class="num">2</span><span>Check whether support and reteaching actually help.</span></li>
-            <li><span class="num">3</span><span>Talk to heads of department and parents with evidence, not vibes.</span></li>
-            <li><span class="num">4</span><span>Stop drowning in marksheets — start deciding.</span></li>
+            <li><span class="num">×</span><span>“Class average is 5.3.”</span></li>
+            <li><span class="num">×</span><span>“Student 14 is low.”</span></li>
+            <li><span class="num">×</span><span>“Unit 2 looks weaker.”</span></li>
           </ul>
         </div>
-        <div class="card lilac">
-          <strong>For every subject</strong>
-          <p>Math, English, Science, Arabic, PE, Arts — the method is the same. Only the columns change (skills, tasks, criteria, standards).</p>
+        <div class="side good">
+          <h3>An insight</h3>
+          <ul class="list">
+            <li><span class="num">✓</span><span>“Organizing is the weak criterion for most of the class, even when Analysing is strong.”</span></li>
+            <li><span class="num">✓</span><span>“Median is 4 while average is 5.4 — a few high scores are hiding the typical student.”</span></li>
+            <li><span class="num">✓</span><span>“So this week we reteach Organizing with a shared planner, then reassess.”</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout">Insight formula: Who + which criterion/unit + compared to what + so we will…</div>
+    </section>
+
+    <section class="slide" data-title="Why it matters">
+      <div class="eyebrow"><span>Step 2 · Why</span><span class="step">Purpose</span></div>
+      <h2>Data sharpens judgment — it does not replace it</h2>
+      <div class="grid-2">
+        <ul class="list">
+          <li><span class="num">1</span><span>See who is slipping <em>before</em> the next report.</span></li>
+          <li><span class="num">2</span><span>Check whether reteaching actually helped.</span></li>
+          <li><span class="num">3</span><span>Talk to HoDs and parents with evidence, not vibes.</span></li>
+          <li><span class="num">4</span><span>Stop drowning in marksheets — start deciding.</span></li>
+        </ul>
+        <div class="card gold">
+          <strong>Works in every subject</strong>
+          <p>Math, Arabic, English, Science, PHE, Arts — the method is the same. Only the criteria names change (Knowing, Analysing, Communicating…).</p>
         </div>
       </div>
     </section>
 
-    <!-- 6 What is DA -->
-    <section class="slide" data-title="What is analysis">
-      <div class="eyebrow"><span>Step 2 · Definition</span><span class="step">Core idea</span></div>
-      <h2>What is data analysis — really?</h2>
-      <p class="lede">It is a disciplined habit: ask a useful question, look at evidence, find patterns, decide what to do.</p>
-      <div class="flow">
-        <span class="step">Question</span><span class="arrow">→</span>
-        <span class="step">Evidence</span><span class="arrow">→</span>
-        <span class="step">Pattern</span><span class="arrow">→</span>
-        <span class="step">Insight</span><span class="arrow">→</span>
-        <span class="step">Action</span>
-      </div>
-      <div class="grid-3" style="margin-top:1.25rem">
-        <div class="card"><strong>Not just charts</strong><p>A chart without a decision is decoration.</p></div>
-        <div class="card"><strong>Not only for experts</strong><p>If you can mark work, you can analyse patterns.</p></div>
-        <div class="card"><strong>Ends in Monday</strong><p>If nothing changes in class, you stopped too early.</p></div>
-      </div>
-    </section>
-
-    <!-- 7 Autopsy -->
-    <section class="slide" data-title="Autopsy vs Biopsy">
-      <div class="eyebrow"><span>Step 3 · Mindset</span><span class="step">How we use data</span></div>
+    <section class="slide" data-title="Autopsy vs biopsy">
+      <div class="eyebrow"><span>Step 2 · Mindset</span><span class="step">When we look</span></div>
       <h2>Autopsy vs biopsy</h2>
       <div class="compare">
         <div class="side bad">
           <h3>Data as autopsy</h3>
           <ul class="list">
-            <li><span class="num">×</span><span>Only after the unit ends</span></li>
-            <li><span class="num">×</span><span>Focus on overall averages</span></li>
-            <li><span class="num">×</span><span>Treat data as a reporting duty</span></li>
-            <li><span class="num">×</span><span>Result: grades filed, little change</span></li>
+            <li><span class="num">×</span><span>Only after the unit is over</span></li>
+            <li><span class="num">×</span><span>One overall average</span></li>
+            <li><span class="num">×</span><span>Filed for reporting</span></li>
+            <li><span class="num">×</span><span>Nothing changes in class</span></li>
           </ul>
         </div>
         <div class="side good">
           <h3>Data as biopsy</h3>
           <ul class="list">
             <li><span class="num">✓</span><span>During learning, while you can still help</span></li>
-            <li><span class="num">✓</span><span>Focus on skills, tasks, groups</span></li>
-            <li><span class="num">✓</span><span>Treat data as a diagnostic tool</span></li>
-            <li><span class="num">✓</span><span>Result: teaching adjustments</span></li>
+            <li><span class="num">✓</span><span>Criteria, units, groups</span></li>
+            <li><span class="num">✓</span><span>Used as a diagnostic</span></li>
+            <li><span class="num">✓</span><span>A reteach, regroup, or redesign this week</span></li>
           </ul>
         </div>
       </div>
     </section>
 
-    <!-- 8 Engine -->
-    <section class="slide" data-title="Analysis engine">
-      <div class="eyebrow"><span>Step 3 · Method</span><span class="step">Four-step engine</span></div>
-      <h2>Look → Patterns → Why → Action</h2>
-      <div class="grid-2" style="grid-template-columns:1fr 1fr">
-        <div class="card sky"><div class="n">01</div><strong>Look</strong><p>Open the data. Check averages <em>and</em> the spread. Notice outliers.</p></div>
-        <div class="card teal"><div class="n">02</div><strong>Find patterns</strong><p>Which task, skill, group, or habit shows up again and again?</p></div>
-        <div class="card amber"><div class="n">03</div><strong>Ask why</strong><p>Teaching method? Unclear task? Missing prior skills?</p></div>
-        <div class="card coral"><div class="n">04</div><strong>Take action</strong><p>Reteach, regroup, or redesign the next lesson.</p></div>
-      </div>
-      <div class="callout">Stopping after Look is autopsy. The engine only works if you act.</div>
+    <section class="slide" data-title="Your gradebook">
+      <div class="eyebrow"><span>Step 3 · Your files</span><span class="step">How AM gradebooks look</span></div>
+      <h2>One subject. Units on row 1. Criteria on row 2.</h2>
+      <p class="lede">This is the export you already have — Math, Arabic, and the rest. The analyzer reads it as-is.</p>
+      <table class="mini-table">
+        <thead>
+          <tr><th></th><th colspan="4">Unit 1</th><th colspan="4">Progress Report</th><th colspan="4">End of Term</th></tr>
+          <tr><th>Student</th><th>A</th><th>B</th><th>C</th><th>D</th><th>A</th><th>B</th><th>C</th><th>D</th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="name">Student A</td><td class="ok">5</td><td>—</td><td class="ok">6</td><td>—</td><td class="ok">5</td><td>—</td><td class="ok">6</td><td>—</td><td class="mid">4</td><td class="low">3</td><td class="ok">6</td><td class="mid">4</td></tr>
+          <tr><td class="name">Student B</td><td class="ok">6</td><td>—</td><td class="ok">7</td><td>—</td><td class="ok">6</td><td>—</td><td class="ok">7</td><td>—</td><td class="ok">7</td><td class="ok">5</td><td class="ok">8</td><td class="ok">7</td></tr>
+          <tr><td class="name">Student C</td><td class="ok">5</td><td>—</td><td class="ok">6</td><td>—</td><td class="ok">5</td><td>—</td><td class="ok">6</td><td>—</td><td class="ok">6</td><td class="ok">6</td><td class="ok">8</td><td class="ok">7</td></tr>
+        </tbody>
+      </table>
+      <p class="lede" style="margin-top:0.85rem">A, B, C, D = the four MYP criteria. A dash means not assessed yet — skip it, don’t treat it as zero.</p>
     </section>
 
-    <!-- What is classroom data -->
-    <section class="slide" data-title="What is data">
-      <div class="eyebrow"><span>Step 2 · What counts as data</span><span class="step">Definition</span></div>
-      <h2>Classroom data = information you can use to decide</h2>
-      <p class="lede">If it helps you answer “who needs what next?”, it is data — numbers, categories, or notes you can organise.</p>
+    <section class="slide" data-title="Average vs median">
+      <div class="eyebrow"><span>Step 3 · Look carefully</span><span class="step">Two numbers, not one</span></div>
+      <h2>Average tells the mix. Median tells the typical student.</h2>
       <div class="grid-2">
-        <div class="card teal">
-          <strong>Examples that count</strong>
-          <ul class="list">
-            <li><span class="num">✓</span><span>Test / task scores and grades</span></li>
-            <li><span class="num">✓</span><span>Attendance % and homework completion</span></li>
-            <li><span class="num">✓</span><span>Criteria / skill marks (A–D, 1–8, etc.)</span></li>
-            <li><span class="num">✓</span><span>Support flags (reading help, intervention)</span></li>
-          </ul>
+        <div class="card green">
+          <strong>Average 5.4 · Median 4</strong>
+          <p>A few 7s and 8s pulled the average up. Most of the class is still around 4. Plan for the middle, not the highlight reel.</p>
         </div>
-        <div class="card coral">
-          <strong>Not enough on its own</strong>
-          <ul class="list">
-            <li><span class="num">×</span><span>A single average with no comparison</span></li>
-            <li><span class="num">×</span><span>A rumour about “this class is weak”</span></li>
-            <li><span class="num">×</span><span>One student’s bad day treated as a trend</span></li>
-            <li><span class="num">×</span><span>Screenshots you can’t filter or check</span></li>
-          </ul>
+        <div class="card gold">
+          <strong>Average 5.4 · Median 6</strong>
+          <p>Most students are doing well; a small group is dragging the average down. Regroup for support — don’t reteach the whole class.</p>
         </div>
       </div>
+      <div class="callout">If average and median disagree, the class is uneven. That <em>is</em> the insight.</div>
     </section>
 
-    <!-- Types of data -->
-    <section class="slide" data-title="Your data">
-      <div class="eyebrow"><span>Step 2 · Types</span><span class="step">Four buckets</span></div>
-      <h2>Four kinds of data teachers use</h2>
-      <div class="grid-4">
-        <div class="card teal"><strong>Achievement</strong><p>Scores, grades, growth between terms or tasks</p></div>
-        <div class="card sky"><strong>Engagement</strong><p>Attendance, homework, participation</p></div>
-        <div class="card amber"><strong>Support</strong><p>Reading support, math help, IEPs, interventions</p></div>
-        <div class="card lilac"><strong>Context</strong><p>Grade, section, gender, activities — handle carefully</p></div>
-      </div>
-      <div class="callout">Today’s lab file includes all four — so the habit transfers to your own classes.</div>
+    <section class="slide" data-title="Heatmaps">
+      <div class="eyebrow"><span>Step 3 · See the class</span><span class="step">How to read a heatmap</span></div>
+      <h2>Green = mastery. Gold = developing. Red = needs support.</h2>
+      <p class="lede">Scan a <strong>row</strong> for a weak criterion. Scan a <strong>column</strong> for a student profile.</p>
+      <table class="mini-table">
+        <thead>
+          <tr><th></th><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>Avg</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Knowing</td>
+            <td><span class="heatcell h-green">6</span></td>
+            <td><span class="heatcell h-green">7</span></td>
+            <td><span class="heatcell h-gold">5</span></td>
+            <td><span class="heatcell h-green">6</span></td>
+            <td><span class="heatcell h-green">7</span></td>
+            <td class="ok">6.2</td>
+          </tr>
+          <tr>
+            <td class="name">Investigating</td>
+            <td><span class="heatcell h-red">3</span></td>
+            <td><span class="heatcell h-gold">4</span></td>
+            <td><span class="heatcell h-red">3</span></td>
+            <td><span class="heatcell h-gold">4</span></td>
+            <td><span class="heatcell h-red">2</span></td>
+            <td class="low">3.2</td>
+          </tr>
+          <tr>
+            <td class="name">Communicating</td>
+            <td><span class="heatcell h-gold">5</span></td>
+            <td><span class="heatcell h-green">6</span></td>
+            <td><span class="heatcell h-gold">5</span></td>
+            <td><span class="heatcell h-green">6</span></td>
+            <td><span class="heatcell h-gold">5</span></td>
+            <td class="mid">5.4</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout">Insight: Investigating is a class-wide gap. Reteach that skill — don’t only pull S5 aside.</div>
     </section>
 
-    <!-- Where to find it -->
-    <section class="slide" data-title="Where to find data">
-      <div class="eyebrow"><span>Step 2 · Where to find it</span><span class="step">School sources</span></div>
-      <h2>Where can teachers find this data?</h2>
-      <div class="grid-2">
-        <div class="card sky">
-          <strong>Everyday teacher sources</strong>
-          <ul class="list">
-            <li><span class="num">1</span><span>Your markbook / Excel / Google Sheet</span></li>
-            <li><span class="num">2</span><span>Assignment scores in LMS / classroom platforms</span></li>
-            <li><span class="num">3</span><span>Attendance registers</span></li>
-            <li><span class="num">4</span><span>Homework trackers and exit tickets</span></li>
-          </ul>
-        </div>
-        <div class="card teal">
-          <strong>School systems (ask leadership)</strong>
-          <ul class="list">
-            <li><span class="num">5</span><span>SIS / student information system reports</span></li>
-            <li><span class="num">6</span><span>Toddle / ManageBac / similar IB tools (if used)</span></li>
-            <li><span class="num">7</span><span>Department shared drives &amp; unit folders</span></li>
-            <li><span class="num">8</span><span>Counseling / learning-support summaries (with permission)</span></li>
-          </ul>
-        </div>
-      </div>
-      <div class="callout">Flow: find the source → export a table → clean it → analyse → act</div>
-    </section>
-
-    <!-- Data flow checklist -->
-    <section class="slide" data-title="Data flow">
-      <div class="eyebrow"><span>Step 2 · Flow</span><span class="step">From file to action</span></div>
-      <h2>A simple data flow every teacher can follow</h2>
-      <div class="lab-steps" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
-        <div class="card"><div class="n">01</div><strong>Locate</strong><p>Where does this live? Markbook, LMS, SIS, shared folder?</p></div>
-        <div class="card"><div class="n">02</div><strong>Export</strong><p>Download CSV/Excel — one row per student or per score entry.</p></div>
-        <div class="card"><div class="n">03</div><strong>Clean</strong><p>Fix headers, number types, remove blank rows, remove private fields if sharing.</p></div>
-        <div class="card"><div class="n">04</div><strong>Analyse &amp; act</strong><p>Look → patterns → why → action → write a 2-2-2.</p></div>
-      </div>
-    </section>
-
-    <!-- 10 Questions -->
-    <section class="slide" data-title="Better questions">
-      <div class="eyebrow"><span>Step 3 · Before any chart</span><span class="step">Questions</span></div>
-      <h2>Strong questions make strong analysis</h2>
-      <div class="compare">
-        <div class="side bad">
-          <h3>Weak</h3>
-          <ul class="list">
-            <li><span class="num">×</span><span>“Show me all the scores.”</span></li>
-            <li><span class="num">×</span><span>“Is the class okay?”</span></li>
-            <li><span class="num">×</span><span>“Who failed?”</span></li>
-          </ul>
-        </div>
-        <div class="side good">
-          <h3>Strong</h3>
-          <ul class="list">
-            <li><span class="num">✓</span><span>“Which part of the unit was hardest for most students?”</span></li>
-            <li><span class="num">✓</span><span>“Who improved from Term 1 to Term 2 — and who didn’t?”</span></li>
-            <li><span class="num">✓</span><span>“Do students with low attendance also score lower?”</span></li>
-          </ul>
-        </div>
-      </div>
-      <div class="callout">Move from “Who failed?” → “Which skill / task / habit is the problem?”</div>
-    </section>
-
-    <!-- 11 Beyond average -->
-    <section class="slide" data-title="Beyond averages">
-      <div class="eyebrow"><span>Step 3 · Look carefully</span><span class="step">Beyond the average</span></div>
-      <h2>Class average 75% is a starting point — not a story</h2>
-      <div class="grid-3">
-        <div class="card sky"><strong>1 · Spread</strong><p>Are scores clustered near 75%, or split into two groups?</p></div>
-        <div class="card teal"><strong>2 · High scores</strong><p>Who already mastered it and needs a bigger challenge?</p></div>
-        <div class="card coral"><strong>3 · Low scores</strong><p>Who needs help this week — and on which part?</p></div>
-      </div>
-      <div class="callout">Rule: useful data is timely, easy to read, and ready to use in the next lesson.</div>
-    </section>
-
-    <!-- 12 Worked example -->
     <section class="slide" data-title="Worked example">
-      <div class="eyebrow"><span>Step 3 · Example</span><span class="step">Same average, different action</span></div>
-      <h2>Worked example: average = 74%</h2>
+      <div class="eyebrow"><span>Step 3 · Example</span><span class="step">Same file, two readings</span></div>
+      <h2>Math Grade 8 · End of term average ≈ 5.4</h2>
       <div class="grid-2">
-        <div class="card coral">
+        <div class="card alert">
           <strong>Surface reading</strong>
-          <p>“74%. We’re fine. Move on.”</p>
-          <p style="margin-top:0.6rem"><strong style="font-family:DM Sans,sans-serif;font-size:0.95rem;color:var(--coral)">Result</strong></p>
-          <p>No change in teaching.</p>
+          <p>“5.4 out of 8. Substantial. We’re fine.”</p>
+          <p style="margin-top:0.55rem">No change in teaching.</p>
         </div>
-        <div class="card teal">
-          <strong>Pattern reading</strong>
-          <p>“Math Term 1 for students under 80% attendance averages <span class="amber">58%</span>.”</p>
-          <p style="margin-top:0.6rem"><strong style="font-family:DM Sans,sans-serif;font-size:0.95rem;color:var(--teal-deep)">Result</strong></p>
-          <p>Target those students + attendance check-ins.</p>
+        <div class="card green">
+          <strong>Insight reading</strong>
+          <p>Knowing is strong. Investigating Patterns is the red row. Median sits below the average.</p>
+          <p style="margin-top:0.55rem">Monday move: a 20-minute Investigating mini-lesson + a short re-check.</p>
         </div>
       </div>
-      <p class="lede" style="margin-top:1rem">Same overall number. Only the second reading creates a Monday move.</p>
     </section>
 
-    <!-- 13 Diagnose -->
-    <section class="slide" data-title="Ask why">
-      <div class="eyebrow"><span>Step 3 · Diagnose</span><span class="step">Ask why</span></div>
-      <h2>Three places to look for the cause</h2>
+    <section class="slide" data-title="Three moves">
+      <div class="eyebrow"><span>Step 3 · Act</span><span class="step">Turn insight into teaching</span></div>
+      <h2>Three moves after you name the pattern</h2>
       <div class="grid-3">
-        <div class="card sky"><strong>Teaching</strong><p>Was the method a poor match for the skill?</p><p style="margin-top:0.55rem;color:var(--sky);font-weight:600">→ Try another approach or medium</p></div>
-        <div class="card amber"><strong>The task</strong><p>Was the question unclear or the rubric confusing?</p><p style="margin-top:0.55rem;color:var(--amber);font-weight:600">→ Clarify the task next time</p></div>
-        <div class="card coral"><strong>Basics</strong><p>Did students miss earlier skills they needed?</p><p style="margin-top:0.55rem;color:var(--coral);font-weight:600">→ Rebuild those basics first</p></div>
+        <div class="card green"><strong>Reteach</strong><p>Whole-class gap on one criterion → short, focused mini-lesson.</p></div>
+        <div class="card gold"><strong>Regroup</strong><p>Uneven class (average ≠ median) → support some, stretch others.</p></div>
+        <div class="card navy"><strong>Redesign</strong><p>Same gap across units → change the task, rubric, or sequence next time.</p></div>
       </div>
     </section>
 
-    <!-- 14 Action -->
-    <section class="slide" data-title="Take action">
-      <div class="eyebrow"><span>Step 3 · Act</span><span class="step">Three teaching moves</span></div>
-      <h2>Turn a pattern into a teaching move</h2>
-      <div class="grid-3">
-        <div class="card teal"><strong>Reteach</strong><p>Whole-class gap → short, focused mini-lesson on one error pattern.</p></div>
-        <div class="card sky"><strong>Regroup</strong><p>Mixed understanding → flexible groups: support some, stretch others.</p></div>
-        <div class="card amber"><strong>Redesign</strong><p>Future units → change pacing, examples, or assessment design.</p></div>
-      </div>
-      <div class="callout">Insight formula: Who + What changed + By how much + So what</div>
-    </section>
-
-    <!-- 15 2-2-2 -->
     <section class="slide" data-title="2-2-2">
-      <div class="eyebrow"><span>Step 3 · Output</span><span class="step">Standard response</span></div>
+      <div class="eyebrow"><span>Step 3 · Output</span><span class="step">Your finish line</span></div>
       <h2>After every summative: the <span class="accent">2-2-2</span></h2>
       <div class="grid-3">
-        <div class="card teal"><strong>2 Strengths</strong><p>Where did the class do well?</p></div>
-        <div class="card amber"><strong>2 Gaps</strong><p>Which patterns need attention?</p></div>
-        <div class="card coral"><strong>2 Actions</strong><p>What will you change this week?</p></div>
+        <div class="card green"><strong>2 Strengths</strong><p>Where did the class do well — which criteria or units?</p></div>
+        <div class="card gold"><strong>2 Gaps</strong><p>Which patterns need attention this week?</p></div>
+        <div class="card alert"><strong>2 Actions</strong><p>Reteach, regroup, or redesign — named, timed, specific.</p></div>
       </div>
-      <p class="lede" style="margin-top:1.1rem">This is your finish line in the lab — not a folder of screenshots.</p>
+      <p class="lede" style="margin-top:1rem">This is what you leave with. Not a folder of screenshots.</p>
     </section>
 
-    <!-- 16 Traps -->
     <section class="slide" data-title="Traps">
-      <div class="eyebrow"><span>Step 3 · Caution</span><span class="step">Common traps</span></div>
+      <div class="eyebrow"><span>Step 3 · Caution</span><span class="step">Four traps</span></div>
       <h2>Four traps that fool smart teachers</h2>
       <div class="grid-2">
         <ul class="list">
-          <li><span class="num">1</span><span><strong style="color:var(--ink)">Average addiction</strong> — 74% can hide a group at 48%.</span></li>
-          <li><span class="num">2</span><span><strong style="color:var(--ink)">Link ≠ cause</strong> — robotics kids may score high for other reasons.</span></li>
+          <li><span class="num">1</span><span><strong style="color:var(--ink)">Average addiction</strong> — 5.4 can hide a cluster at 3.</span></li>
+          <li><span class="num">2</span><span><strong style="color:var(--ink)">Treating “—” as zero</strong> — not assessed yet is not a fail.</span></li>
         </ul>
         <ul class="list">
-          <li><span class="num">3</span><span><strong style="color:var(--ink)">Cherry-picking</strong> — one chart that only supports what we hoped.</span></li>
-          <li><span class="num">4</span><span><strong style="color:var(--ink)">Missing context</strong> — a drop may mean a harder assessment.</span></li>
+          <li><span class="num">3</span><span><strong style="color:var(--ink)">Blaming one student</strong> — if the row is red for everyone, it’s the skill.</span></li>
+          <li><span class="num">4</span><span><strong style="color:var(--ink)">Missing context</strong> — a drop may mean a harder task, not worse teaching.</span></li>
         </ul>
       </div>
       <div class="callout">Always ask: compared to what — and for whom?</div>
     </section>
 
-    <!-- AI danger / privacy FIRST -->
-    <section class="slide" data-title="Privacy first">
+    <section class="slide" data-title="Privacy">
       <div class="eyebrow"><span>Step 4 · Tools</span><span class="step">Non-negotiable</span></div>
-      <h2>Before any AI tool: <span class="coral">remove private information</span></h2>
-      <p class="lede">Student data is confidential. Uploading names, IDs, emails, photos, or medical/support details to public AI tools can leak privacy — permanently.</p>
+      <h2>The analyzer stays on this device. AI does not get names.</h2>
       <div class="grid-2">
-        <div class="card coral">
-          <strong>Strip these before upload</strong>
-          <ul class="list">
-            <li><span class="num">×</span><span>Full name, Student ID, national ID</span></li>
-            <li><span class="num">×</span><span>Email, phone, address, photo</span></li>
-            <li><span class="num">×</span><span>Parent contacts</span></li>
-            <li><span class="num">×</span><span>Medical / safeguarding / IEP details that identify a child</span></li>
-          </ul>
+        <div class="card alert">
+          <strong>Never paste into public AI</strong>
+          <p>Full names, IDs, emails, photos, medical or safeguarding details.</p>
         </div>
-        <div class="card teal">
-          <strong>Safer to keep (anonymised)</strong>
-          <ul class="list">
-            <li><span class="num">✓</span><span>Codes like S01, S02 instead of names</span></li>
-            <li><span class="num">✓</span><span>Scores, terms, subjects, attendance %</span></li>
-            <li><span class="num">✓</span><span>Grade level / section (if school policy allows)</span></li>
-            <li><span class="num">✓</span><span>Support type as a category only (e.g. “Reading”) without the child’s identity</span></li>
-          </ul>
+        <div class="card green">
+          <strong>Safer here</strong>
+          <p>Upload your gradebook to the Teacher Data Analyzer — it runs in the browser. Nothing is sent to a server.</p>
         </div>
       </div>
-      <div class="callout">Rule: if a stranger could recognise the student, it is not ready for AI.</div>
+      <div class="callout">If a stranger could recognise the child, it is not ready for ChatGPT.</div>
     </section>
 
-    <!-- AI tools -->
-    <section class="slide" data-title="AI tools">
-      <div class="eyebrow"><span>Step 4 · Tools</span><span class="step">AI for analysis</span></div>
-      <h2>AI can help analyse — and it can be dangerous if used wrong</h2>
+    <section class="slide" data-title="The analyzer">
+      <div class="eyebrow"><span>Step 4 · Practice</span><span class="step">Your tool today</span></div>
+      <h2>Teacher Data Analyzer</h2>
+      <p class="lede">Upload the school export. Get KPIs, average vs median, heatmaps, and a student scatter — then write a 2-2-2.</p>
       <div class="grid-3">
-        <div class="card sky"><strong>What AI can do</strong><p>Summarise tables, suggest chart ideas, draft insight wording, spot odd rows — after data is cleaned.</p></div>
-        <div class="card amber"><strong>What AI cannot replace</strong><p>Your knowledge of the class, the assessment, and what is fair to do next.</p></div>
-        <div class="card coral"><strong>Main risk</strong><p>Pasting real student files into ChatGPT / Copilot / Gemini / Claude without removing private fields.</p></div>
+        <div class="card green"><div class="n">01</div><strong>Upload</strong><p>Your subject gradebook (.xlsx) or download the template.</p></div>
+        <div class="card gold"><div class="n">02</div><strong>Read</strong><p>Heatmap + median. Filter by unit if you want one period.</p></div>
+        <div class="card navy"><div class="n">03</div><strong>Write</strong><p>Two strengths, two gaps, two actions. 60 seconds.</p></div>
       </div>
-      <div class="grid-2" style="margin-top:1rem">
-        <div class="card">
-          <strong>Safer uses</strong>
-          <p>Ask AI how to build a PivotTable, which chart fits a question, or how to rewrite an anonymised insight.</p>
-        </div>
-        <div class="card">
-          <strong>Unsafe uses</strong>
-          <p>“Here is my full class list with names and scores — tell me who is failing.” Never.</p>
-        </div>
-      </div>
+      <div class="callout"><a href="tool/index.html" style="color:inherit">Open /tool/ — processed only on this device</a></div>
     </section>
 
-    <!-- AI checklist -->
-    <section class="slide" data-title="AI checklist">
-      <div class="eyebrow"><span>Step 4 · Tools</span><span class="step">Before you paste</span></div>
-      <h2>AI safety checklist for teachers</h2>
-      <ul class="list" style="max-width:46rem">
-        <li><span class="num">1</span><span><strong style="color:var(--ink)">Remove</strong> names, IDs, emails, and any identifying details.</span></li>
-        <li><span class="num">2</span><span><strong style="color:var(--ink)">Replace</strong> with codes (S01, S02…) if you need rows.</span></li>
-        <li><span class="num">3</span><span><strong style="color:var(--ink)">Check</strong> school policy — some tools are approved; others are not.</span></li>
-        <li><span class="num">4</span><span><strong style="color:var(--ink)">Never</strong> upload photos of markbooks that show faces or names.</span></li>
-        <li><span class="num">5</span><span><strong style="color:var(--ink)">Verify</strong> AI suggestions against the real numbers — AI can invent patterns.</span></li>
-        <li><span class="num">6</span><span><strong style="color:var(--ink)">Prefer local tools</strong> first (Excel / Power BI on your device) for identifiable data.</span></li>
-      </ul>
-      <div class="callout">Power BI on your laptop keeps data local. Public AI chats often do not.</div>
-    </section>
-
-    <!-- 17 Power BI intro -->
-    <section class="slide" data-title="Meet Power BI">
-      <div class="eyebrow"><span>Step 4 · Tools</span><span class="step">Microsoft Power BI</span></div>
-      <h2>Why Power BI for today’s lab?</h2>
-      <p class="lede">It turns tables into interactive visuals — filters, comparisons, and living reports. Best first tool when the file still has school data you should not paste into public AI.</p>
-      <div class="grid-3">
-        <div class="card sky"><strong>Runs on your device</strong><p>Desktop app — better privacy control than a public chatbot.</p></div>
-        <div class="card teal"><strong>Built for slicing</strong><p>Click Term, Grade, Subject — charts update live.</p></div>
-        <div class="card amber"><strong>Teacher-friendly</strong><p>Drag fields. No coding required for today’s challenges.</p></div>
-      </div>
-    </section>
-
-    <!-- 18 Power BI steps -->
-    <section class="slide" data-title="Power BI steps">
-      <div class="eyebrow"><span>Step 4 · Workflow</span><span class="step">Four stages</span></div>
-      <h2>Power BI — step by step</h2>
-      <div class="grid-2">
-        <div class="card"><div class="n">01</div><strong>Get data</strong><p>Home → Get data → Text/CSV or Excel → Load.</p></div>
-        <div class="card"><div class="n">02</div><strong>Check types</strong><p>Score and Attendance must be numbers (Decimal Number).</p></div>
-        <div class="card"><div class="n">03</div><strong>Build visuals</strong><p>Drag fields to Axis / Values. Add slicers for Term, Grade, Subject.</p></div>
-        <div class="card"><div class="n">04</div><strong>Write the 2-2-2</strong><p>Use the chart as evidence — then name strengths, gaps, actions.</p></div>
-      </div>
-    </section>
-
-    <!-- 19 Live demo -->
-    <section class="slide" data-title="Live demo">
-      <div class="eyebrow"><span>Step 4 · Watch once</span><span class="step">Demo</span></div>
-      <h2>Follow along — then you do it</h2>
-      <ul class="list">
-        <li><span class="num">1</span><span>Open <strong style="color:var(--ink)">ahliyyah-mutran-learning.csv</strong> in Power BI</span></li>
-        <li><span class="num">2</span><span>Clustered column: Subject on axis · Average of Score</span></li>
-        <li><span class="num">3</span><span>Insert a slicer for Term · click Term 1, then Term 2</span></li>
-        <li><span class="num">4</span><span>Say out loud one pattern you notice</span></li>
-      </ul>
-      <div class="callout">Excel fallback: PivotChart works for Challenges 1 and 3</div>
-    </section>
-
-    <!-- 20 Lab brief -->
-    <section class="slide" data-title="Lab brief">
-      <div class="eyebrow"><span>Step 5 · Practice</span><span class="step">Lab brief</span></div>
-      <h2>Ahliyyah &amp; Mutran learning snapshot</h2>
-      <p class="lede">20 students · 120 rows · Math, Science, English · Terms 1 &amp; 2 · attendance &amp; learning support</p>
-      <div class="kpi">
-        <div class="stat"><span class="n">8</span><div class="t">Min · Challenge 1</div></div>
-        <div class="stat"><span class="n">8</span><div class="t">Min · Challenge 2</div></div>
-        <div class="stat"><span class="n">8</span><div class="t">Min · Challenge 3</div></div>
-      </div>
-      <p class="lede" style="margin-top:1rem">Then ~6 minutes to share your 2-2-2.</p>
-    </section>
-
-    <!-- 21 C1 -->
     <section class="slide" data-title="Challenge 1">
-      <div class="challenge">
-        <span class="badge">Challenge 01 · Patterns · 8 min</span>
-        <h2>Where are we strong — and weak?</h2>
-        <p class="lede">Build Average Score by Subject. Add a Term slicer. Compare Term 1 vs Term 2.</p>
-        <div class="card" style="margin-top:0.5rem"><strong>Success</strong><p>Name the highest and lowest subject–term pair — and why a teacher should care.</p></div>
+      <div class="eyebrow"><span>Lab · 8 min</span><span class="step">Challenge 1</span></div>
+      <h2>Which criterion is the class story?</h2>
+      <p class="lede">Open your file (or Try template). Look at the criterion heatmap and the average/median bars.</p>
+      <div class="card" style="margin-top:1rem;max-width:36rem">
+        <strong>Write one insight sentence</strong>
+        <p>“Most students are weaker in ________ compared with ________, so this week I will ________.”</p>
       </div>
     </section>
 
-    <!-- 22 C2 -->
     <section class="slide" data-title="Challenge 2">
-      <div class="challenge">
-        <span class="badge">Challenge 02 · Relationships · 8 min</span>
-        <h2>Does showing up pay off?</h2>
-        <p class="lede">Scatter chart: AttendancePct on X, Score on Y. Optional: colour by LearningSupport.</p>
-        <div class="card" style="margin-top:0.5rem"><strong>Success</strong><p>One sentence on the link + one surprising case.</p></div>
+      <div class="eyebrow"><span>Lab · 8 min</span><span class="step">Challenge 2</span></div>
+      <h2>Is the class even — or split?</h2>
+      <p class="lede">Compare average and median. Then check highest vs lowest student averages.</p>
+      <div class="card" style="margin-top:1rem;max-width:36rem">
+        <strong>Decide the move</strong>
+        <p>If they match → whole-class reteach is fair. If they diverge → regroup. Name which students need the first check-in.</p>
       </div>
     </section>
 
-    <!-- 23 C3 -->
     <section class="slide" data-title="Challenge 3">
-      <div class="challenge">
-        <span class="badge">Challenge 03 · Impact · 8 min</span>
-        <h2>Who is growing?</h2>
-        <p class="lede">Compare Term 1 vs Term 2 by LearningSupport. Diagnose why. Choose a move: reteach / regroup / redesign.</p>
-        <div class="card" style="margin-top:0.5rem"><strong>Success</strong><p>A verdict with a number + one action for this week.</p></div>
+      <div class="eyebrow"><span>Lab · 8 min</span><span class="step">Challenge 3</span></div>
+      <h2>Did a later unit help?</h2>
+      <p class="lede">Use the criterion × unit heatmap. Did one skill stay red from Progress Report to End of Term?</p>
+      <div class="card" style="margin-top:1rem;max-width:36rem">
+        <strong>Then choose</strong>
+        <p>Reteach that skill now, or redesign how it is taught next unit. Don’t file it.</p>
       </div>
     </section>
 
-    <!-- 24 Share -->
     <section class="slide" data-title="Share-out">
-      <div class="eyebrow"><span>Step 5 · Share</span><span class="step">2-2-2</span></div>
-      <h2>45–60 seconds: strengths · gaps · actions</h2>
+      <div class="eyebrow"><span>Share</span><span class="step">45–60 seconds</span></div>
+      <h2>Strengths · gaps · actions</h2>
       <div class="grid-3">
-        <div class="card teal"><strong>2 Strengths</strong><p>What looked solid?</p></div>
-        <div class="card amber"><strong>2 Gaps</strong><p>What pattern needs attention?</p></div>
-        <div class="card coral"><strong>2 Actions</strong><p>What happens this week?</p></div>
+        <div class="card green"><strong>2 Strengths</strong><p>What looked solid?</p></div>
+        <div class="card gold"><strong>2 Gaps</strong><p>What pattern needs attention?</p></div>
+        <div class="card alert"><strong>2 Actions</strong><p>What happens this week?</p></div>
       </div>
-      <div class="callout">No method monologues — finding + evidence + action only</div>
+      <div class="callout">Finding + evidence + action. No tool monologues.</div>
     </section>
 
-    <!-- 25 Close -->
     <section class="slide" data-title="Close">
       <div class="eyebrow"><span>Takeaways</span><span class="step">Leave with this</span></div>
       <h2>Remember the path</h2>
-      <ul class="list" style="max-width:44rem">
-        <li><span class="num">1</span><span>Know what data is — and where it lives in school systems.</span></li>
-        <li><span class="num">2</span><span>Biopsy, not autopsy — Look → Patterns → Why → Action.</span></li>
-        <li><span class="num">3</span><span>Never put identifiable student data into public AI tools.</span></li>
-        <li><span class="num">4</span><span>Finish with a 2-2-2 — strengths, gaps, actions.</span></li>
+      <ul class="list" style="max-width:42rem">
+        <li><span class="num">1</span><span>A number is not an insight. Name the criterion, the group, and the comparison.</span></li>
+        <li><span class="num">2</span><span>Use average <em>and</em> median. Read the heatmap: rows = skills, columns = students.</span></li>
+        <li><span class="num">3</span><span>Analyse on this device. Never put identifiable student data into public AI.</span></li>
+        <li><span class="num">4</span><span>Finish with a 2-2-2 — then teach differently on Monday.</span></li>
       </ul>
       <div class="callout">Find the pattern. Then do something about it.</div>
     </section>
@@ -872,9 +563,9 @@
   </div>
 
   <div class="footer-bar">
-    <div class="nav-hint"><kbd>←</kbd> <kbd>→</kbd> · game: 1–5 + Show answer · <kbd>Space</kbd> · <kbd>F</kbd></div>
+    <div class="nav-hint"><kbd>←</kbd> <kbd>→</kbd> · game: 1–5 + Show answer · <kbd>F</kbd> fullscreen</div>
     <div class="progress"><i id="progress"></i></div>
-    <div id="counter">1 / 25</div>
+    <div id="counter">1 / 20</div>
   </div>
 
   <script>
@@ -891,9 +582,9 @@
       { title: "Round 4 · Homework & scores", prompt: "Find the pattern (works in any subject).",
         body: '<table class="mini-table"><thead><tr><th>Student</th><th>Homework?</th><th>Test</th></tr></thead><tbody><tr><td class="name">Sam</td><td>Yes</td><td class="ok">84</td></tr><tr><td class="name">Noor</td><td class="low">No</td><td class="low">58</td></tr><tr><td class="name">Alex</td><td>Yes</td><td class="ok">79</td></tr><tr><td class="name">Maya</td><td class="low">No</td><td class="low">61</td></tr><tr><td class="name">Jordan</td><td>Yes</td><td class="ok">88</td></tr><tr><td class="name">Lina</td><td class="low">No</td><td class="low">55</td></tr></tbody></table>',
         answer: "No homework → lower scores. Yes homework → higher scores." },
-      { title: "Round 5 · Class markbook", prompt: "Students — or one part of the unit?",
-        body: '<table class="mini-table"><thead><tr><th>Student</th><th>Part A</th><th>Part B</th><th>Part C</th><th>Avg</th></tr></thead><tbody><tr><td class="name">Sam</td><td class="ok">82</td><td class="low">54</td><td class="ok">80</td><td>72</td></tr><tr><td class="name">Noor</td><td class="ok">88</td><td class="low">61</td><td class="ok">85</td><td>78</td></tr><tr><td class="name">Alex</td><td class="ok">79</td><td class="low">58</td><td class="ok">81</td><td>73</td></tr><tr><td class="name">Maya</td><td class="ok">91</td><td class="low">63</td><td class="ok">89</td><td>81</td></tr><tr><td class="name">Jordan</td><td class="ok">84</td><td class="low">57</td><td class="ok">83</td><td>75</td></tr></tbody></table>',
-        answer: "Part B is low for everyone. Reteach Part B — don’t only blame one student." }
+      { title: "Round 5 · MYP markbook", prompt: "One student — or one criterion?",
+        body: '<table class="mini-table"><thead><tr><th>Student</th><th>Analysing</th><th>Organizing</th><th>Producing</th><th>Language</th></tr></thead><tbody><tr><td class="name">Sam</td><td class="ok">6</td><td class="low">3</td><td class="ok">6</td><td class="ok">5</td></tr><tr><td class="name">Noor</td><td class="ok">7</td><td class="low">4</td><td class="ok">6</td><td class="ok">6</td></tr><tr><td class="name">Alex</td><td class="ok">5</td><td class="low">3</td><td class="ok">5</td><td class="ok">5</td></tr><tr><td class="name">Maya</td><td class="ok">7</td><td class="low">4</td><td class="ok">7</td><td class="ok">6</td></tr><tr><td class="name">Jordan</td><td class="ok">6</td><td class="low">3</td><td class="ok">6</td><td class="ok">5</td></tr></tbody></table>',
+        answer: "Organizing is low for everyone. Reteach Organizing — don’t only pull one student." }
     ];
 
     let gameRound = 0, answerOn = false;
@@ -940,7 +631,7 @@
     function updateChrome() {
       progress.style.width = ((index + 1) / slides.length) * 100 + "%";
       counter.textContent = `${index + 1} / ${slides.length}`;
-      document.title = `${slides[index].dataset.title} · From Numbers to Narratives`;
+      document.title = `${slides[index].dataset.title} · From Marks to Moves`;
     }
 
     document.addEventListener("keydown", (e) => {
