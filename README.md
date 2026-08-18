@@ -20,11 +20,7 @@ You can add columns after the criteria block, for example `Attendance %`, `Homew
 
 ## Demo classes
 
-| Button | Pattern to notice |
-|--------|-------------------|
-| Demo 1 · Criterion B gap | High homework/attendance; Criterion B stays low across reports |
-| Demo 2 · Average hides the class | A few high levels pull the average up; the typical student is lower |
-| Demo 3 · Attendance pattern | Lower attendance lines up with lower entered levels |
+Three anonymized demo gradebooks are available on the home screen for practice in the session.
 
 ## Files
 

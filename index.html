@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260818a" />
+  <link rel="stylesheet" href="styles.css?v=20260818b" />
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
 </head>
@@ -39,11 +39,11 @@
           <button type="button" class="btn primary" id="browseBtn">Choose file</button>
           <a class="btn ghost" id="downloadTemplate" href="templates/subject-gradebook-template.xlsx" download="AM-subject-gradebook-template.xlsx">Download template</a>
         </div>
-        <p class="demo-label">Or try a demo class — each one has a pattern you can turn into an insight</p>
+        <p class="demo-label">Or try a demo class</p>
         <div class="demo-picks">
-          <button type="button" class="btn ghost" data-demo="1">Demo 1 · Criterion B gap</button>
-          <button type="button" class="btn ghost" data-demo="2">Demo 2 · Average hides the class</button>
-          <button type="button" class="btn ghost" data-demo="3">Demo 3 · Attendance pattern</button>
+          <button type="button" class="btn ghost" data-demo="1">Demo class 1</button>
+          <button type="button" class="btn ghost" data-demo="2">Demo class 2</button>
+          <button type="button" class="btn ghost" data-demo="3">Demo class 3</button>
         </div>
         <p class="file-name" id="fileName"></p>
       </div>
@@ -72,14 +72,6 @@
           <label for="numOverride">Numeric (Y)</label>
           <select id="numOverride"><option value="">Auto</option></select>
         </div>
-        <div class="field hidden" id="scatterXField">
-          <label for="scatterX">Plot criterion (X)</label>
-          <select id="scatterX"></select>
-        </div>
-        <div class="field hidden" id="scatterYField">
-          <label for="scatterY">Against criterion (Y)</label>
-          <select id="scatterY"></select>
-        </div>
         <div class="mode-pill" id="modePill">Detecting…</div>
       </div>
 
@@ -95,6 +87,6 @@
     </section>
   </div>
 
-  <script src="app.js?v=20260818a"></script>
+  <script src="app.js?v=20260818b"></script>
 </body>
 </html>

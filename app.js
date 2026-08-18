@@ -17,6 +17,8 @@
     charts: [],
     fileLabel: "",
     subjectHint: "",
+    scatterX: "",
+    scatterY: "",
   };
 
   const $ = (id) => document.getElementById(id);
@@ -521,8 +523,28 @@
   }
 
   function shortLabel(s) {
-    const t = String(s);
-    return t.length > 22 ? t.slice(0, 20) + "…" : t;
+    return String(s ?? "");
+  }
+
+  function categoryAxis() {
+    return {
+      grid: { display: false },
+      ticks: {
+        autoSkip: false,
+        maxRotation: 45,
+        minRotation: 0,
+        padding: 8,
+        font: { size: 11 },
+      },
+    };
+  }
+
+  function valueAxis() {
+    return {
+      beginAtZero: true,
+      grid: { color: "rgba(118,110,101,0.12)" },
+      ticks: { padding: 6, font: { size: 11 } },
+    };
   }
 
   function renderKpis(kpis) {
@@ -549,7 +571,7 @@
     const guideHtml = guide
       ? `<p class="chart-guide"><strong>What to notice:</strong> ${escapeHtml(guide)}</p>`
       : "";
-    card.innerHTML = `<h3>${escapeHtml(title)}</h3><div class="chart-wrap"><canvas id="${canvasId}"></canvas></div>${guideHtml}`;
+    card.innerHTML = `<h3>${escapeHtml(title)}</h3><div class="chart-wrap tall"><canvas id="${canvasId}"></canvas></div>${guideHtml}`;
     return card;
   }
 
@@ -572,9 +594,10 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
+        layout: { padding: { bottom: 12, right: 8 } },
         scales: {
-          y: { beginAtZero: true, grid: { color: "rgba(118,110,101,0.12)" } },
-          x: { grid: { display: false } },
+          y: valueAxis(),
+          x: categoryAxis(),
         },
       },
     });
@@ -606,10 +629,11 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { position: "bottom" } },
+        plugins: { legend: { position: "bottom", labels: { padding: 16, boxWidth: 12 } } },
+        layout: { padding: { bottom: 12, right: 8 } },
         scales: {
-          y: { beginAtZero: true, grid: { color: "rgba(118,110,101,0.12)" } },
-          x: { grid: { display: false } },
+          y: valueAxis(),
+          x: categoryAxis(),
         },
       },
     });
@@ -631,10 +655,11 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { position: "bottom" } },
+        plugins: { legend: { position: "bottom", labels: { padding: 16, boxWidth: 12 } } },
+        layout: { padding: { bottom: 12, right: 8 } },
         scales: {
-          y: { beginAtZero: true, grid: { color: "rgba(118,110,101,0.12)" } },
-          x: { grid: { display: false } },
+          y: valueAxis(),
+          x: categoryAxis(),
         },
       },
     });
@@ -658,13 +683,106 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
+        layout: { padding: { top: 8, right: 16, bottom: 8, left: 8 } },
         scales: {
-          x: { title: { display: true, text: xTitle || "X" }, grid: { color: "rgba(118,110,101,0.12)" } },
-          y: { title: { display: true, text: yTitle || "Y" }, grid: { color: "rgba(118,110,101,0.12)" } },
+          x: {
+            title: { display: true, text: xTitle || "X", padding: { top: 10 }, font: { size: 12 } },
+            grid: { color: "rgba(118,110,101,0.12)" },
+            ticks: { padding: 8, font: { size: 11 } },
+          },
+          y: {
+            title: { display: true, text: yTitle || "Y", padding: { bottom: 8 }, font: { size: 12 } },
+            grid: { color: "rgba(118,110,101,0.12)" },
+            ticks: { padding: 8, font: { size: 11 } },
+          },
         },
       },
     });
     state.charts.push(chart);
+  }
+
+  function syncScatterPair(criteria) {
+    const exact = (letter) =>
+      criteria.find((c) => String(c).trim().toUpperCase() === letter) ||
+      criteria.find((c) => new RegExp(`(^|\\s)${letter}(\\s|$|\\))`, "i").test(String(c)));
+    const fallbackX = exact("A") || criteria[0] || "";
+    const fallbackY = exact("B") || criteria.find((c) => c !== fallbackX) || criteria[1] || "";
+    if (!criteria.includes(state.scatterX)) state.scatterX = fallbackX;
+    if (!criteria.includes(state.scatterY) || state.scatterY === state.scatterX) {
+      state.scatterY = criteria.find((c) => c !== state.scatterX) || fallbackY;
+    }
+  }
+
+  function addCriterionScatter(grid, id, rows, school, guide) {
+    const criteria = unique(rows.map((r) => r[school.subject]));
+    if (criteria.length < 2) return false;
+    syncScatterPair(criteria);
+    const sc = criterionScatterPoints(
+      rows,
+      school.studentName,
+      school.subject,
+      school.score,
+      state.scatterX,
+      state.scatterY
+    );
+    if (!sc) return false;
+    const opts = criteria
+      .map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`)
+      .join("");
+    const card = document.createElement("div");
+    card.className = "chart-card wide";
+    card.innerHTML = `
+      <div class="chart-head">
+        <h3>Compare two criteria</h3>
+        <div class="scatter-picks">
+          <label>X axis<select id="scatterX">${opts}</select></label>
+          <label>Y axis<select id="scatterY">${opts}</select></label>
+        </div>
+      </div>
+      <div class="chart-wrap tall"><canvas id="${id}"></canvas></div>
+      <p class="chart-guide"><strong>What to notice:</strong> ${escapeHtml(guide)}</p>`;
+    grid.appendChild(card);
+    $("scatterX").value = sc.xCrit;
+    $("scatterY").value = sc.yCrit;
+    const onPick = () => {
+      state.scatterX = $("scatterX").value;
+      state.scatterY = $("scatterY").value;
+      refreshDashboard();
+    };
+    $("scatterX").addEventListener("change", onPick);
+    $("scatterY").addEventListener("change", onPick);
+    const chart = new Chart($(id), {
+      type: "scatter",
+      data: {
+        datasets: [
+          {
+            label: "Points",
+            data: sc.points,
+            backgroundColor: "rgba(32, 112, 40, 0.55)",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        layout: { padding: { top: 8, right: 16, bottom: 8, left: 8 } },
+        scales: {
+          x: {
+            title: { display: true, text: sc.xCrit, padding: { top: 10 }, font: { size: 12 } },
+            grid: { color: "rgba(118,110,101,0.12)" },
+            ticks: { padding: 8, font: { size: 11 } },
+          },
+          y: {
+            title: { display: true, text: sc.yCrit, padding: { bottom: 8 }, font: { size: 12 } },
+            grid: { color: "rgba(118,110,101,0.12)" },
+            ticks: { padding: 8, font: { size: 11 } },
+          },
+        },
+      },
+    });
+    state.charts.push(chart);
+    return true;
   }
 
   function heatColor(score) {
@@ -738,7 +856,7 @@
     const sub = subtitle ? `<p style="margin:0 0 0.55rem;color:var(--muted);font-size:0.88rem">${escapeHtml(subtitle)}</p>` : "";
     let head =
       `<th class="row-label"></th>` +
-      colLabels.map((c, i) => `<th title="${escapeHtml(c)}">${escapeHtml(tinyName(c, i))}</th>`).join("");
+      colLabels.map((c) => `<th title="${escapeHtml(c)}">${escapeHtml(c)}</th>`).join("");
     if (rowAvgs) head += `<th>Avg</th>`;
     const body = rowLabels
       .map((rowLabel, ri) => {
@@ -752,7 +870,7 @@
           rowAvgs && rowAvgs[ri] != null
             ? `<td class="heat" style="background:${heatColor(rowAvgs[ri])}">${formatNum(rowAvgs[ri], 1)}</td>`
             : "";
-        return `<tr><td class="row-label" title="${escapeHtml(rowLabel)}">${escapeHtml(shortLabel(rowLabel))}</td>${cells}${avgCell}</tr>`;
+        return `<tr><td class="row-label" title="${escapeHtml(rowLabel)}">${escapeHtml(rowLabel)}</td>${cells}${avgCell}</tr>`;
       })
       .join("");
     card.innerHTML = `
@@ -941,7 +1059,7 @@
       heatUnit:
         "Compare criteria across units. A red streak in one criterion across units is a reteach signal.",
       critScatter:
-        "Each point is a student (average of entered levels for that criterion). Use the dropdowns to plot any pair, e.g. D vs A. Points high on both axes are strong in both; bottom-left need support in both.",
+        "Each point is one student. Change the two menus on this chart to compare any pair of criteria.",
     };
 
     if (school) {
@@ -977,24 +1095,7 @@
           );
           chartCount++;
         }
-        const sc = criterionScatterPoints(
-          rows,
-          school.studentName,
-          school.subject,
-          school.score,
-          $("scatterX")?.value,
-          $("scatterY")?.value
-        );
-        if (sc) {
-          addScatter(
-            grid,
-            "chart-crit-scatter",
-            `${shortLabel(sc.yCrit)} vs ${shortLabel(sc.xCrit)} (each point = one student)`,
-            sc.points,
-            sc.xCrit,
-            sc.yCrit,
-            GUIDE.critScatter
-          );
+        if (addCriterionScatter(grid, "chart-crit-scatter", rows, school, GUIDE.critScatter)) {
           chartCount++;
         }
       }
@@ -1238,31 +1339,6 @@
     if ([...el.options].some((o) => o.value === cur)) el.value = cur;
   }
 
-  function populateScatterControls() {
-    const xEl = $("scatterX");
-    const yEl = $("scatterY");
-    const xField = $("scatterXField");
-    const yField = $("scatterYField");
-    if (!xEl || !yEl || !xField || !yField) return;
-    const show = state.mode === "criteria";
-    xField.classList.toggle("hidden", !show);
-    yField.classList.toggle("hidden", !show);
-    if (!show) return;
-    const criteria = unique((state.rows || []).map((r) => r.Criterion));
-    const prevX = xEl.value;
-    const prevY = yEl.value;
-    fillSelect(xEl, criteria, false);
-    fillSelect(yEl, criteria, false);
-    const exact = (letter) => criteria.find((c) => String(c).trim().toUpperCase() === letter);
-    const fallbackX = exact("A") || criteria[0] || "";
-    const fallbackY = exact("B") || criteria.find((c) => c !== fallbackX) || criteria[1] || "";
-    xEl.value = criteria.includes(prevX) ? prevX : fallbackX;
-    yEl.value = criteria.includes(prevY) && prevY !== xEl.value ? prevY : fallbackY;
-    if (yEl.value === xEl.value && criteria.length > 1) {
-      yEl.value = criteria.find((c) => c !== xEl.value) || yEl.value;
-    }
-  }
-
   function populateControls(headers, profile) {
     fillSelect($("sheetSelect"), state.sheetNames, false);
     const cats = profile.filter((p) => p.isCategorical).map((p) => p.name);
@@ -1272,7 +1348,6 @@
     fillSelect($("numOverride"), nums, true);
     $("filterVal").innerHTML = `<option value="">All</option>`;
     $("filterVal").disabled = true;
-    populateScatterControls();
   }
 
   function refreshFilterValues() {
@@ -1503,9 +1578,9 @@
       e.stopPropagation();
       const id = btn.getAttribute("data-demo");
       const demos = {
-        "1": ["templates/demo-criterion-gap.xlsx", "Demo 1 · Class-wide Criterion B gap"],
-        "2": ["templates/demo-uneven-class.xlsx", "Demo 2 · Average hides the typical student"],
-        "3": ["templates/demo-attendance.xlsx", "Demo 3 · Attendance and levels"],
+        "1": ["templates/demo-criterion-gap.xlsx", "Demo class 1"],
+        "2": ["templates/demo-uneven-class.xlsx", "Demo class 2"],
+        "3": ["templates/demo-attendance.xlsx", "Demo class 3"],
       };
       const pick = demos[id];
       if (pick) loadSampleFile(pick[0], pick[1]);
@@ -1549,6 +1624,4 @@
   $("filterVal").addEventListener("change", refreshDashboard);
   $("catOverride").addEventListener("change", refreshDashboard);
   $("numOverride").addEventListener("change", refreshDashboard);
-  $("scatterX")?.addEventListener("change", refreshDashboard);
-  $("scatterY")?.addEventListener("change", refreshDashboard);
 })();
