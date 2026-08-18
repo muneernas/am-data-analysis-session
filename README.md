@@ -1,28 +1,26 @@
-# From Marks to Moves
+# Teacher Data Analyzer
 
-Professional learning for **Ahliyyah & Mutran** teachers (grades 6–10, all subjects): data analysis, insights, and a hands-on gradebook analyzer.
+Browser-based gradebook analyzer for **Ahliyyah & Mutran** teachers (MYP · Grades 6–10 · all subjects).
 
-**Live deck:** https://muneernas.github.io/am-data-analysis-session/
+Upload a subject summative export (row 1 = units, row 2 = criteria) and get KPIs, heatmaps, and charts — processed only on the device.
 
-**Teacher Data Analyzer:** https://muneernas.github.io/am-data-analysis-session/tool/
+## Live
 
-## Flow
+**Vercel:** your deployment URL (root shows the tool)
 
-1. **Warm up** — Pattern Police  
-2. **What is an insight** — number vs pattern vs Monday move  
-3. **Read the gradebook** — units + criteria, average vs median, heatmaps  
-4. **Analyzer** — upload your export (on this device only)  
-5. **2-2-2** — strengths, gaps, actions  
+**GitHub Pages (legacy):** https://muneernas.github.io/am-data-analysis-session/
 
 ## Files
 
-| File | Purpose |
-|------|---------|
-| `index.html` | New session deck (From Marks to Moves) |
-| `from-numbers-to-narratives.html` | Previous deck, kept as reference |
-| `tool/` | Teacher Data Analyzer |
-| `handout.html` | Participant worksheet |
-| `FACILITATOR-GUIDE.md` | Timing & talking points |
-| `dataset/` | Sample files |
+| File / folder | Purpose |
+|---------------|---------|
+| `index.html` | Analyzer app |
+| `app.js` | Parse, detect gradebook shape, build charts |
+| `styles.css` | UI styles |
+| `assets/` | School logo |
+| `templates/` | Downloadable subject gradebook template |
+| `dataset/` | Sample CSV files (optional reference) |
 
-Open `index.html` → **F** fullscreen · `→` `←` navigate · Pattern Police uses on-slide buttons.
+## Privacy
+
+All processing happens in the browser. Nothing is uploaded to a server. Do not paste identifiable student data into public AI tools.
