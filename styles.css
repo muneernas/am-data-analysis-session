@@ -203,6 +203,36 @@ body {
   color: var(--myp-green);
 }
 
+.demo-label {
+  margin: 1.05rem 0 0.45rem !important;
+  font-weight: 700;
+  color: var(--ink) !important;
+  font-size: 0.88rem !important;
+}
+
+.demo-picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  justify-content: center;
+}
+
+.demo-picks .btn {
+  font-size: 0.82rem;
+  padding: 0.48rem 0.85rem;
+}
+
+.ordinal-note {
+  margin: 0 0 0.85rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.75rem;
+  background: rgba(0, 24, 138, 0.06);
+  border: 1px solid rgba(0, 24, 138, 0.18);
+  color: var(--navy);
+  line-height: 1.4;
+  font-size: 0.88rem;
+}
+
 .file-name {
   margin-top: 0.7rem !important;
   font-weight: 600;

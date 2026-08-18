@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260816d" />
+  <link rel="stylesheet" href="styles.css?v=20260818a" />
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
 </head>
@@ -34,11 +34,16 @@
       <div class="upload-inner">
         <div class="upload-icon" aria-hidden="true">↑</div>
         <h2>Drop your gradebook here</h2>
-        <p>Same layout as school exports: row 1 = units, row 2 = criteria, then student marks.</p>
+        <p>Edunation or Toddle export, or your own Excel. Extra columns such as attendance, homework, or EAL are kept. In the template, replace <strong>Criterion A–D</strong> with your subject’s criterion names.</p>
         <div class="upload-actions">
           <button type="button" class="btn primary" id="browseBtn">Choose file</button>
           <a class="btn ghost" id="downloadTemplate" href="templates/subject-gradebook-template.xlsx" download="AM-subject-gradebook-template.xlsx">Download template</a>
-          <button type="button" class="btn ghost" id="loadTemplateBtn">Try template</button>
+        </div>
+        <p class="demo-label">Or try a demo class — each one has a pattern you can turn into an insight</p>
+        <div class="demo-picks">
+          <button type="button" class="btn ghost" data-demo="1">Demo 1 · Criterion B gap</button>
+          <button type="button" class="btn ghost" data-demo="2">Demo 2 · Average hides the class</button>
+          <button type="button" class="btn ghost" data-demo="3">Demo 3 · Attendance pattern</button>
         </div>
         <p class="file-name" id="fileName"></p>
       </div>
@@ -67,9 +72,18 @@
           <label for="numOverride">Numeric (Y)</label>
           <select id="numOverride"><option value="">Auto</option></select>
         </div>
+        <div class="field hidden" id="scatterXField">
+          <label for="scatterX">Plot criterion (X)</label>
+          <select id="scatterX"></select>
+        </div>
+        <div class="field hidden" id="scatterYField">
+          <label for="scatterY">Against criterion (Y)</label>
+          <select id="scatterY"></select>
+        </div>
         <div class="mode-pill" id="modePill">Detecting…</div>
       </div>
 
+      <p class="ordinal-note hidden" id="ordinalNote">MYP levels 1–8 are best-fit judgments, not percentages. Averages and medians here help you spot patterns — they are not official grades.</p>
       <div class="kpis" id="kpiStrip"></div>
 
       <div class="charts" id="chartsGrid"></div>
@@ -81,6 +95,6 @@
     </section>
   </div>
 
-  <script src="app.js?v=20260816d"></script>
+  <script src="app.js?v=20260818a"></script>
 </body>
 </html>

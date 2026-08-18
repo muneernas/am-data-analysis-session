@@ -103,9 +103,29 @@
     );
   }
 
+  function looksLikeCriterionName(name) {
+    const s = String(name ?? "").trim();
+    if (!s) return false;
+    if (/^[A-Da-d]$/.test(s)) return true;
+    if (/^criterion\s*[A-D]\b/i.test(s)) return true;
+    return /\b(knowing|understanding|analys|analyz|organiz|organis|produc|communicat|investigat|inquir|thinking|research|applying|application|pattern|language|design|perform|process|create|creating|responding|planning)\b/i.test(
+      s
+    );
+  }
+
+  function isContextHeader(name) {
+    const k = normalizeHeader(name);
+    const raw = String(name ?? "");
+    return (
+      /attendance|homework|atl|eal|support|wellbeing|well-being|comment|notes|gender|punctual|best fit|final grade|overall|report grade|language support|learning support|iep|\bsen\b/.test(
+        k
+      ) || /%/.test(raw)
+    );
+  }
+
   function looksLikeScoreColumn(name, profileCol, rows) {
     const key = normalizeHeader(name);
-    if (isMetaKey(key) || isSensitiveKey(key)) return false;
+    if (isMetaKey(key) || isSensitiveKey(key) || isContextHeader(name)) return false;
     if (!profileCol?.isNumeric) return false;
     if (/\b(term|semester|score|mark|percent|assessment|exam|quiz|test|total|average|avg)\b/.test(key)) {
       return true;
@@ -151,21 +171,56 @@
     return hasUnits || hasRepeats;
   }
 
+  function columnLooksLikeLevels(aoa, colIndex) {
+    const vals = [];
+    for (let r = 2; r < aoa.length; r++) {
+      const n = toNumber((aoa[r] || [])[colIndex]);
+      if (n != null) vals.push(n);
+    }
+    if (!vals.length) return false;
+    const in8 = vals.filter((n) => n >= 0 && n <= 8).length;
+    return in8 / vals.length >= 0.75;
+  }
+
+  function isContextColumn(aoa, colIndex, header, unitLabel) {
+    if (!header) return true;
+    if (isContextHeader(header)) return true;
+    if (looksLikeCriterionName(header)) return false;
+    if (columnLooksLikeLevels(aoa, colIndex) && unitLabel) return false;
+    return true;
+  }
+
   function parseCriteriaGradebook(aoa) {
     const units = forwardFillUnits(aoa[0] || []);
     const criteria = aoa[1] || [];
     const longRows = [];
     let missing = 0;
     let filled = 0;
+    const extraHeaders = [];
+    const extraCols = [];
+
+    for (let c = 1; c < Math.max(criteria.length, (aoa[0] || []).length); c++) {
+      const header = String(criteria[c] ?? "").trim();
+      const unit = String(units[c] ?? "").trim();
+      if (isContextColumn(aoa, c, header, unit)) {
+        if (header && !extraHeaders.includes(header)) extraHeaders.push(header);
+        extraCols.push({ c, header: header || `Column ${c}` });
+      }
+    }
 
     for (let r = 2; r < aoa.length; r++) {
       const row = aoa[r] || [];
       const student = String(row[0] ?? "").trim();
       if (!student) continue;
+      const extras = {};
+      extraCols.forEach(({ c, header }) => {
+        extras[header] = row[c];
+      });
       for (let c = 1; c < criteria.length; c++) {
         const criterion = String(criteria[c] ?? "").trim();
         if (!criterion) continue;
         const unit = String(units[c] ?? "").trim() || "—";
+        if (isContextColumn(aoa, c, criterion, String(units[c] ?? "").trim())) continue;
         const raw = row[c];
         const blank = raw == null || String(raw).trim() === "" || String(raw).trim() === "-";
         const score = toNumber(raw);
@@ -179,6 +234,7 @@
           Unit: unit,
           Criterion: criterion,
           Score: score,
+          ...extras,
         });
       }
     }
@@ -187,6 +243,7 @@
       if (c === 0) return "Student Name";
       const criterion = String(crit ?? "").trim();
       const unit = String(units[c] ?? "").trim();
+      if (isContextColumn(aoa, c, criterion, unit)) return criterion;
       return unit ? `${unit} · ${criterion}` : criterion;
     });
 
@@ -211,6 +268,7 @@
       unitCount: unique(longRows.map((r) => r.Unit)).length,
       criterionCount: unique(longRows.map((r) => r.Criterion)).length,
       studentCount: unique(longRows.map((r) => r.Student)).length,
+      extraHeaders,
     };
   }
 
@@ -401,9 +459,9 @@
       kpis.push({ label: "Units / periods", value: String(unique(rows.map((r) => r.Unit)).filter((u) => u && u !== "—").length) });
       kpis.push({ label: "Criteria", value: String(unique(rows.map((r) => r.Criterion)).length) });
       const scores = rows.map((r) => toNumber(r.Score)).filter((n) => n != null);
-      kpis.push({ label: "Avg mark", value: formatNum(avg(scores)) });
-      kpis.push({ label: "Median mark", value: formatNum(median(scores)) });
-      kpis.push({ label: "Marks entered", value: String(scores.length) });
+      kpis.push({ label: "Avg of entered levels", value: formatNum(avg(scores)) });
+      kpis.push({ label: "Median of entered levels", value: formatNum(median(scores)) });
+      kpis.push({ label: "Levels entered", value: String(scores.length) });
       return kpis;
     }
 
@@ -712,7 +770,27 @@
     grid.appendChild(card);
   }
 
-  function criterionScatterPoints(rows, studentCol, criterionCol, scoreCol) {
+  function studentContextScatter(rows, studentCol, xCol, scoreCol) {
+    const byStu = new Map();
+    for (const r of rows) {
+      const s = String(r[studentCol] ?? "").trim();
+      if (!s) continue;
+      if (!byStu.has(s)) byStu.set(s, { xs: [], scores: [] });
+      const x = toNumber(r[xCol]);
+      if (x != null) byStu.get(s).xs.push(x);
+      const y = toNumber(r[scoreCol]);
+      if (y != null) byStu.get(s).scores.push(y);
+    }
+    const points = [];
+    for (const [, v] of byStu) {
+      const x = avg(v.xs);
+      const y = avg(v.scores);
+      if (x != null && y != null) points.push({ x, y });
+    }
+    return points;
+  }
+
+  function criterionScatterPoints(rows, studentCol, criterionCol, scoreCol, xPick, yPick) {
     const criteria = unique(rows.map((r) => r[criterionCol]));
     if (criteria.length < 2) return null;
     const ranked = criteria
@@ -721,8 +799,11 @@
         n: rows.filter((r) => String(r[criterionCol]) === String(c) && toNumber(r[scoreCol]) != null).length,
       }))
       .sort((a, b) => b.n - a.n);
-    const xCrit = ranked[0].c;
-    const yCrit = ranked[1].c;
+    const xCrit = xPick && criteria.includes(xPick) ? xPick : ranked[0].c;
+    const yCrit =
+      yPick && criteria.includes(yPick) && yPick !== xCrit
+        ? yPick
+        : ranked.find((r) => r.c !== xCrit)?.c;
     const points = [];
     unique(rows.map((r) => r[studentCol])).forEach((stu) => {
       const x = avg(
@@ -834,23 +915,23 @@
 
     const GUIDE = {
       criterion:
-        "Compare average and median. If the median is much lower than the average, a few high marks may be hiding that most of the class is still struggling on that criterion.",
+        "Compare average and median for each criterion across all units in the file. If the median is much lower than the average, a few high levels may be hiding that most of the class is still struggling on that criterion.",
       unit:
-        "Use this to spot which unit or reporting period was stronger or weaker overall. A big average-median gap means the class was uneven.",
+        "This mixes all criteria in that unit into one picture — it is not an MYP best-fit grade. Use it to spot a weaker period, then check the criterion × unit heatmap for the skill.",
       unitCrit:
         "Look for one criterion that dips across several units — that is often the best place to reteach or add practice.",
       dist:
         "Check where marks pile up. A cluster at the low end suggests reteaching; a cluster at the high end means many students are ready for extension.",
       top:
-        "Strong overall performers. Ask: are they strong on every criterion, or only some? Use filters to check.",
+        "Highest averages of entered levels across all criteria and units — not an official MYP grade. Check whether they are strong on every criterion.",
       low:
-        "Students with the lowest overall marks. Start support here, and check which criterion is pulling them down.",
+        "Lowest averages of entered levels across all criteria and units — not MYP best-fit. Check which criterion is pulling them down.",
       support:
         "Compare groups carefully — small group sizes can swing averages. Prefer the median when groups are uneven.",
       grade:
         "Use this to see if one grade band needs a different pitch or scaffold than another.",
       scatter:
-        "Points trending up-right suggest attendance and score move together. Isolated low-score points with high attendance may need a different kind of support.",
+        "Each point is one student (average of their entered levels). Points trending up-right suggest attendance and levels move together. High attendance with low levels may need a teaching move, not more presence.",
       generic:
         "Average shows the overall level; median shows the typical student. When they diverge, dig into who is above or below the middle.",
       counts:
@@ -860,7 +941,7 @@
       heatUnit:
         "Compare criteria across units. A red streak in one criterion across units is a reteach signal.",
       critScatter:
-        "Each point is a student. Points high on both axes are strong in both criteria; bottom-left need support in both.",
+        "Each point is a student (average of entered levels for that criterion). Use the dropdowns to plot any pair, e.g. D vs A. Points high on both axes are strong in both; bottom-left need support in both.",
     };
 
     if (school) {
@@ -892,16 +973,23 @@
             um.matrix,
             null,
             GUIDE.heatUnit,
-            "Class averages by criterion and unit / period"
+            "Class average of entered levels by criterion and unit"
           );
           chartCount++;
         }
-        const sc = criterionScatterPoints(rows, school.studentName, school.subject, school.score);
+        const sc = criterionScatterPoints(
+          rows,
+          school.studentName,
+          school.subject,
+          school.score,
+          $("scatterX")?.value,
+          $("scatterY")?.value
+        );
         if (sc) {
           addScatter(
             grid,
             "chart-crit-scatter",
-            `${shortLabel(sc.xCrit)} vs ${shortLabel(sc.yCrit)}`,
+            `${shortLabel(sc.yCrit)} vs ${shortLabel(sc.xCrit)} (each point = one student)`,
             sc.points,
             sc.xCrit,
             sc.yCrit,
@@ -918,7 +1006,7 @@
             grid,
             "chart-subj",
             state.mode === "criteria"
-              ? "Average and median by criterion"
+              ? "Average and median by criterion (all units combined)"
               : `${shortLabel(scoreCol)} by ${shortLabel(catCol)} (avg and median)`,
             g,
             state.mode === "criteria" ? GUIDE.criterion : GUIDE.generic
@@ -930,7 +1018,13 @@
       if (state.mode === "criteria" && school.term) {
         const g = groupStats(rows, school.term, school.score);
         if (g.length) {
-          addAvgMedianBar(grid, "chart-unit", "Average and median by unit / period", g, GUIDE.unit);
+          addAvgMedianBar(
+            grid,
+            "chart-unit",
+            "Average and median by unit (all criteria combined — not a best-fit grade)",
+            g,
+            GUIDE.unit
+          );
           chartCount++;
         }
       }
@@ -942,7 +1036,7 @@
             addGroupedBar(
               grid,
               "chart-term",
-              state.mode === "criteria" ? "Average mark by criterion and unit" : "Average score by subject and term",
+              state.mode === "criteria" ? "Average entered level by criterion and unit" : "Average score by subject and term",
               cmp.labels,
               cmp.datasets,
               GUIDE.unitCrit
@@ -958,7 +1052,7 @@
           addBarChart(
             grid,
             "chart-dist",
-            dist.kind === "myp" ? "How many marks at each level (1-8)" : "Score distribution",
+            dist.kind === "myp" ? "How many entered levels at each 1–8" : "Score distribution",
             dist.labels,
             dist.data,
             "Count",
@@ -968,17 +1062,42 @@
         }
       }
 
-      if (school.attendance && school.score) {
-        const points = rows
-          .map((r) => {
-            const x = toNumber(r[school.attendance]);
-            const y = toNumber(r[school.score]);
-            return x != null && y != null ? { x, y } : null;
-          })
-          .filter(Boolean)
-          .slice(0, 500);
+      if (school.attendance && school.score && (school.studentName || state.mode !== "criteria")) {
+        const points =
+          school.studentName
+            ? studentContextScatter(rows, school.studentName, school.attendance, school.score)
+            : rows
+                .map((r) => {
+                  const x = toNumber(r[school.attendance]);
+                  const y = toNumber(r[school.score]);
+                  return x != null && y != null ? { x, y } : null;
+                })
+                .filter(Boolean)
+                .slice(0, 500);
         if (points.length >= 5) {
-          addScatter(grid, "chart-scatter", "Attendance % vs Score", points, "Attendance %", "Score", GUIDE.scatter);
+          addScatter(
+            grid,
+            "chart-scatter",
+            "Attendance vs average entered level (one point per student)",
+            points,
+            school.attendance,
+            school.studentName ? "Average entered level" : "Score",
+            GUIDE.scatter
+          );
+          chartCount++;
+        }
+      } else if (school.homework && school.score && school.studentName) {
+        const points = studentContextScatter(rows, school.studentName, school.homework, school.score);
+        if (points.length >= 5) {
+          addScatter(
+            grid,
+            "chart-hw-scatter",
+            "Homework vs average entered level (one point per student)",
+            points,
+            school.homework,
+            "Average entered level",
+            GUIDE.scatter
+          );
           chartCount++;
         }
       }
@@ -1005,11 +1124,23 @@
         const top = all.slice(0, 8);
         const low = [...all].sort((a, b) => (a.avg ?? 0) - (b.avg ?? 0)).slice(0, 8);
         if (top.length >= 3) {
-          addAvgMedianBar(grid, "chart-students-top", "Highest overall averages", top, GUIDE.top);
+          addAvgMedianBar(
+            grid,
+            "chart-students-top",
+            "Highest student averages (all criteria and units — not MYP best-fit)",
+            top,
+            GUIDE.top
+          );
           chartCount++;
         }
         if (low.length >= 3) {
-          addAvgMedianBar(grid, "chart-students-low", "Lowest overall averages", low, GUIDE.low);
+          addAvgMedianBar(
+            grid,
+            "chart-students-low",
+            "Lowest student averages (all criteria and units — not MYP best-fit)",
+            low,
+            GUIDE.low
+          );
           chartCount++;
         }
       }
@@ -1107,6 +1238,31 @@
     if ([...el.options].some((o) => o.value === cur)) el.value = cur;
   }
 
+  function populateScatterControls() {
+    const xEl = $("scatterX");
+    const yEl = $("scatterY");
+    const xField = $("scatterXField");
+    const yField = $("scatterYField");
+    if (!xEl || !yEl || !xField || !yField) return;
+    const show = state.mode === "criteria";
+    xField.classList.toggle("hidden", !show);
+    yField.classList.toggle("hidden", !show);
+    if (!show) return;
+    const criteria = unique((state.rows || []).map((r) => r.Criterion));
+    const prevX = xEl.value;
+    const prevY = yEl.value;
+    fillSelect(xEl, criteria, false);
+    fillSelect(yEl, criteria, false);
+    const exact = (letter) => criteria.find((c) => String(c).trim().toUpperCase() === letter);
+    const fallbackX = exact("A") || criteria[0] || "";
+    const fallbackY = exact("B") || criteria.find((c) => c !== fallbackX) || criteria[1] || "";
+    xEl.value = criteria.includes(prevX) ? prevX : fallbackX;
+    yEl.value = criteria.includes(prevY) && prevY !== xEl.value ? prevY : fallbackY;
+    if (yEl.value === xEl.value && criteria.length > 1) {
+      yEl.value = criteria.find((c) => c !== xEl.value) || yEl.value;
+    }
+  }
+
   function populateControls(headers, profile) {
     fillSelect($("sheetSelect"), state.sheetNames, false);
     const cats = profile.filter((p) => p.isCategorical).map((p) => p.name);
@@ -1116,6 +1272,7 @@
     fillSelect($("numOverride"), nums, true);
     $("filterVal").innerHTML = `<option value="">All</option>`;
     $("filterVal").disabled = true;
+    populateScatterControls();
   }
 
   function refreshFilterValues() {
@@ -1171,6 +1328,8 @@
 
     renderKpis(buildKpis(rows, school, profile));
     renderCharts(rows, school, profile);
+    const ordinal = $("ordinalNote");
+    if (ordinal) ordinal.classList.toggle("hidden", state.mode !== "criteria");
     // Preview original upload shape (more familiar for teachers)
     renderPreview(state.rawRows.length ? state.rawRows : rows, state.rawHeaders.length ? state.rawHeaders : state.headers);
     dashboard.classList.remove("hidden");
@@ -1229,22 +1388,26 @@
       state.rawRows = parsed.previewRows;
       state.rawHeaders = parsed.flatHeaders;
       state.rows = parsed.longRows;
-      state.headers = ["Student", "Unit", "Criterion", "Score"];
+      const extra = parsed.extraHeaders || [];
+      state.headers = ["Student", "Unit", "Criterion", "Score", ...extra];
       state.profile = profileColumns(parsed.longRows, state.headers);
+      const extraKey = (needles) =>
+        extra.find((h) => needles.some((n) => normalizeHeader(h).includes(n))) || null;
       state.school = {
         score: "Score",
         subject: "Criterion",
         term: "Unit",
         studentName: "Student",
-        attendance: null,
-        gradeLevel: null,
-        learningSupport: null,
-        studentId: null,
-        homework: null,
+        attendance: extraKey(["attendance"]),
+        gradeLevel: extraKey(["grade level", "year group"]),
+        learningSupport: extraKey(["eal", "learning support", "support"]),
+        studentId: extraKey(["student id"]),
+        homework: extraKey(["homework"]),
       };
       state.mode = "criteria";
       const subj = state.subjectHint ? ` (${state.subjectHint})` : "";
-      state.notice = `Subject gradebook${subj}: unit row + criteria row detected. ${parsed.filled} marks charted across ${parsed.unitCount} units and ${parsed.criterionCount} criteria (dashes skipped).`;
+      const extraNote = extra.length ? ` Extra columns kept: ${extra.join(", ")}.` : "";
+      state.notice = `Subject gradebook${subj}: unit row + criteria row detected. ${parsed.filled} levels charted across ${parsed.unitCount} units and ${parsed.criterionCount} criteria (dashes skipped).${extraNote} MYP 1–8 levels are best-fit judgments; averages here are for patterns only.`;
       return;
     }
 
@@ -1335,12 +1498,18 @@
   $("downloadTemplate").addEventListener("click", (e) => {
     e.stopPropagation();
   });
-  $("loadTemplateBtn").addEventListener("click", (e) => {
-    e.stopPropagation();
-    loadSampleFile(
-      "templates/subject-gradebook-template.xlsx",
-      "AM subject gradebook template"
-    );
+  document.querySelectorAll("[data-demo]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-demo");
+      const demos = {
+        "1": ["templates/demo-criterion-gap.xlsx", "Demo 1 · Class-wide Criterion B gap"],
+        "2": ["templates/demo-uneven-class.xlsx", "Demo 2 · Average hides the typical student"],
+        "3": ["templates/demo-attendance.xlsx", "Demo 3 · Attendance and levels"],
+      };
+      const pick = demos[id];
+      if (pick) loadSampleFile(pick[0], pick[1]);
+    });
   });
   dropzone.addEventListener("click", (e) => {
     if (e.target.closest("a, button")) return;
@@ -1380,4 +1549,6 @@
   $("filterVal").addEventListener("change", refreshDashboard);
   $("catOverride").addEventListener("change", refreshDashboard);
   $("numOverride").addEventListener("change", refreshDashboard);
+  $("scatterX")?.addEventListener("change", refreshDashboard);
+  $("scatterY")?.addEventListener("change", refreshDashboard);
 })();
