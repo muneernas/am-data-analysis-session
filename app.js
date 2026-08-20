@@ -1000,7 +1000,7 @@
       .map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`)
       .join("");
     const card = document.createElement("div");
-    card.className = "chart-card wide";
+    card.className = "chart-card";
     card.innerHTML = `
       <div class="chart-head">
         <div>
@@ -1359,94 +1359,46 @@
       }
 
       if (state.mode === "criteria" && school.studentName && school.subject && school.score) {
+        // Row 1: criterion avg + compare-two scatter (paired)
+        let gCrit = null;
+        if (scoreCol && catCol) {
+          gCrit = sortCriterionEntries(groupStats(patternRows, catCol, scoreCol));
+          if (gCrit.length) {
+            addAvgMedianBar(
+              grid,
+              "chart-subj",
+              "Average and median by criterion (learning units only)",
+              gCrit,
+              GUIDE.criterion
+            );
+            chartCount++;
+          }
+        }
         if (addCriterionScatter(grid, "chart-crit-scatter", patternRows, school, GUIDE.critScatter)) {
           chartCount++;
         }
-        // Student heatmap: one reporting snapshot (End of Term), not blended with units
-        const hm = buildStudentCriterionMatrix(rows, school.studentName, school.subject, school.score, school.term);
-        if (hm.criteria.length && hm.students.length) {
-          addHeatmapCard(
+        // Full-width landscape box plot between paired rows
+        if (gCrit?.some((e) => e.box && e.box.count >= 3)) {
+          addBoxWhiskerChart(
             grid,
-            "Criterion × student heatmap",
-            hm.students,
-            hm.criteria,
-            hm.matrix,
-            hm.rowAvgs,
-            GUIDE.heatStudent,
-            hm.unitLabel
-              ? `Snapshot: ${hm.unitLabel} (one period only — not averaged with other periods)`
-              : "Averaged across available marks in scope"
+            "chart-box-crit",
+            "Box and whisker by criterion (learning units only)",
+            gCrit,
+            GUIDE.box
           );
           chartCount++;
         }
-        // Learning units heatmap (comparable summatives)
-        const umLearn = buildUnitCriterionMatrix(
-          rows,
-          school.term,
-          school.subject,
-          school.score,
-          isLearningUnit
-        );
-        if (umLearn.units.length >= 1 && umLearn.criteria.length) {
-          addHeatmapCard(
-            grid,
-            "Criterion × learning unit heatmap",
-            umLearn.units,
-            umLearn.criteria,
-            umLearn.matrix,
-            null,
-            GUIDE.heatUnit,
-            "Instructional units only — safe to compare across units"
-          );
-          chartCount++;
-        }
-        // Reporting periods: show separately with warning, never as growth averages
-        const umRep = buildUnitCriterionMatrix(
-          rows,
-          school.term,
-          school.subject,
-          school.score,
-          isReportingPeriod
-        );
-        if (umRep.units.length >= 1 && umRep.criteria.length) {
-          addHeatmapCard(
-            grid,
-            "Reporting snapshots (not growth averages)",
-            umRep.units,
-            umRep.criteria,
-            umRep.matrix,
-            null,
-            GUIDE.reporting,
-            "Progress Report and End of Term are reporting moments. End of Term may already include Progress Report and may use a converted scale."
-          );
-          chartCount++;
-        }
-      }
-
-      if (scoreCol && catCol) {
-        let g = groupStats(patternRows, catCol, scoreCol);
-        if (state.mode === "criteria") g = sortCriterionEntries(g);
+      } else if (scoreCol && catCol) {
+        const g = groupStats(patternRows, catCol, scoreCol);
         if (g.length) {
           addAvgMedianBar(
             grid,
             "chart-subj",
-            state.mode === "criteria"
-              ? "Average and median by criterion (learning units only)"
-              : `${shortLabel(scoreCol)} by ${shortLabel(catCol)} (avg and median)`,
+            `${shortLabel(scoreCol)} by ${shortLabel(catCol)} (avg and median)`,
             g,
-            state.mode === "criteria" ? GUIDE.criterion : GUIDE.generic
+            GUIDE.generic
           );
           chartCount++;
-          if (state.mode === "criteria" && g.some((e) => e.box && e.box.count >= 3)) {
-            addBoxWhiskerChart(
-              grid,
-              "chart-box-crit",
-              "Box and whisker by criterion (learning units only)",
-              g,
-              GUIDE.box
-            );
-            chartCount++;
-          }
         }
       }
 
@@ -1454,6 +1406,18 @@
       if (state.mode === "criteria" && school.term) {
         const learningRows = rows.filter((r) => isLearningUnit(r[school.term]));
         const g = groupStats(learningRows, school.term, school.score);
+        if (g.length >= 2) {
+          addAvgMedianBar(
+            grid,
+            "chart-unit",
+            "Average and median by learning unit (not reporting periods)",
+            g,
+            GUIDE.unit
+          );
+          chartCount++;
+        }
+      } else if (state.mode !== "criteria" && school.term && school.score) {
+        const g = groupStats(patternRows, school.term, school.score);
         if (g.length >= 2) {
           addAvgMedianBar(
             grid,
@@ -1583,6 +1547,66 @@
             "Lowest student averages (within chart scope — not MYP best-fit)",
             low,
             GUIDE.low
+          );
+          chartCount++;
+        }
+      }
+
+      // Heatmaps last (full width) so they don't strand a half-width chart alone
+      if (state.mode === "criteria" && school.studentName && school.subject && school.score) {
+        const hm = buildStudentCriterionMatrix(rows, school.studentName, school.subject, school.score, school.term);
+        if (hm.criteria.length && hm.students.length) {
+          addHeatmapCard(
+            grid,
+            "Criterion × student heatmap",
+            hm.students,
+            hm.criteria,
+            hm.matrix,
+            hm.rowAvgs,
+            GUIDE.heatStudent,
+            hm.unitLabel
+              ? `Snapshot: ${hm.unitLabel} (one period only — not averaged with other periods)`
+              : "Averaged across available marks in scope"
+          );
+          chartCount++;
+        }
+        const umLearn = buildUnitCriterionMatrix(
+          rows,
+          school.term,
+          school.subject,
+          school.score,
+          isLearningUnit
+        );
+        if (umLearn.units.length >= 1 && umLearn.criteria.length) {
+          addHeatmapCard(
+            grid,
+            "Criterion × learning unit heatmap",
+            umLearn.units,
+            umLearn.criteria,
+            umLearn.matrix,
+            null,
+            GUIDE.heatUnit,
+            "Instructional units only — safe to compare across units"
+          );
+          chartCount++;
+        }
+        const umRep = buildUnitCriterionMatrix(
+          rows,
+          school.term,
+          school.subject,
+          school.score,
+          isReportingPeriod
+        );
+        if (umRep.units.length >= 1 && umRep.criteria.length) {
+          addHeatmapCard(
+            grid,
+            "Reporting snapshots (not growth averages)",
+            umRep.units,
+            umRep.criteria,
+            umRep.matrix,
+            null,
+            GUIDE.reporting,
+            "Progress Report and End of Term are reporting moments. End of Term may already include Progress Report and may use a converted scale."
           );
           chartCount++;
         }
