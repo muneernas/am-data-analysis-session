@@ -421,6 +421,18 @@ body {
   height: 340px;
 }
 
+.chart-stat {
+  margin: 0.35rem 0 0;
+  font-size: 0.88rem;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+.chart-stat .muted {
+  color: var(--muted);
+  font-weight: 500;
+}
+
 .chart-guide {
   margin: 0.7rem 0 0;
   padding-top: 0.65rem;

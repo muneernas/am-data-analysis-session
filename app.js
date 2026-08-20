@@ -1,7 +1,7 @@
 /* Teacher Data Analyzer — client-side only */
 (() => {
   const COLORS = ["#207028", "#f2b334", "#67c04d", "#766e65", "#f32735", "#00188a", "#c2bdb7"];
-  const MAX_CATS = 12;
+  const MAX_CATS = 24;
 
   const state = {
     workbook: null,
@@ -67,6 +67,72 @@
     return a.length % 2 ? a[mid] : (a[mid - 1] + a[mid]) / 2;
   }
 
+  function stdev(nums) {
+    const a = nums.filter((n) => n != null && Number.isFinite(n));
+    if (a.length < 2) return null;
+    const m = avg(a);
+    if (m == null) return null;
+    const variance = a.reduce((s, n) => s + (n - m) ** 2, 0) / (a.length - 1);
+    return Math.sqrt(variance);
+  }
+
+  function quartileAt(sorted, q) {
+    if (!sorted.length) return null;
+    const pos = (sorted.length - 1) * q;
+    const base = Math.floor(pos);
+    const rest = pos - base;
+    if (sorted[base + 1] == null) return sorted[base];
+    return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+  }
+
+  function boxStats(nums) {
+    const a = nums.filter((n) => n != null && Number.isFinite(n)).sort((x, y) => x - y);
+    if (!a.length) return null;
+    const q1 = quartileAt(a, 0.25);
+    const q2 = quartileAt(a, 0.5);
+    const q3 = quartileAt(a, 0.75);
+    const iqr = q3 - q1;
+    const loFence = q1 - 1.5 * iqr;
+    const hiFence = q3 + 1.5 * iqr;
+    const whiskerMin = a.find((n) => n >= loFence) ?? a[0];
+    const whiskerMax = [...a].reverse().find((n) => n <= hiFence) ?? a[a.length - 1];
+    return {
+      min: a[0],
+      max: a[a.length - 1],
+      q1,
+      median: q2,
+      q3,
+      whiskerMin,
+      whiskerMax,
+      mean: avg(a),
+      stdev: stdev(a),
+      count: a.length,
+      values: a,
+    };
+  }
+
+  function pearsonR(points) {
+    const pts = (points || []).filter((p) => p && Number.isFinite(p.x) && Number.isFinite(p.y));
+    if (pts.length < 3) return null;
+    const xs = pts.map((p) => p.x);
+    const ys = pts.map((p) => p.y);
+    const mx = avg(xs);
+    const my = avg(ys);
+    if (mx == null || my == null) return null;
+    let num = 0;
+    let dx = 0;
+    let dy = 0;
+    for (let i = 0; i < pts.length; i++) {
+      const a = xs[i] - mx;
+      const b = ys[i] - my;
+      num += a * b;
+      dx += a * a;
+      dy += b * b;
+    }
+    if (dx === 0 || dy === 0) return null;
+    return num / Math.sqrt(dx * dy);
+  }
+
   function formatNum(n, digits = 1) {
     if (n == null || !Number.isFinite(n)) return "—";
     return Number.isInteger(n) ? String(n) : n.toFixed(digits);
@@ -109,8 +175,8 @@
     const s = String(name ?? "").trim();
     if (!s) return false;
     if (/^[A-Da-d]$/.test(s)) return true;
-    if (/^criterion\s*[A-D]\b/i.test(s)) return true;
-    return /\b(knowing|understanding|analys|analyz|organiz|organis|produc|communicat|investigat|inquir|thinking|research|applying|application|pattern|language|design|perform|process|create|creating|responding|planning)\b/i.test(
+    if (/^criterion\s*[A-Da-d]\b/i.test(s)) return true;
+    return /\b(knowing|understanding|analys|analyz|organiz|organis|produc|communicat|investigat|inquir|thinking|research|applying|application|pattern|language|design|perform|process|create|creating|responding|planning|reflect|develop|using|knowledge|conceptual|technical|artistic|physical|transfer|synthesis|evaluat)\b/i.test(
       s
     );
   }
@@ -119,7 +185,7 @@
     const k = normalizeHeader(name);
     const raw = String(name ?? "");
     return (
-      /attendance|homework|atl|eal|support|wellbeing|well-being|comment|notes|gender|punctual|best fit|final grade|overall|report grade|language support|learning support|iep|\bsen\b/.test(
+      /attendance|homework|atl|eal|support|wellbeing|well-being|comment|notes|gender|punctual|best fit|final grade|overall|report grade|language support|learning support|iep|\bsen\b|behaviour|behavior|effort|participation/.test(
         k
       ) || /%/.test(raw)
     );
@@ -181,14 +247,17 @@
     }
     if (!vals.length) return false;
     const in8 = vals.filter((n) => n >= 0 && n <= 8).length;
-    return in8 / vals.length >= 0.75;
+    return in8 / vals.length >= 0.6;
   }
 
+  // Under a unit/reporting block, keep the column as a criterion unless it is clearly
+  // context (attendance, EAL, …). Sparse criteria (mostly dashes) must still count.
   function isContextColumn(aoa, colIndex, header, unitLabel) {
     if (!header) return true;
     if (isContextHeader(header)) return true;
+    if (unitLabel) return false;
     if (looksLikeCriterionName(header)) return false;
-    if (columnLooksLikeLevels(aoa, colIndex) && unitLabel) return false;
+    if (columnLooksLikeLevels(aoa, colIndex)) return false;
     return true;
   }
 
@@ -413,13 +482,19 @@
       if (!buckets.has(key)) buckets.set(key, []);
       buckets.get(key).push(n);
     }
-    let entries = [...buckets.entries()].map(([label, vals]) => ({
-      label,
-      avg: avg(vals),
-      median: median(vals),
-      count: vals.length,
-      value: avg(vals), // legacy alias
-    }));
+    let entries = [...buckets.entries()].map(([label, vals]) => {
+      const box = boxStats(vals);
+      return {
+        label,
+        avg: avg(vals),
+        median: median(vals),
+        stdev: stdev(vals),
+        count: vals.length,
+        value: avg(vals),
+        box,
+        values: vals,
+      };
+    });
     entries.sort((a, b) => (b.avg ?? 0) - (a.avg ?? 0));
     if (entries.length > MAX_CATS) entries = entries.slice(0, MAX_CATS);
     return entries;
@@ -462,7 +537,7 @@
       kpis.push({ label: "Criteria", value: String(unique(rows.map((r) => r.Criterion)).length) });
       const scores = rows.map((r) => toNumber(r.Score)).filter((n) => n != null);
       kpis.push({ label: "Avg of entered levels", value: formatNum(avg(scores)) });
-      kpis.push({ label: "Median of entered levels", value: formatNum(median(scores)) });
+      kpis.push({ label: "Std Dev", value: formatNum(stdev(scores)) });
       kpis.push({ label: "Levels entered", value: String(scores.length) });
       return kpis;
     }
@@ -477,7 +552,7 @@
     if (school?.score) {
       const scores = rows.map((r) => toNumber(r[school.score])).filter((n) => n != null);
       kpis.push({ label: "Avg score", value: formatNum(avg(scores)) });
-      kpis.push({ label: "Median score", value: formatNum(median(scores)) });
+      kpis.push({ label: "Std Dev", value: formatNum(stdev(scores)) });
       if (scores.length) {
         kpis.push({ label: "Min score", value: formatNum(Math.min(...scores), 0) });
         kpis.push({ label: "Max score", value: formatNum(Math.max(...scores), 0) });
@@ -604,7 +679,7 @@
     state.charts.push(chart);
   }
 
-  function addAvgMedianBar(grid, id, title, entries, guide) {
+  function addAvgStdevBar(grid, id, title, entries, guide) {
     if (!entries.length) return;
     grid.appendChild(makeChartCard(title, id, guide));
     const chart = new Chart($(id), {
@@ -619,9 +694,9 @@
             borderRadius: 6,
           },
           {
-            label: "Median",
-            data: entries.map((x) => x.median),
-            backgroundColor: "rgba(242, 179, 52, 0.92)",
+            label: "Std Dev",
+            data: entries.map((x) => x.stdev),
+            backgroundColor: "rgba(0, 24, 138, 0.75)",
             borderRadius: 6,
           },
         ],
@@ -629,7 +704,25 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { position: "bottom", labels: { padding: 16, boxWidth: 12 } } },
+        plugins: {
+          legend: { position: "bottom", labels: { padding: 16, boxWidth: 12 } },
+          tooltip: {
+            callbacks: {
+              afterBody(items) {
+                const i = items?.[0]?.dataIndex;
+                if (i == null || !entries[i]) return "";
+                const e = entries[i];
+                return [
+                  `n = ${e.count}`,
+                  e.median != null ? `Median = ${formatNum(e.median)}` : "",
+                  e.avg != null && e.stdev != null
+                    ? `Mean ± SD = ${formatNum(e.avg)} ± ${formatNum(e.stdev)}`
+                    : "",
+                ].filter(Boolean);
+              },
+            },
+          },
+        },
         layout: { padding: { bottom: 12, right: 8 } },
         scales: {
           y: valueAxis(),
@@ -638,6 +731,100 @@
       },
     });
     state.charts.push(chart);
+  }
+
+  function addBoxWhiskerChart(grid, id, title, entries, guide) {
+    const usable = (entries || []).filter((e) => e.box && e.box.count >= 2);
+    if (!usable.length) return;
+    grid.appendChild(makeChartCard(title, id, guide));
+    const chart = new Chart($(id), {
+      type: "bar",
+      data: {
+        labels: usable.map((x) => x.label),
+        datasets: [
+          {
+            label: "Whiskers (min–max in range)",
+            data: usable.map((x) => [x.box.whiskerMin, x.box.whiskerMax]),
+            backgroundColor: "rgba(118, 110, 101, 0.28)",
+            borderColor: "rgba(118, 110, 101, 0.7)",
+            borderWidth: 1,
+            borderRadius: 2,
+            barPercentage: 0.18,
+            categoryPercentage: 0.7,
+            order: 2,
+          },
+          {
+            label: "IQR (Q1–Q3)",
+            data: usable.map((x) => [x.box.q1, x.box.q3]),
+            backgroundColor: "rgba(32, 112, 40, 0.45)",
+            borderColor: "rgba(32, 112, 40, 0.95)",
+            borderWidth: 1.5,
+            borderRadius: 4,
+            barPercentage: 0.5,
+            categoryPercentage: 0.7,
+            order: 1,
+          },
+          {
+            type: "line",
+            label: "Median",
+            data: usable.map((x) => x.box.median),
+            borderColor: "#f2b334",
+            backgroundColor: "#f2b334",
+            pointRadius: 5,
+            pointHoverRadius: 6,
+            showLine: false,
+            order: 0,
+          },
+          {
+            type: "line",
+            label: "Mean",
+            data: usable.map((x) => x.box.mean),
+            borderColor: "#00188a",
+            backgroundColor: "#00188a",
+            pointStyle: "triangle",
+            pointRadius: 5,
+            pointHoverRadius: 6,
+            showLine: false,
+            order: 0,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "bottom", labels: { padding: 14, boxWidth: 12 } },
+          tooltip: {
+            callbacks: {
+              afterBody(items) {
+                const i = items?.[0]?.dataIndex;
+                const e = usable[i];
+                if (!e?.box) return "";
+                const b = e.box;
+                return [
+                  `Median = ${formatNum(b.median)}`,
+                  `Mean ± SD = ${formatNum(b.mean)} ± ${formatNum(b.stdev)}`,
+                  `Q1–Q3 = ${formatNum(b.q1)} – ${formatNum(b.q3)}`,
+                  `Whiskers = ${formatNum(b.whiskerMin)} – ${formatNum(b.whiskerMax)}`,
+                  `n = ${b.count}`,
+                ];
+              },
+            },
+          },
+        },
+        layout: { padding: { bottom: 12, right: 8 } },
+        scales: {
+          y: valueAxis(),
+          x: categoryAxis(),
+        },
+      },
+    });
+    state.charts.push(chart);
+  }
+
+  // Keep old name as alias for any leftover calls
+  function addAvgMedianBar(grid, id, title, entries, guide) {
+    addAvgStdevBar(grid, id, title, entries, guide);
   }
 
   function addGroupedBar(grid, id, title, labels, datasets, guide) {
@@ -667,7 +854,10 @@
   }
 
   function addScatter(grid, id, title, points, xTitle, yTitle, guide) {
-    grid.appendChild(makeChartCard(title, id, guide));
+    const r = pearsonR(points);
+    const rBit = r == null ? "" : ` · Pearson r = ${formatNum(r, 2)}`;
+    const cardTitle = `${title}${rBit}`;
+    grid.appendChild(makeChartCard(cardTitle, id, guide));
     const chart = new Chart($(id), {
       type: "scatter",
       data: {
@@ -726,6 +916,16 @@
       state.scatterY
     );
     if (!sc) return false;
+    const r = pearsonR(sc.points);
+    const rText = r == null ? "n/a (need ≥3 paired scores)" : formatNum(r, 2);
+    const rMeaning =
+      r == null
+        ? ""
+        : Math.abs(r) >= 0.7
+          ? "strong"
+          : Math.abs(r) >= 0.4
+            ? "moderate"
+            : "weak";
     const opts = criteria
       .map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`)
       .join("");
@@ -733,14 +933,19 @@
     card.className = "chart-card wide";
     card.innerHTML = `
       <div class="chart-head">
-        <h3>Compare two criteria</h3>
+        <div>
+          <h3>Compare two criteria</h3>
+          <p class="chart-stat">Pearson r = <strong>${escapeHtml(rText)}</strong>${
+            rMeaning ? ` <span class="muted">(${escapeHtml(rMeaning)} linear association)</span>` : ""
+          } · n = ${sc.points.length} students</p>
+        </div>
         <div class="scatter-picks">
           <label>X axis<select id="scatterX">${opts}</select></label>
           <label>Y axis<select id="scatterY">${opts}</select></label>
         </div>
       </div>
       <div class="chart-wrap tall"><canvas id="${id}"></canvas></div>
-      <p class="chart-guide"><strong>What to notice:</strong> ${escapeHtml(guide)}</p>`;
+      <p class="chart-guide"><strong>What to notice:</strong> ${escapeHtml(guide)} r near +1 means students strong on one criterion tend to be strong on the other; near 0 means little linear link.</p>`;
     grid.appendChild(card);
     $("scatterX").value = sc.xCrit;
     $("scatterY").value = sc.yCrit;
@@ -756,7 +961,7 @@
       data: {
         datasets: [
           {
-            label: "Points",
+            label: "Students",
             data: sc.points,
             backgroundColor: "rgba(32, 112, 40, 0.55)",
           },
@@ -813,6 +1018,7 @@
 
   function buildStudentCriterionMatrix(rows, studentCol, criterionCol, scoreCol, unitCol) {
     const students = unique(rows.map((r) => r[studentCol])).slice(0, 24);
+    // Use every criterion seen in the file — not only ones scored in the selected unit
     const criteria = unique(rows.map((r) => r[criterionCol]));
     let unitFilter = null;
     if (unitCol) {
@@ -1003,6 +1209,8 @@
       label: shortLabel(label),
       avg: avg(vals),
       median: median(vals),
+      stdev: stdev(vals),
+      count: vals.length,
       full: label,
     }));
   }
@@ -1033,9 +1241,9 @@
 
     const GUIDE = {
       criterion:
-        "Compare average and median for each criterion across all units in the file. If the median is much lower than the average, a few high levels may be hiding that most of the class is still struggling on that criterion.",
+        "Average shows the class level on each criterion. Std Dev shows how spread out the levels are — a high SD means the class is uneven on that skill.",
       unit:
-        "This mixes all criteria in that unit into one picture — it is not an MYP best-fit grade. Use it to spot a weaker period, then check the criterion × unit heatmap for the skill.",
+        "This mixes all criteria in that unit into one picture — it is not an MYP best-fit grade. High SD means students differed a lot in that period.",
       unitCrit:
         "Look for one criterion that dips across several units — that is often the best place to reteach or add practice.",
       dist:
@@ -1045,21 +1253,23 @@
       low:
         "Lowest averages of entered levels across all criteria and units — not MYP best-fit. Check which criterion is pulling them down.",
       support:
-        "Compare groups carefully — small group sizes can swing averages. Prefer the median when groups are uneven.",
+        "Compare groups carefully — small group sizes can swing averages. Check Std Dev when groups look uneven.",
       grade:
         "Use this to see if one grade band needs a different pitch or scaffold than another.",
       scatter:
-        "Each point is one student (average of their entered levels). Points trending up-right suggest attendance and levels move together. High attendance with low levels may need a teaching move, not more presence.",
+        "Each point is one student (average of their entered levels). Pearson r on this chart summarises the linear link. High attendance with low levels may need a teaching move, not more presence.",
       generic:
-        "Average shows the overall level; median shows the typical student. When they diverge, dig into who is above or below the middle.",
+        "Average shows the overall level; Std Dev shows spread. A large SD means the group is uneven — dig into who is above or below.",
       counts:
         "Counts show volume, not quality. Pair this with a score chart before deciding next steps.",
       heatStudent:
-        "Dark green = mastery, gold = developing, red = needs support. Scan down a column for a student profile, or across a row for a weak criterion.",
+        "Dark green = mastery, gold = developing, red = needs support. Empty cells were not assessed. Scan down a column for a student profile, or across a row for a weak criterion.",
       heatUnit:
         "Compare criteria across units. A red streak in one criterion across units is a reteach signal.",
       critScatter:
-        "Each point is one student. Change the two menus on this chart to compare any pair of criteria.",
+        "Each point is one student. Change the two menus to compare any pair of criteria.",
+      box:
+        "Box = middle 50% of scores (Q1–Q3). Gold dot = median. Blue triangle = mean. Thin bar = whiskers. Wide boxes / long whiskers mean a spread-out class.",
     };
 
     if (school) {
@@ -1067,6 +1277,9 @@
       const catCol = catOverride || school.subject;
 
       if (state.mode === "criteria" && school.studentName && school.subject && school.score) {
+        if (addCriterionScatter(grid, "chart-crit-scatter", rows, school, GUIDE.critScatter)) {
+          chartCount++;
+        }
         const hm = buildStudentCriterionMatrix(rows, school.studentName, school.subject, school.score, school.term);
         if (hm.criteria.length && hm.students.length) {
           addHeatmapCard(
@@ -1095,34 +1308,43 @@
           );
           chartCount++;
         }
-        if (addCriterionScatter(grid, "chart-crit-scatter", rows, school, GUIDE.critScatter)) {
-          chartCount++;
-        }
       }
 
       if (scoreCol && catCol) {
         const g = groupStats(rows, catCol, scoreCol);
         if (g.length) {
-          addAvgMedianBar(
+          addAvgStdevBar(
             grid,
             "chart-subj",
             state.mode === "criteria"
-              ? "Average and median by criterion (all units combined)"
-              : `${shortLabel(scoreCol)} by ${shortLabel(catCol)} (avg and median)`,
+              ? "Average and Std Dev by criterion (all units combined)"
+              : `${shortLabel(scoreCol)} by ${shortLabel(catCol)} (avg and Std Dev)`,
             g,
             state.mode === "criteria" ? GUIDE.criterion : GUIDE.generic
           );
           chartCount++;
+          if (state.mode === "criteria" || g.some((e) => e.box && e.box.count >= 3)) {
+            addBoxWhiskerChart(
+              grid,
+              "chart-box-crit",
+              state.mode === "criteria"
+                ? "Box and whisker by criterion"
+                : `Box and whisker by ${shortLabel(catCol)}`,
+              g,
+              GUIDE.box
+            );
+            chartCount++;
+          }
         }
       }
 
       if (state.mode === "criteria" && school.term) {
         const g = groupStats(rows, school.term, school.score);
         if (g.length) {
-          addAvgMedianBar(
+          addAvgStdevBar(
             grid,
             "chart-unit",
-            "Average and median by unit (all criteria combined — not a best-fit grade)",
+            "Average and Std Dev by unit (all criteria combined — not a best-fit grade)",
             g,
             GUIDE.unit
           );
@@ -1206,7 +1428,7 @@
       if (school.learningSupport && school.score) {
         const g = groupStats(rows, school.learningSupport, school.score);
         if (g.length) {
-          addAvgMedianBar(grid, "chart-support", "Average and median by learning support", g, GUIDE.support);
+          addAvgStdevBar(grid, "chart-support", "Average and Std Dev by learning support", g, GUIDE.support);
           chartCount++;
         }
       }
@@ -1214,7 +1436,7 @@
       if (school.gradeLevel && school.score) {
         const g = groupStats(rows, school.gradeLevel, school.score);
         if (g.length) {
-          addAvgMedianBar(grid, "chart-grade", "Average and median by grade level", g, GUIDE.grade);
+          addAvgStdevBar(grid, "chart-grade", "Average and Std Dev by grade level", g, GUIDE.grade);
           chartCount++;
         }
       }
@@ -1225,7 +1447,7 @@
         const top = all.slice(0, 8);
         const low = [...all].sort((a, b) => (a.avg ?? 0) - (b.avg ?? 0)).slice(0, 8);
         if (top.length >= 3) {
-          addAvgMedianBar(
+          addAvgStdevBar(
             grid,
             "chart-students-top",
             "Highest student averages (all criteria and units — not MYP best-fit)",
@@ -1235,7 +1457,7 @@
           chartCount++;
         }
         if (low.length >= 3) {
-          addAvgMedianBar(
+          addAvgStdevBar(
             grid,
             "chart-students-low",
             "Lowest student averages (all criteria and units — not MYP best-fit)",
@@ -1255,10 +1477,10 @@
       if (catCol && numCol) {
         const g = groupStats(rows, catCol, numCol);
         if (g.length) {
-          addAvgMedianBar(
+          addAvgStdevBar(
             grid,
             "chart-generic",
-            `${shortLabel(numCol)} by ${shortLabel(catCol)} (avg and median)`,
+            `${shortLabel(numCol)} by ${shortLabel(catCol)} (avg and Std Dev)`,
             g,
             GUIDE.generic
           );
