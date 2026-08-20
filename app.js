@@ -54,6 +54,64 @@
     return [...new Set(arr.filter((x) => x != null && String(x).trim() !== ""))];
   }
 
+  // Reporting snapshots (Progress Report, End of Term) are not independent "units".
+  // End of Term often already includes Progress Report / is a converted best-fit grade.
+  function isReportingPeriod(name) {
+    const s = String(name ?? "").toLowerCase();
+    return /progress\s*report|end of\s*(term|year|semester)|mid[\s-]?term|report\s*card|final\s*report|reporting\s*period|semester\s*report|term\s*report|overall\s*grade|final\s*grade|grade\s*boundary|out of\s*32|\/\s*7\b/.test(
+      s
+    );
+  }
+
+  function isLearningUnit(name) {
+    const s = String(name ?? "").trim();
+    if (!s || s === "—") return false;
+    return !isReportingPeriod(s);
+  }
+
+  function splitByPeriodType(rows, unitCol) {
+    const learning = [];
+    const reporting = [];
+    for (const r of rows) {
+      const u = String(r[unitCol] ?? "").trim();
+      if (!u || u === "—") continue;
+      if (isReportingPeriod(u)) reporting.push(r);
+      else learning.push(r);
+    }
+    return {
+      learning,
+      reporting,
+      learningUnits: unique(learning.map((r) => r[unitCol])),
+      reportingUnits: unique(reporting.map((r) => r[unitCol])),
+    };
+  }
+
+  function rowsForPatternCharts(rows, school) {
+    if (state.mode !== "criteria" || !school?.term) {
+      return { rows, scopeNote: "", split: null };
+    }
+    const split = splitByPeriodType(rows, school.term);
+    if (split.learning.length) {
+      const note =
+        split.reportingUnits.length
+          ? `Pattern charts use learning units only (${split.learningUnits.join(", ")}). Reporting periods (${split.reportingUnits.join(", ")}) are shown separately — End of Term is not averaged against Progress Report.`
+          : `Pattern charts use learning units: ${split.learningUnits.join(", ")}.`;
+      return { rows: split.learning, scopeNote: note, split };
+    }
+    // No instructional units — use a single reporting snapshot (prefer End of Term)
+    const endish =
+      split.reportingUnits.find((u) => /end of/i.test(u)) ||
+      split.reportingUnits[split.reportingUnits.length - 1];
+    const scoped = endish ? split.reporting.filter((r) => String(r[school.term]) === String(endish)) : split.reporting;
+    return {
+      rows: scoped,
+      scopeNote: endish
+        ? `No instructional units found. Snapshot charts use “${endish}” only — reporting periods are not compared as growth.`
+        : "",
+      split,
+    };
+  }
+
   function avg(nums) {
     const a = nums.filter((n) => n != null && Number.isFinite(n));
     if (!a.length) return null;
@@ -1041,8 +1099,9 @@
     return { students, criteria, matrix, rowAvgs, unitLabel: unitFilter };
   }
 
-  function buildUnitCriterionMatrix(rows, unitCol, criterionCol, scoreCol) {
-    const units = unique(rows.map((r) => r[unitCol])).filter((u) => u && u !== "—");
+  function buildUnitCriterionMatrix(rows, unitCol, criterionCol, scoreCol, unitFilterFn) {
+    let units = unique(rows.map((r) => r[unitCol])).filter((u) => u && u !== "—");
+    if (typeof unitFilterFn === "function") units = units.filter(unitFilterFn);
     const criteria = unique(rows.map((r) => r[criterionCol]));
     const matrix = criteria.map((crit) =>
       units.map((unit) => {
@@ -1241,45 +1300,56 @@
 
     const GUIDE = {
       criterion:
-        "Average shows the class level on each criterion. Std Dev shows how spread out the levels are — a high SD means the class is uneven on that skill.",
+        "Average shows the class level on each criterion within learning units only. Std Dev shows spread. Reporting periods are not mixed into this chart.",
       unit:
-        "This mixes all criteria in that unit into one picture — it is not an MYP best-fit grade. High SD means students differed a lot in that period.",
+        "Compares instructional units only (Unit 1, Unit 2, …). Progress Report and End of Term are reporting snapshots — they are not listed here because End of Term often already includes earlier work / uses a different conversion.",
       unitCrit:
-        "Look for one criterion that dips across several units — that is often the best place to reteach or add practice.",
+        "Learning units only. Look for one criterion that dips across several units — that is often the best place to reteach.",
+      reporting:
+        "Reporting snapshots only. Do not read Progress Report → End of Term as a simple average rise/fall: End of Term may already include Progress Report and may be converted (e.g. /32 → /7).",
       dist:
-        "Check where marks pile up. A cluster at the low end suggests reteaching; a cluster at the high end means many students are ready for extension.",
+        "Check where marks pile up within the chart scope. A cluster at the low end suggests reteaching; a cluster at the high end means many students are ready for extension.",
       top:
-        "Highest averages of entered levels across all criteria and units — not an official MYP grade. Check whether they are strong on every criterion.",
+        "Highest averages within the chart scope — not an official MYP grade. Check whether they are strong on every criterion.",
       low:
-        "Lowest averages of entered levels across all criteria and units — not MYP best-fit. Check which criterion is pulling them down.",
+        "Lowest averages within the chart scope — not MYP best-fit. Check which criterion is pulling them down.",
       support:
         "Compare groups carefully — small group sizes can swing averages. Check Std Dev when groups look uneven.",
       grade:
         "Use this to see if one grade band needs a different pitch or scaffold than another.",
       scatter:
-        "Each point is one student (average of their entered levels). Pearson r on this chart summarises the linear link. High attendance with low levels may need a teaching move, not more presence.",
+        "Each point is one student within learning units (or a single reporting snapshot). Pearson r summarises the linear link.",
       generic:
         "Average shows the overall level; Std Dev shows spread. A large SD means the group is uneven — dig into who is above or below.",
       counts:
         "Counts show volume, not quality. Pair this with a score chart before deciding next steps.",
       heatStudent:
-        "Dark green = mastery, gold = developing, red = needs support. Empty cells were not assessed. Scan down a column for a student profile, or across a row for a weak criterion.",
+        "Dark green = mastery, gold = developing, red = needs support. Empty cells were not assessed. This heatmap uses one reporting snapshot (prefer End of Term), not a mix of periods.",
       heatUnit:
-        "Compare criteria across units. A red streak in one criterion across units is a reteach signal.",
+        "Learning units only. A red streak in one criterion across units is a reteach signal. Reporting periods are shown separately.",
       critScatter:
         "Each point is one student. Change the two menus to compare any pair of criteria.",
       box:
-        "Box = middle 50% of scores (Q1–Q3). Gold dot = median. Blue triangle = mean. Thin bar = whiskers. Wide boxes / long whiskers mean a spread-out class.",
+        "Box = middle 50% of scores (Q1–Q3). Gold dot = median. Blue triangle = mean. Thin bar = whiskers. Built from learning units only when available.",
     };
 
     if (school) {
       const scoreCol = numOverride || school.score;
       const catCol = catOverride || school.subject;
+      const scoped = rowsForPatternCharts(rows, school);
+      const patternRows = scoped.rows.length ? scoped.rows : rows;
+      if (scoped.scopeNote) {
+        const note = document.createElement("div");
+        note.className = "scope-note";
+        note.textContent = scoped.scopeNote;
+        grid.appendChild(note);
+      }
 
       if (state.mode === "criteria" && school.studentName && school.subject && school.score) {
-        if (addCriterionScatter(grid, "chart-crit-scatter", rows, school, GUIDE.critScatter)) {
+        if (addCriterionScatter(grid, "chart-crit-scatter", patternRows, school, GUIDE.critScatter)) {
           chartCount++;
         }
+        // Student heatmap: one reporting snapshot (End of Term), not blended with units
         const hm = buildStudentCriterionMatrix(rows, school.studentName, school.subject, school.score, school.term);
         if (hm.criteria.length && hm.students.length) {
           addHeatmapCard(
@@ -1290,34 +1360,64 @@
             hm.matrix,
             hm.rowAvgs,
             GUIDE.heatStudent,
-            hm.unitLabel ? `Showing: ${hm.unitLabel}` : "Averaged across available units"
+            hm.unitLabel
+              ? `Snapshot: ${hm.unitLabel} (one period only — not averaged with other periods)`
+              : "Averaged across available marks in scope"
           );
           chartCount++;
         }
-        const um = buildUnitCriterionMatrix(rows, school.term, school.subject, school.score);
-        if (um.units.length >= 2 && um.criteria.length) {
+        // Learning units heatmap (comparable summatives)
+        const umLearn = buildUnitCriterionMatrix(
+          rows,
+          school.term,
+          school.subject,
+          school.score,
+          isLearningUnit
+        );
+        if (umLearn.units.length >= 1 && umLearn.criteria.length) {
           addHeatmapCard(
             grid,
-            "Criterion × unit heatmap",
-            um.units,
-            um.criteria,
-            um.matrix,
+            "Criterion × learning unit heatmap",
+            umLearn.units,
+            umLearn.criteria,
+            umLearn.matrix,
             null,
             GUIDE.heatUnit,
-            "Class average of entered levels by criterion and unit"
+            "Instructional units only — safe to compare across units"
+          );
+          chartCount++;
+        }
+        // Reporting periods: show separately with warning, never as growth averages
+        const umRep = buildUnitCriterionMatrix(
+          rows,
+          school.term,
+          school.subject,
+          school.score,
+          isReportingPeriod
+        );
+        if (umRep.units.length >= 1 && umRep.criteria.length) {
+          addHeatmapCard(
+            grid,
+            "Reporting snapshots (not growth averages)",
+            umRep.units,
+            umRep.criteria,
+            umRep.matrix,
+            null,
+            GUIDE.reporting,
+            "Progress Report and End of Term are reporting moments. End of Term may already include Progress Report and may use a converted scale."
           );
           chartCount++;
         }
       }
 
       if (scoreCol && catCol) {
-        const g = groupStats(rows, catCol, scoreCol);
+        const g = groupStats(patternRows, catCol, scoreCol);
         if (g.length) {
           addAvgStdevBar(
             grid,
             "chart-subj",
             state.mode === "criteria"
-              ? "Average and Std Dev by criterion (all units combined)"
+              ? "Average and Std Dev by criterion (learning units only)"
               : `${shortLabel(scoreCol)} by ${shortLabel(catCol)} (avg and Std Dev)`,
             g,
             state.mode === "criteria" ? GUIDE.criterion : GUIDE.generic
@@ -1328,7 +1428,7 @@
               grid,
               "chart-box-crit",
               state.mode === "criteria"
-                ? "Box and whisker by criterion"
+                ? "Box and whisker by criterion (learning units only)"
                 : `Box and whisker by ${shortLabel(catCol)}`,
               g,
               GUIDE.box
@@ -1338,13 +1438,15 @@
         }
       }
 
+      // By-unit averages: instructional units only — never Progress Report vs End of Term
       if (state.mode === "criteria" && school.term) {
-        const g = groupStats(rows, school.term, school.score);
-        if (g.length) {
+        const learningRows = rows.filter((r) => isLearningUnit(r[school.term]));
+        const g = groupStats(learningRows, school.term, school.score);
+        if (g.length >= 2) {
           addAvgStdevBar(
             grid,
             "chart-unit",
-            "Average and Std Dev by unit (all criteria combined — not a best-fit grade)",
+            "Average and Std Dev by learning unit (not reporting periods)",
             g,
             GUIDE.unit
           );
@@ -1352,14 +1454,20 @@
         }
       }
 
+      // Grouped criterion × period: learning units only
       if (school.subject && school.term && school.score) {
-        const cmp = termSubjectComparison(rows, school.subject, school.term, school.score);
+        const learningRows = state.mode === "criteria"
+          ? rows.filter((r) => isLearningUnit(r[school.term]))
+          : rows;
+        const cmp = termSubjectComparison(learningRows, school.subject, school.term, school.score);
         if (cmp.labels.length && cmp.datasets.length >= 1 && cmp.datasets.some((d) => d.label !== "—")) {
           if (cmp.datasets.length > 1) {
             addGroupedBar(
               grid,
               "chart-term",
-              state.mode === "criteria" ? "Average entered level by criterion and unit" : "Average score by subject and term",
+              state.mode === "criteria"
+                ? "Average entered level by criterion and learning unit"
+                : "Average score by subject and term",
               cmp.labels,
               cmp.datasets,
               GUIDE.unitCrit
@@ -1370,12 +1478,12 @@
       }
 
       if (scoreCol) {
-        const dist = scoreDistribution(rows, scoreCol);
+        const dist = scoreDistribution(patternRows, scoreCol);
         if (dist) {
           addBarChart(
             grid,
             "chart-dist",
-            dist.kind === "myp" ? "How many entered levels at each 1–8" : "Score distribution",
+            dist.kind === "myp" ? "How many entered levels at each 1–8 (chart scope)" : "Score distribution",
             dist.labels,
             dist.data,
             "Count",
@@ -1388,8 +1496,8 @@
       if (school.attendance && school.score && (school.studentName || state.mode !== "criteria")) {
         const points =
           school.studentName
-            ? studentContextScatter(rows, school.studentName, school.attendance, school.score)
-            : rows
+            ? studentContextScatter(patternRows, school.studentName, school.attendance, school.score)
+            : patternRows
                 .map((r) => {
                   const x = toNumber(r[school.attendance]);
                   const y = toNumber(r[school.score]);
@@ -1410,7 +1518,7 @@
           chartCount++;
         }
       } else if (school.homework && school.score && school.studentName) {
-        const points = studentContextScatter(rows, school.studentName, school.homework, school.score);
+        const points = studentContextScatter(patternRows, school.studentName, school.homework, school.score);
         if (points.length >= 5) {
           addScatter(
             grid,
@@ -1426,7 +1534,7 @@
       }
 
       if (school.learningSupport && school.score) {
-        const g = groupStats(rows, school.learningSupport, school.score);
+        const g = groupStats(patternRows, school.learningSupport, school.score);
         if (g.length) {
           addAvgStdevBar(grid, "chart-support", "Average and Std Dev by learning support", g, GUIDE.support);
           chartCount++;
@@ -1434,7 +1542,7 @@
       }
 
       if (school.gradeLevel && school.score) {
-        const g = groupStats(rows, school.gradeLevel, school.score);
+        const g = groupStats(patternRows, school.gradeLevel, school.score);
         if (g.length) {
           addAvgStdevBar(grid, "chart-grade", "Average and Std Dev by grade level", g, GUIDE.grade);
           chartCount++;
@@ -1443,14 +1551,14 @@
 
       if ((state.mode === "wide" || state.mode === "criteria") && school.score && (school.studentName || "Student")) {
         const studentCol = school.studentName || "Student";
-        const all = studentStats(rows, studentCol, school.score).sort((a, b) => (b.avg ?? 0) - (a.avg ?? 0));
+        const all = studentStats(patternRows, studentCol, school.score).sort((a, b) => (b.avg ?? 0) - (a.avg ?? 0));
         const top = all.slice(0, 8);
         const low = [...all].sort((a, b) => (a.avg ?? 0) - (b.avg ?? 0)).slice(0, 8);
         if (top.length >= 3) {
           addAvgStdevBar(
             grid,
             "chart-students-top",
-            "Highest student averages (all criteria and units — not MYP best-fit)",
+            "Highest student averages (within chart scope — not MYP best-fit)",
             top,
             GUIDE.top
           );
@@ -1460,7 +1568,7 @@
           addAvgStdevBar(
             grid,
             "chart-students-low",
-            "Lowest student averages (all criteria and units — not MYP best-fit)",
+            "Lowest student averages (within chart scope — not MYP best-fit)",
             low,
             GUIDE.low
           );
@@ -1704,7 +1812,7 @@
       state.mode = "criteria";
       const subj = state.subjectHint ? ` (${state.subjectHint})` : "";
       const extraNote = extra.length ? ` Extra columns kept: ${extra.join(", ")}.` : "";
-      state.notice = `Subject gradebook${subj}: unit row + criteria row detected. ${parsed.filled} levels charted across ${parsed.unitCount} units and ${parsed.criterionCount} criteria (dashes skipped).${extraNote} MYP 1–8 levels are best-fit judgments; averages here are for patterns only.`;
+      state.notice = `Subject gradebook${subj}: unit row + criteria row detected. ${parsed.filled} levels charted across ${parsed.unitCount} units and ${parsed.criterionCount} criteria (dashes skipped).${extraNote} Pattern charts use learning units only; Progress Report / End of Term are shown as separate reporting snapshots (not averaged against each other).`;
       return;
     }
 

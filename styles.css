@@ -433,6 +433,18 @@ body {
   font-weight: 500;
 }
 
+.scope-note {
+  grid-column: 1 / -1;
+  margin: 0 0 0.35rem;
+  padding: 0.7rem 0.95rem;
+  border-radius: 0.75rem;
+  background: rgba(243, 39, 53, 0.06);
+  border: 1px solid rgba(243, 39, 53, 0.22);
+  color: #7a1a22;
+  line-height: 1.45;
+  font-size: 0.88rem;
+}
+
 .chart-guide {
   margin: 0.7rem 0 0;
   padding-top: 0.65rem;
