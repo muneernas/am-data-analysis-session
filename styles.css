@@ -359,6 +359,103 @@ body {
   grid-column: 1 / -1;
 }
 
+.chart-kpis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.55rem;
+  margin: -0.15rem 0 0.7rem;
+}
+
+.chart-kpi {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 4.5rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  background: #faf9f7;
+}
+
+.chart-kpi-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+.chart-kpi-value {
+  font-family: "Fraunces", serif;
+  font-size: 1.05rem;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.boxplot-card {
+  padding-bottom: 1.15rem;
+}
+
+.boxplot-wrap {
+  overflow-x: auto;
+  margin-bottom: 0.35rem;
+}
+
+.boxplot-wrap svg {
+  display: block;
+  min-width: 640px;
+}
+
+.boxplot-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin: 0 0 0.65rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.boxplot-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.boxplot-legend i {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+.lg-box {
+  background: rgba(32, 112, 40, 0.35);
+  border: 1.5px solid #207028;
+}
+
+.lg-med {
+  width: 3px !important;
+  height: 14px !important;
+  background: #f2b334;
+  border-radius: 0;
+}
+
+.lg-mean {
+  width: 10px !important;
+  height: 10px !important;
+  background: #00188a;
+  transform: rotate(45deg);
+  border-radius: 0;
+}
+
+.lg-whisk {
+  width: 18px !important;
+  height: 2px !important;
+  background: #766e65;
+  border-radius: 0;
+}
+
 .chart-card > h3 {
   margin: 0 0 0.75rem;
   font-family: "Fraunces", serif;
