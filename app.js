@@ -1396,26 +1396,6 @@
           );
           chartCount++;
         }
-        const umRep = buildUnitCriterionMatrix(
-          rows,
-          school.term,
-          school.subject,
-          school.score,
-          isReportingPeriod
-        );
-        if (umRep.units.length >= 1 && umRep.criteria.length) {
-          addHeatmapCard(
-            grid,
-            "Reporting snapshots (not growth averages)",
-            umRep.units,
-            umRep.criteria,
-            umRep.matrix,
-            null,
-            GUIDE.reporting,
-            "Progress Report and End of Term are reporting moments. End of Term may already include Progress Report and may use a converted scale."
-          );
-          chartCount++;
-        }
 
         // Row of paired summary charts after heatmaps
         let gCrit = null;
